@@ -1,0 +1,19 @@
+{
+  "name": "wideplayer-for-x",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vite + TypeScript scaffold for the WidePlayer for X browser extension",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "clean": "node scripts/build.mjs --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

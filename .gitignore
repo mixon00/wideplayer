@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+dist/
+build/
+coverage/
+web-ext-artifacts/
+.parcel-cache/
+.idea/
+.vscode/
+*.tsbuildinfo
