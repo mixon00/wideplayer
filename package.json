@@ -5,8 +5,17 @@
   "description": "Vite + TypeScript scaffold for the WidePlayer for X browser extension",
   "type": "module",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "clean": "node scripts/build.mjs --clean",
+    "build": "npm run build:chrome && npm run build:firefox && npm run build:safari",
+    "build:chrome": "npm run clean:chrome && vite build --mode chrome-ui && vite build --mode chrome-content && vite build --mode chrome-background",
+    "build:firefox": "npm run clean:firefox && vite build --mode firefox-ui && vite build --mode firefox-content && vite build --mode firefox-background",
+    "build:safari": "npm run clean:safari && vite build --mode safari-ui && vite build --mode safari-content && vite build --mode safari-background",
+    "clean": "node --input-type=module --eval \"import { rmSync } from 'node:fs'; rmSync('dist', { force: true, recursive: true });\"",
+    "clean:chrome": "node --input-type=module --eval \"import { rmSync } from 'node:fs'; rmSync('dist/chrome', { force: true, recursive: true });\"",
+    "clean:firefox": "node --input-type=module --eval \"import { rmSync } from 'node:fs'; rmSync('dist/firefox', { force: true, recursive: true });\"",
+    "clean:safari": "node --input-type=module --eval \"import { rmSync } from 'node:fs'; rmSync('dist/safari', { force: true, recursive: true });\"",
+    "dev": "npm run dev:chrome",
+    "dev:chrome": "npm run clean:chrome && npm run watch:chrome",
+    "watch:chrome": "sh -c 'vite build --watch --mode chrome-ui & vite build --watch --mode chrome-content & vite build --watch --mode chrome-background & wait'",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
