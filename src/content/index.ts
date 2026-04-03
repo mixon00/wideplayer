@@ -12,10 +12,18 @@ import type { CandidateElements, CandidateRecord, RectSnapshot } from "./types";
 
 const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
 const VIEWPORT_GUTTER = 16;
-const VISIBILITY_THRESHOLD = 0.2;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function lerp(start: number, end: number, progress: number): number {
+  return start + (end - start) * progress;
+}
+
+function smoothstep(value: number): number {
+  const clampedValue = clamp(value, 0, 1);
+  return clampedValue * clampedValue * (3 - 2 * clampedValue);
 }
 
 function isFiniteNumber(value: number | undefined): value is number {
@@ -57,7 +65,7 @@ function isElementVisible(element: HTMLElement): boolean {
   const visibleBottom = Math.min(window.innerHeight, rect.bottom);
   const visibleHeight = Math.max(0, visibleBottom - visibleTop);
 
-  return visibleHeight >= rect.height * VISIBILITY_THRESHOLD;
+  return visibleHeight > 0;
 }
 
 class WidePlayerContentApp {
@@ -83,8 +91,7 @@ class WidePlayerContentApp {
         continue;
       }
 
-      record.isVisible =
-        entry.isIntersecting && entry.intersectionRatio >= VISIBILITY_THRESHOLD;
+      record.isVisible = entry.isIntersecting;
     }
 
     if (this.settings.autoEnable) {
@@ -208,7 +215,7 @@ class WidePlayerContentApp {
     }
 
     this.intersectionObserver = new IntersectionObserver(this.handleVisibilityChange, {
-      threshold: [0, VISIBILITY_THRESHOLD, 0.5, 1],
+      threshold: [0, 0.5, 1],
     });
   }
 
@@ -472,6 +479,24 @@ class WidePlayerContentApp {
     return anchorRect;
   }
 
+  private resolveViewportExpansionProgress(
+    anchorTop: number,
+    collapsedHeight: number,
+    expandedHeight: number
+  ): number {
+    const entryTop = window.innerHeight;
+    const centeredTop = (window.innerHeight - expandedHeight) / 2;
+    const exitTop = -collapsedHeight;
+
+    if (anchorTop >= centeredTop) {
+      const distanceFromEntryToCenter = Math.max(1, entryTop - centeredTop);
+      return clamp(1 - (anchorTop - centeredTop) / distanceFromEntryToCenter, 0, 1);
+    }
+
+    const distanceFromCenterToExit = Math.max(1, centeredTop - exitTop);
+    return clamp(1 - (centeredTop - anchorTop) / distanceFromCenterToExit, 0, 1);
+  }
+
   private syncCandidatePosition(record: CandidateRecord): void {
     const activePlacement = record.activePlacement;
 
@@ -497,25 +522,44 @@ class WidePlayerContentApp {
     }
 
     const aspectRatio = this.resolveAspectRatio(record);
+    const collapsedWidth = anchorRect.width;
+    const collapsedHeight = collapsedWidth / aspectRatio;
     const maximumWidthByViewport = Math.max(anchorRect.width, window.innerWidth - VIEWPORT_GUTTER * 2);
     const maximumWidthByHeight = Math.max(
       anchorRect.width,
       window.innerHeight * MAX_VIEWPORT_HEIGHT_RATIO * aspectRatio
     );
     const maximumWidth = Math.min(maximumWidthByViewport, maximumWidthByHeight);
-    const targetWidth =
+    const expandedWidth =
       anchorRect.width +
       (maximumWidth - anchorRect.width) * (this.settings.widthPercent / 100);
-    const targetHeight = targetWidth / aspectRatio;
-    const preferredLeft = anchorRect.left + anchorRect.width / 2 - targetWidth / 2;
-    const maxLeft = Math.max(VIEWPORT_GUTTER, window.innerWidth - targetWidth - VIEWPORT_GUTTER);
-    const targetLeft = clamp(preferredLeft, VIEWPORT_GUTTER, maxLeft);
+    const expandedHeight = expandedWidth / aspectRatio;
+    const preferredLeft = anchorRect.left + anchorRect.width / 2 - expandedWidth / 2;
+    const maxLeft = Math.max(
+      VIEWPORT_GUTTER,
+      window.innerWidth - expandedWidth - VIEWPORT_GUTTER
+    );
+    const expandedLeft = clamp(preferredLeft, VIEWPORT_GUTTER, maxLeft);
+    const expansionProgress = smoothstep(
+      this.resolveViewportExpansionProgress(anchorRect.top, collapsedHeight, expandedHeight)
+    );
+    const currentWidth = lerp(collapsedWidth, expandedWidth, expansionProgress);
+    const currentHeight = currentWidth / aspectRatio;
+    const currentLeft = lerp(anchorRect.left, expandedLeft, expansionProgress);
 
-    activePlacement.frame.style.left = `${Math.round(targetLeft)}px`;
+    activePlacement.frame.style.setProperty(
+      "--wideplayer-scroll-progress",
+      expansionProgress.toFixed(4)
+    );
+    activePlacement.placeholder.style.setProperty(
+      "--wideplayer-scroll-progress",
+      expansionProgress.toFixed(4)
+    );
+    activePlacement.frame.style.left = `${Math.round(currentLeft)}px`;
     activePlacement.frame.style.top = `${Math.round(anchorRect.top)}px`;
-    activePlacement.frame.style.width = `${Math.round(targetWidth)}px`;
-    activePlacement.frame.style.height = `${Math.round(targetHeight)}px`;
-    updatePlaceholderHeight(activePlacement, targetHeight);
+    activePlacement.frame.style.width = `${Math.round(currentWidth)}px`;
+    activePlacement.frame.style.height = `${Math.round(currentHeight)}px`;
+    updatePlaceholderHeight(activePlacement, currentHeight);
   }
 
   private syncFallbackVisibility(): void {

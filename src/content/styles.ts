@@ -1,4 +1,10 @@
 export const contentStyles = `
+@property --wideplayer-scroll-progress {
+  inherits: false;
+  initial-value: 0;
+  syntax: "<number>";
+}
+
 :root {
   --wideplayer-width-percent: 135;
   --wideplayer-overlay-radius: 16px;
@@ -30,10 +36,15 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
 
 .wideplayer-overlay-frame {
   border-radius: var(--wideplayer-overlay-radius);
-  box-shadow: var(--wideplayer-overlay-shadow);
+  box-shadow:
+    0 calc(8px + var(--wideplayer-scroll-progress) * 4px)
+    calc(20px + var(--wideplayer-scroll-progress) * 8px)
+    rgba(15, 20, 25, calc(0.12 + var(--wideplayer-scroll-progress) * 0.06)),
+    0 0 0 1px rgba(15, 20, 25, calc(0.04 + var(--wideplayer-scroll-progress) * 0.04));
   overflow: hidden;
   pointer-events: auto;
   position: absolute;
+  will-change: height, left, top, width;
 }
 
 .wideplayer-overlay-surface {
@@ -55,6 +66,7 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
 .wideplayer-placeholder {
   display: block;
   pointer-events: none;
+  will-change: height;
   width: 100%;
 }
 

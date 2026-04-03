@@ -1,36 +1,57 @@
 # WidePlayer for X
 
-WidePlayer for X is a browser extension project for making in-feed videos on X appear wider without switching to fullscreen.
+WidePlayer for X is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-This repository is now prepared as an initial commit scaffold:
-- separate browser builds for Chrome, Firefox, and Safari
-- Vite-powered build pipeline
-- TypeScript source structure for content, settings, and background logic
-- popup and options UIs for extension settings
-- product documentation in `PRD.md`
+The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, and browser-specific build outputs for Chrome, Firefox, and Safari.
 
 ## Current Status
 
-The repository contains a runnable starter architecture, not the final feature-complete video expansion engine yet.
+As of version `0.3.2`, the project ships a functional extension MVP with these behaviors:
 
-Included in this scaffold:
-- browser-specific manifests
-- TypeScript settings and storage layer
-- content-script bootstrap for X and Twitter pages
-- background service worker that initializes defaults
-- popup and options pages for `autoEnable` and `widthPercent`
-- Vite build pipeline that assembles per-browser distributions
+- detects supported in-feed videos on `x.com` and `twitter.com`
+- moves the original player into a fixed overlay instead of duplicating the video element
+- preserves feed flow with a placeholder while the player is expanded
+- supports automatic mode and manual per-video expand/collapse controls
+- keeps popup and options settings synchronized through extension storage
+- builds separate distributions for Chrome, Firefox, and Safari
 
-## Planned Product Behavior
+## What Works Today
 
-WidePlayer for X is designed to:
-- enlarge videos beyond tweet width
-- preserve feed layout and natural scrolling
-- move the original player instead of duplicating it
-- support automatic and manual activation modes
-- stay configurable from extension settings
+### Video behavior
 
-Product requirements are documented in `PRD.md`.
+- Auto mode is enabled by default
+- Manual mode adds an `Expand` / `Collapse` button to supported players
+- Expanded width is constrained by viewport width, viewport height, and the user-selected width setting
+- While visible, the expanded player is continuously repositioned on scroll and resize
+- The current implementation scales the widened player with viewport position: it starts near the original size when entering the screen, reaches the configured target size near the viewport center, and shrinks again while leaving the screen
+
+### Settings
+
+The extension currently exposes two settings:
+
+- `autoEnable`
+- `widthPercent`
+
+Current defaults:
+
+- `autoEnable: true`
+- `widthPercent: 35`
+
+Both popup and options pages read from the same storage layer and stay aligned through shared UI logic in `src/shared`.
+
+### Stability and cleanup
+
+- candidate detection re-runs on feed mutations
+- active overlays are restored back into the tweet when the player is collapsed
+- cleanup paths handle disconnects, navigation changes, and removed nodes
+- if the enhancement cannot be applied, the original in-feed player remains usable
+
+## Current Limitations
+
+- detection currently targets tweet articles that contain exactly one direct video candidate
+- media galleries, unusual nested layouts, or unsupported embed structures may be ignored
+- Safari output is generated, but final Safari packaging still depends on Safari Web Extension tooling on macOS
+- there is no dedicated automated test suite yet; validation is currently done through `npm run typecheck` and `npm run build`
 
 ## Repository Structure
 
@@ -44,53 +65,76 @@ Product requirements are documented in `PRD.md`.
 /safari
   manifest.json
 
+/scripts
+  prepare-build.mjs
+
 /src
   /background
   /content
   /options
   /popup
   /shared
-
-/scripts
-  build.mjs
-
-tsconfig.json
 ```
 
 Guiding rules:
-- shared logic lives in `src/shared`
-- browser folders own compatibility-specific manifests and future overrides
-- build output is generated into `dist`
 
-## Getting Started
+- shared logic lives in `src/shared`
+- browser folders only contain browser-specific manifest and compatibility differences
+- generated files in `dist` should not be edited by hand
+
+## Development
 
 Requirements:
+
 - Node.js 18 or newer
 
-Install the local project setup:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Build all browser distributions:
+Build every browser target:
 
 ```bash
 npm run build
 ```
 
-Run TypeScript validation:
+Build only one target:
+
+```bash
+npm run build:chrome
+npm run build:firefox
+npm run build:safari
+```
+
+Run type checking:
 
 ```bash
 npm run typecheck
 ```
 
-The build script generates:
+Clean generated output:
+
+```bash
+npm run clean
+```
+
+Start the Chrome-focused watch flow:
+
+```bash
+npm run dev:chrome
+```
+
+The build generates:
+
 - `dist/chrome`
 - `dist/firefox`
 - `dist/safari`
 
-## Loading the Extension
+Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and options UI.
+
+## Loading The Extension
 
 ### Chrome
 
@@ -107,39 +151,13 @@ The build script generates:
 
 ### Safari
 
-- build output is scaffolded in `dist/safari`
-- final Safari packaging will require Safari Web Extension tooling on macOS
-
-## Settings
-
-The starter UI already supports:
-- `autoEnable`
-- `widthPercent`
-
-Current default values:
-- `autoEnable: true`
-- `widthPercent: 135`
-
-## Available Scripts
-
-```bash
-npm run build
-npm run clean
-npm run typecheck
-```
-
-## Initial Commit Scope
-
-This initial scaffold is intended to give the project a clean starting point for:
-- browser-specific evolution
-- storage and settings work
-- content-script iteration
-- overlay and player-move implementation
-- Vite + TypeScript based development
+- generated output is available in `dist/safari`
+- final packaging and local installation still require Safari Web Extension tooling on macOS
 
 ## Documentation
 
-- product requirements: `PRD.md`
+- product requirements and current MVP scope: `PRD.md`
+- release notes: `CHANGELOG.md`
 
 ## License
 

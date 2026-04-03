@@ -1,366 +1,185 @@
-# WidePlayer for X — PRD
+# WidePlayer for X — Product Requirements Document
 
-## 1. Goal
+## 1. Document Purpose
 
-Build a browser extension family for X (Twitter) that enlarges in-feed videos without fullscreen.
+This PRD is the source of truth for both:
 
-The extension must support two modes:
-- automatic enlargement with no user interaction
-- manual enlargement triggered from a player button when auto mode is disabled
+- the current shipped MVP behavior
+- the intended product direction for upcoming iterations
 
-Result:
-- videos appear larger than tweet width
-- feed layout remains intact
-- scrolling remains natural
-- the original player is moved, not duplicated
-- behavior is configurable from extension settings
-- browser-specific builds can diverge when compatibility requires it
+The repository is no longer a blank scaffold. As of version `0.3.2`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
-## 2. Product Modes
+## 2. Product Goal
 
-### Auto Mode
+Build a browser extension family for X (Twitter) that enlarges supported in-feed videos without entering fullscreen.
+
+Core principles:
+
+- preserve feed layout
+- preserve natural scrolling
+- move the original player instead of duplicating the video element
+- keep the experience configurable through extension settings
+- fail safely when enhancement cannot be applied
+
+---
+
+## 3. Current MVP State
+
+### 3.1 Implemented today
+
+The current project already implements:
+
+- support for `x.com` and `twitter.com`
+- automatic enlargement mode enabled by default
+- manual mode with per-video `Expand` / `Collapse` controls
+- storage-backed settings shared between popup and options pages
+- a player-move overlay architecture that mounts the original player into a fixed overlay
+- placeholder-based layout preservation while a player is widened
+- scroll and resize synchronization for active overlays
+- viewport-aware sizing that grows a visible player toward its configured width near the center of the screen and reduces it again toward entry and exit
+- cleanup logic for rerenders, disconnects, navigation changes, and removed tweet nodes
+- separate build outputs for Chrome, Firefox, and Safari
+
+### 3.2 Current limitations
+
+The MVP is intentionally narrower than the final product vision.
+
+Known limitations:
+
+- detection currently targets tweet articles with exactly one direct video candidate
+- unusual embed structures, galleries, or unsupported DOM layouts may be skipped
+- browser-specific behavior is mostly shared; platform divergences are not deeply optimized yet
+- there is no dedicated test suite yet
+- Safari output is generated, but final packaging still depends on Safari tooling outside this repository
+
+---
+
+## 4. Supported Modes
+
+### 4.1 Auto Mode
+
+Status: implemented
+
+Behavior:
+
 - enabled by default
-- enlarges supported videos automatically when detected and visible
-- requires no clicks
+- supported videos activate automatically when their tweet becomes visible in the viewport
+- widened player size is constrained by viewport width, viewport height, and user settings
+- while the tweet moves through the viewport, the visible player grows from near-original size, reaches its target near the viewport center, then shrinks again while leaving the screen
+- no user click is required
 
-### Manual Mode
+### 4.2 Manual Mode
+
+Status: implemented
+
+Behavior:
+
 - used when `autoEnable = false`
-- injects an expand button into the player UI
-- user can expand or collapse the video locally per tweet
-- manual expansion uses the same moved player architecture as auto mode
+- injects a per-video button into supported players
+- button toggles between `Expand` and `Collapse`
+- uses the same moved-player overlay architecture as auto mode
 
 ---
 
-## 3. Project Structure
+## 5. Current Functional Requirements
 
-The project is organized into browser-specific subfolders so each build can handle compatibility differences cleanly.
+### 5.1 Candidate detection
 
-### Repository Layout
+The content script must:
 
-```text
-/shared
-  /core
-  /content
-  /overlay
-  /settings
-  /ui
+- scan X feed articles for supported video candidates
+- avoid duplicating candidates for the same article
+- ignore unsupported layouts instead of forcing enhancement
+- remain resilient to frequent feed rerenders
 
-/chrome
-  manifest.json
-  browser-adapter
+### 5.2 Player enlargement
 
-/firefox
-  manifest.json
-  browser-adapter
+When a candidate activates, the extension must:
 
-/safari
-  manifest.json
-  browser-adapter
-```
+- move the original player into an overlay frame
+- preserve the tweet flow with a placeholder of matching height
+- keep the overlay aligned with the tweet as the page scrolls
+- clamp widened size so it stays usable inside the viewport
+- restore the original player cleanly when the candidate deactivates
 
-### Rules
-- shared logic lives in `/shared`
-- each browser folder contains only compatibility-specific code, packaging, and manifest differences
-- Chrome is the baseline implementation
-- Firefox and Safari may override APIs, styling hooks, or packaging details as needed
-- feature parity is preferred, but graceful degradation is acceptable when browser limitations exist
+### 5.3 Settings
 
----
+The extension must keep these values aligned across popup, options, storage, and runtime behavior:
 
-## 4. Core Concept
+- `autoEnable`
+- `widthPercent`
 
-Each supported tweet with video is modified in two layers:
+Current defaults:
 
-### Layout Layer
-- keep a placeholder inside the tweet
-- preserve document flow and feed spacing
-- store the original insertion point for restoration
+- `autoEnable: true`
+- `widthPercent: 35`
 
-### Render Layer
-- use a single global overlay root attached to `document.body`
-- move the original player into the overlay container
-- allow the player to extend beyond tweet width
-- restore the player back to its original location when deactivated
+### 5.4 Fail-safe behavior
 
-Important:
-- the video element is not duplicated
-- playback state must remain on the moved player
-- if move/restore fails, the original player must remain usable in place
+If enhancement cannot be safely applied, the extension must:
+
+- leave the original in-feed player usable
+- avoid leaving detached overlays behind
+- avoid breaking feed layout
 
 ---
 
-## 5. Architecture
+## 6. UX Constraints
 
-### Components
+The experience must continue to honor these constraints:
 
-**1. Detector**
-- finds standard feed tweets containing a supported `<video>`
-- ignores unsupported tweet types
-- marks processed tweet instances
-
-**2. Placeholder Manager**
-- creates and updates the in-tweet placeholder
-- preserves layout height
-- stores the original parent and sibling anchor for restoration
-
-**3. Overlay Root**
-- single global container attached to `document.body`
-- owns z-index and positioning context
-- hosts active moved players
-
-**4. Player Mover**
-- moves the original player from tweet media into overlay
-- restores the original player back to the tweet on collapse, cleanup, or failure
-- prevents duplicate mounting
-
-**5. Overlay Instance**
-- one per active tweet
-- controls size, position, and visual container styling
-- wraps the moved player
-
-**6. Viewport Controller**
-- activates overlays only for visible tweets in auto mode
-- suspends or restores players when tweets leave the viewport
-- coordinates lifecycle during scroll and navigation
-
-**7. Settings Store**
-- persists user settings per browser extension build
-- exposes runtime config to content scripts
-- listens for settings changes and reapplies behavior
-
-**8. Manual Trigger Controller**
-- injects an expand/collapse button into the player UI when auto mode is disabled
-- handles per-tweet manual toggling
-
-**9. Browser Adapter**
-- isolates browser API differences
-- abstracts storage, messaging, manifest behavior, and styling quirks
+- widening should feel like an enhancement of the feed, not a fullscreen takeover
+- tweet layout should remain understandable while the player is expanded
+- scrolling should remain natural
+- the widened player should not feel detached from its originating tweet
+- manual controls should stay obvious but lightweight
 
 ---
 
-## 6. Flow
+## 7. Technical Constraints
 
-1. Observe DOM using `MutationObserver`
-2. Detect standard feed tweet containing a supported video
-3. If not processed:
-   - mark tweet
-   - locate media container
-   - measure original size
-   - capture original DOM insertion point
-4. Read current extension settings
-5. Compute target size
-6. Create or update placeholder
-7. Register tweet as overlay-capable
-8. Branch by mode:
-   - if auto mode is enabled and tweet is visible, move player into overlay
-   - if auto mode is disabled, inject manual expand button and wait for click
-9. On scroll or resize:
-   - update overlay position
-   - keep placeholder synchronized
-10. On collapse, navigation, DOM invalidation, or cleanup:
-   - restore player to original location
-   - remove overlay instance
-11. On failure:
-   - abort enhancement
-   - leave original player functional inside tweet
+Implementation rules for the current architecture:
+
+- shared logic belongs in `src/shared`
+- browser folders should contain only compatibility-specific differences
+- Chrome remains the baseline build unless a browser requires an override
+- content-script DOM mutations must be idempotent
+- cleanup paths must continue working when nodes disconnect or the feed rerenders
+- generated output in `dist` must never be edited manually
 
 ---
 
-## 7. Sizing Logic
+## 8. Non-Goals For The Current MVP
 
-### Inputs
-- tweet width
-- video aspect ratio
-- viewport width
-- user setting: target width percent
+The current MVP does not yet aim to deliver:
 
-### Output
-- `targetWidth = min(tweetWidth * widthPercent, viewportWidth - margin * 2)`
-- `targetHeight = targetWidth / aspectRatio`
-- `finalHeight = clamp(targetHeight, minHeight, maxHeight)`
-- `finalWidth = finalHeight * aspectRatio`
-
-### Recommended Defaults
-- width percent: `135%`
-- allowed width range: `110%` to `180%`
-- min height: `360px`
-- max height: `520px`
-- horizontal viewport margin: `24px`
-
-Notes:
-- if height clamp reduces width, use the clamped width derived from aspect ratio
-- if viewport is narrow, fit to viewport before applying final render position
+- universal support for every X media layout
+- browser-specific feature forks beyond manifest-level differences
+- a dedicated automated test harness
+- store packaging, listing assets, or release automation
+- a finalized visual design system for popup/options beyond the functional settings UI
 
 ---
 
-## 8. Positioning
+## 9. Near-Term Product Direction
 
-- anchor = bounding rect of the original media section
-- overlay top = anchor top relative to page scroll
-- overlay horizontal center = anchor center
-- overlay transform = `translateX(-50%)`
-- overlay width may exceed tweet width
-- placeholder height must always match the rendered overlay height
+The next iterations should focus on:
 
-Position updates are required on:
-- scroll
-- resize
-- feed relayout
-- player state changes that affect controls height
+- improving support coverage for more X media layouts
+- refining activation heuristics and visual polish
+- tuning manual controls and per-video affordances
+- validating browser-specific quirks where Chrome, Firefox, and Safari diverge
+- adding stronger validation around DOM behavior and settings synchronization
 
 ---
 
-## 9. Interaction
+## 10. Acceptance Snapshot For The Current State
 
-### Auto Mode
-- overlay becomes the primary interactive player immediately
-- original in-tweet player location is replaced by placeholder
+The current MVP should be considered healthy when:
 
-### Manual Mode
-- inject a new expand button into the player controls
-- button toggles expanded/collapsed state for that tweet
-- collapse restores the player to its original location
-
-### Common Rules
-- only the moved player is interactive
-- pointer events are enabled on the overlay container
-- no duplicate playback surface exists
-- if multiple tweets are active, each overlay maps to its own original player
-
----
-
-## 10. Settings
-
-The extension must include a settings UI.
-
-### Required Settings
-- `autoEnable` — on/off
-- `widthPercent` — user-defined enlargement width in percent
-
-### Behavior
-- settings persist using extension storage
-- changes apply without page reload when possible
-- defaults are provided on first install
-
-### UX Rules
-- when `autoEnable = true`, videos enlarge automatically
-- when `autoEnable = false`, no automatic enlargement occurs
-- when `autoEnable = false`, the player receives a new expand button for local activation
-
----
-
-## 11. Browser Compatibility Strategy
-
-### Chrome Build
-- primary reference build
-- targets current Chromium extension APIs
-
-### Firefox Build
-- separate folder for Firefox-specific manifest, API, and styling adjustments
-- may require adapter differences for storage, messaging, or UI injection behavior
-
-### Safari Build
-- separate folder for Safari-specific compatibility work
-- may require additional packaging or API translation
-- feature parity is desired, but fallback behavior is acceptable if Safari imposes limitations
-
-### Compatibility Principle
-- browser-specific differences should not leak into shared business logic unless unavoidable
-
----
-
-## 12. Performance
-
-- activate auto overlays only for visible tweets using `IntersectionObserver`
-- throttle or batch scroll and resize updates
-- prefer `requestAnimationFrame` for position sync
-- reuse overlay containers where practical
-- cleanup detached tweets aggressively
-- avoid repeated DOM queries for already processed tweets
-
----
-
-## 13. Scope (MVP)
-
-Supported:
-- single video in standard feed tweet
-- automatic mode
-- manual mode with player button
-- persistent extension settings
-- browser-specific project folders for Chrome, Firefox, and Safari
-
-Not supported in v1:
-- quoted tweets
-- multi-media tweets
-- GIFs
-- modal view
-- non-standard X surfaces if DOM differs significantly
-
----
-
-## 14. Risks
-
-### DOM Instability
-- avoid deep selectors
-- rely on stable anchors such as `<article>`, media containers, and `<video>`
-
-### Move Safety
-- moving the player may break if X tightly couples the node to internal rendering
-- fallback must restore or leave the original player untouched
-
-### Clipping
-- solved via global overlay root
-
-### Z-Index Conflicts
-- controlled via dedicated overlay root
-
-### Scroll Sync
-- requires continuous position updates
-
-### Browser Drift
-- different browsers may require separate manifest and API handling over time
-
----
-
-## 15. Success Criteria
-
-- supported videos enlarge beyond tweet width without fullscreen
-- feed layout remains stable during scroll
-- auto mode requires no user interaction
-- manual mode exposes a working expand button when auto mode is disabled
-- the same original player is moved and restored without creating a duplicate player
-- settings persist across sessions
-- unsupported cases fail gracefully without breaking the tweet player
-
----
-
-## 16. Acceptance Criteria
-
-- when a supported tweet video enters the viewport in auto mode, it enlarges automatically
-- when `autoEnable` is disabled, no automatic enlargement occurs
-- when `autoEnable` is disabled, the injected player button expands the video locally
-- collapsing a manually expanded video restores the player to the original tweet position
-- changing `widthPercent` updates future overlay sizing and can be applied live when feasible
-- if overlay initialization fails, the original tweet video stays usable
-- Chrome, Firefox, and Safari builds live in separate subfolders with shared core logic
-
----
-
-## 17. Future Enhancements
-
-- per-browser feature flags
-- adjustable max height
-- per-site or per-page enable toggle
-- hover-based quick actions
-- quoted tweet support
-- adaptive scaling by viewport category
-- animation transitions
-- keyboard shortcut for manual expand
-
----
-
-## 18. Product Summary
-
-WidePlayer for X is a browser extension family that enlarges in-feed X videos beyond tweet width while preserving feed layout and natural scrolling. It moves the original player into a global overlay, supports both automatic and manual expansion modes, stores user preferences, and ships as browser-specific builds for Chrome, Firefox, and Safari.
+- `npm run typecheck` passes after TypeScript or UI wiring changes
+- `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
+- popup and options stay synchronized for `autoEnable` and `widthPercent`
+- supported videos can widen and restore without breaking the surrounding feed
