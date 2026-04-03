@@ -10,6 +10,7 @@ import {
 import { contentStyles } from "./styles";
 import type { CandidateElements, CandidateRecord, RectSnapshot } from "./types";
 
+const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
 const VIEWPORT_GUTTER = 16;
 const VISIBILITY_THRESHOLD = 0.2;
 
@@ -496,9 +497,15 @@ class WidePlayerContentApp {
     }
 
     const aspectRatio = this.resolveAspectRatio(record);
-    const expandedWidth = anchorRect.width * (this.settings.widthPercent / 100);
-    const maximumWidth = Math.max(anchorRect.width, window.innerWidth - VIEWPORT_GUTTER * 2);
-    const targetWidth = Math.min(expandedWidth, maximumWidth);
+    const maximumWidthByViewport = Math.max(anchorRect.width, window.innerWidth - VIEWPORT_GUTTER * 2);
+    const maximumWidthByHeight = Math.max(
+      anchorRect.width,
+      window.innerHeight * MAX_VIEWPORT_HEIGHT_RATIO * aspectRatio
+    );
+    const maximumWidth = Math.min(maximumWidthByViewport, maximumWidthByHeight);
+    const targetWidth =
+      anchorRect.width +
+      (maximumWidth - anchorRect.width) * (this.settings.widthPercent / 100);
     const targetHeight = targetWidth / aspectRatio;
     const preferredLeft = anchorRect.left + anchorRect.width / 2 - targetWidth / 2;
     const maxLeft = Math.max(VIEWPORT_GUTTER, window.innerWidth - targetWidth - VIEWPORT_GUTTER);

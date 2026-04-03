@@ -33,11 +33,18 @@ body {
 .description,
 .setting-hint,
 .info-copy,
-.status-text {
+.status-text,
+.build-text {
   color: #8b98a5;
   font-size: 0.875rem;
   line-height: 1.4;
   margin: 0;
+}
+
+.build-text {
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.75rem;
 }
 
 .setting-card {
@@ -79,15 +86,6 @@ output {
 input[type="range"] {
   accent-color: #1d9bf0;
   width: 100%;
-}
-
-input[type="number"] {
-  background: #0f1419;
-  border: 1px solid #273340;
-  border-radius: 10px;
-  color: #f7f9f9;
-  font-size: 0.95rem;
-  padding: 10px 12px;
 }
 
 .popup-footer {

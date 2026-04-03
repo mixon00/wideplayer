@@ -4,8 +4,8 @@ import { clampWidthPercent, loadSettings, saveSettings } from "../settings";
 interface SettingsScreenElements {
   autoEnableInput: HTMLInputElement;
   widthRangeInput: HTMLInputElement;
-  widthNumberInput: HTMLInputElement;
   widthOutput: HTMLOutputElement;
+  widthNumberInput?: HTMLInputElement | null;
   modeCopy: HTMLElement;
   statusText: HTMLElement;
   autoModeDescription: string;
@@ -17,8 +17,8 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
   const {
     autoEnableInput,
     widthRangeInput,
-    widthNumberInput,
     widthOutput,
+    widthNumberInput,
     modeCopy,
     statusText,
     autoModeDescription,
@@ -39,7 +39,9 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
     const widthValue = String(normalizedWidth);
 
     widthRangeInput.value = widthValue;
-    widthNumberInput.value = widthValue;
+    if (widthNumberInput) {
+      widthNumberInput.value = widthValue;
+    }
     widthOutput.value = `${normalizedWidth}%`;
   }
 
@@ -49,7 +51,7 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
 
       const savedSettings = await saveSettings({
         autoEnable: autoEnableInput.checked,
-        widthPercent: Number(widthNumberInput.value),
+        widthPercent: Number(widthRangeInput.value),
       });
 
       autoEnableInput.checked = savedSettings.autoEnable;
@@ -84,10 +86,6 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
   });
 
   widthRangeInput.addEventListener("change", () => {
-    void persistSettings();
-  });
-
-  widthNumberInput.addEventListener("change", () => {
     void persistSettings();
   });
 

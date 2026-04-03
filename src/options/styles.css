@@ -54,10 +54,17 @@ h2 {
 .lead,
 .panel-copy p,
 .setting-hint,
-.status-text {
+.status-text,
+.build-text {
   color: #8b98a5;
   line-height: 1.5;
   margin: 0;
+}
+
+.build-text {
+  font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.85rem;
 }
 
 .toggle-card,
@@ -93,13 +100,4 @@ output {
 input[type="range"] {
   accent-color: #1d9bf0;
   width: 100%;
-}
-
-input[type="number"] {
-  background: #0f1419;
-  border: 1px solid #273340;
-  border-radius: 12px;
-  color: #f7f9f9;
-  font: inherit;
-  padding: 12px 14px;
 }

@@ -1,10 +1,12 @@
 import "./styles.css";
+import { BUILD_ID } from "../shared/build-info";
 import { mountSettingsScreen } from "../shared/ui/settings-screen";
+
+document.querySelector<HTMLElement>("#build-id")!.textContent = `Build ${BUILD_ID}`;
 
 mountSettingsScreen({
   autoEnableInput: document.querySelector<HTMLInputElement>("#auto-enable")!,
   widthRangeInput: document.querySelector<HTMLInputElement>("#width-range")!,
-  widthNumberInput: document.querySelector<HTMLInputElement>("#width-input")!,
   widthOutput: document.querySelector<HTMLOutputElement>("#width-output")!,
   modeCopy: document.querySelector<HTMLElement>("#mode-copy")!,
   statusText: document.querySelector<HTMLElement>("#status-text")!,

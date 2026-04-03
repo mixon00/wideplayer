@@ -32,15 +32,14 @@
       <section class="panel">
         <div class="panel-copy">
           <h2>Preferred width</h2>
-          <p>Set the preferred width percentage that later overlay logic will target relative to the tweet width.</p>
+          <p>0% keeps the original size. 100% reaches the widest safe overlay size in the current viewport, capped by viewport height.</p>
         </div>
         <div class="range-card">
           <div class="range-header">
-            <label for="width-range" class="setting-label">Width percent</label>
-            <output id="width-output" for="width-range width-input">135%</output>
+            <label for="width-range" class="setting-label">Width</label>
+            <output id="width-output" for="width-range">35%</output>
           </div>
-          <input id="width-range" type="range" min="110" max="180" step="1" value="135" />
-          <input id="width-input" type="number" min="110" max="180" step="1" value="135" />
+          <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
         </div>
       </section>
 
@@ -50,6 +49,7 @@
           Auto mode expands supported videos automatically.
         </p>
         <p id="status-text" class="status-text" role="status">Ready</p>
+        <p id="build-id" class="build-text">Build</p>
       </section>
     </main>
 

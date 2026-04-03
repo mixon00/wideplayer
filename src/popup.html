@@ -27,12 +27,11 @@
         <div class="range-header">
           <div>
             <span class="setting-label">Width</span>
-            <p class="setting-hint">Controls the target width relative to the tweet.</p>
+            <p class="setting-hint">0% keeps the original size. 100% reaches the widest safe overlay size in the current viewport.</p>
           </div>
-          <output id="width-output" for="width-range width-input">135%</output>
+          <output id="width-output" for="width-range">35%</output>
         </div>
-        <input id="width-range" type="range" min="110" max="180" step="1" value="135" />
-        <input id="width-input" type="number" min="110" max="180" step="1" value="135" />
+        <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
       </section>
 
       <section class="setting-card info-card">
@@ -45,6 +44,7 @@
         <button id="open-options" class="secondary-button" type="button">Open Options</button>
         <p id="status-text" class="status-text" role="status">Ready</p>
       </footer>
+      <p id="build-id" class="build-text">Build</p>
     </main>
 
     <script type="module" src="./popup/main.ts"></script>
