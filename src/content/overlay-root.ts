@@ -2,13 +2,15 @@ import { OVERLAY_ROOT_ID } from "../shared/constants";
 import type { OverlayFrameElements } from "./types";
 
 export class OverlayRootManager {
-  private readonly root: HTMLElement;
+  private root: HTMLElement;
 
   constructor() {
     this.root = this.ensureRoot();
   }
 
   createFrame(candidateId: string): OverlayFrameElements {
+    this.root = this.ensureRoot();
+
     const frame = document.createElement("div");
     frame.className = "wideplayer-overlay-frame";
     frame.dataset.wideplayerCandidateId = candidateId;
@@ -23,6 +25,7 @@ export class OverlayRootManager {
   }
 
   destroy(): void {
+    this.root = this.ensureRoot();
     this.root.remove();
   }
 
@@ -31,14 +34,28 @@ export class OverlayRootManager {
   }
 
   private ensureRoot(): HTMLElement {
+    const host = this.resolveHost();
     let root = document.getElementById(OVERLAY_ROOT_ID);
 
     if (!root) {
       root = document.createElement("div");
       root.id = OVERLAY_ROOT_ID;
-      document.body.appendChild(root);
+    }
+
+    if (root.parentElement !== host) {
+      host.appendChild(root);
     }
 
     return root;
+  }
+
+  private resolveHost(): HTMLElement {
+    const reactRoot = document.getElementById("react-root");
+
+    if (reactRoot instanceof HTMLElement) {
+      return reactRoot;
+    }
+
+    return document.body;
   }
 }

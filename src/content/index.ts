@@ -8,13 +8,41 @@ import {
   updatePlaceholderHeight,
 } from "./player-placement";
 import { contentStyles } from "./styles";
-import type { CandidateElements, CandidateRecord } from "./types";
+import type { CandidateElements, CandidateRecord, RectSnapshot } from "./types";
 
 const VIEWPORT_GUTTER = 16;
 const VISIBILITY_THRESHOLD = 0.2;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function isFiniteNumber(value: number | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isPositiveNumber(value: number | undefined): value is number {
+  return isFiniteNumber(value) && value > 0;
+}
+
+function firstFinite(...values: Array<number | undefined>): number | null {
+  for (const value of values) {
+    if (isFiniteNumber(value)) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function firstPositive(...values: Array<number | undefined>): number | null {
+  for (const value of values) {
+    if (isPositiveNumber(value)) {
+      return value;
+    }
+  }
+
+  return null;
 }
 
 function isElementVisible(element: HTMLElement): boolean {
@@ -110,7 +138,12 @@ class WidePlayerContentApp {
     record.lastKnownAspectRatio = this.resolveAspectRatio(record);
 
     const overlayFrame = this.overlayRootManager.createFrame(record.id);
-    const activePlacement = activatePlayerPlacement(record.playerElement, record.id, overlayFrame);
+    const activePlacement = activatePlayerPlacement(
+      record.playerElement,
+      record.anchorElement,
+      record.id,
+      overlayFrame
+    );
 
     if (!activePlacement) {
       this.overlayRootManager.removeFrame(overlayFrame.frame);
@@ -123,6 +156,7 @@ class WidePlayerContentApp {
     record.playerElement.dataset.wideplayerExpanded = "true";
     this.updateToggleButtonState(record);
     this.syncCandidatePosition(record);
+    this.schedulePositionSync();
   }
 
   private applySettings(): void {
@@ -186,7 +220,7 @@ class WidePlayerContentApp {
     }
 
     try {
-      restorePlayerPlacement(record.playerElement, activePlacement);
+      restorePlayerPlacement(activePlacement);
     } finally {
       this.overlayRootManager?.removeFrame(activePlacement.frame);
       record.activePlacement = null;
@@ -268,6 +302,34 @@ class WidePlayerContentApp {
     record.toggleButton = null;
   }
 
+  private ensureActivePlacementConnection(record: CandidateRecord): boolean {
+    const activePlacement = record.activePlacement;
+
+    if (!activePlacement || !this.overlayRootManager) {
+      return false;
+    }
+
+    const isFrameConnected = activePlacement.frame.isConnected;
+    const isPlayerMounted = activePlacement.mountedElement.parentElement === activePlacement.surface;
+
+    if (isFrameConnected && isPlayerMounted) {
+      return true;
+    }
+
+    const overlayFrame = this.overlayRootManager.createFrame(record.id);
+    overlayFrame.surface.appendChild(activePlacement.mountedElement);
+    if (activePlacement.overlayRadius) {
+      overlayFrame.frame.style.borderTopLeftRadius = activePlacement.overlayRadius.topLeft;
+      overlayFrame.frame.style.borderTopRightRadius = activePlacement.overlayRadius.topRight;
+      overlayFrame.frame.style.borderBottomRightRadius = activePlacement.overlayRadius.bottomRight;
+      overlayFrame.frame.style.borderBottomLeftRadius = activePlacement.overlayRadius.bottomLeft;
+    }
+    activePlacement.frame = overlayFrame.frame;
+    activePlacement.surface = overlayFrame.surface;
+
+    return true;
+  }
+
   private resolveAspectRatio(record: CandidateRecord): number {
     if (record.video.videoWidth > 0 && record.video.videoHeight > 0) {
       const videoAspectRatio = record.video.videoWidth / record.video.videoHeight;
@@ -321,6 +383,10 @@ class WidePlayerContentApp {
     }
 
     this.syncAutoMode();
+
+    if (this.hasActiveCandidates()) {
+      this.schedulePositionSync();
+    }
   }
 
   private schedulePositionSync(): void {
@@ -366,6 +432,45 @@ class WidePlayerContentApp {
     }
   }
 
+  private resolveAnchorRect(record: CandidateRecord): RectSnapshot | null {
+    const activePlacement = record.activePlacement;
+
+    if (!activePlacement) {
+      return null;
+    }
+
+    const placeholderRect = activePlacement.placeholder.getBoundingClientRect();
+    const placeholderParent = activePlacement.placeholder.parentElement ?? activePlacement.originalParent;
+    const parentRect = placeholderParent.getBoundingClientRect();
+    const lastKnownAnchorRect = activePlacement.lastKnownAnchorRect;
+    const width = firstPositive(
+      placeholderRect.width,
+      parentRect.width,
+      lastKnownAnchorRect.width
+    );
+    const height = firstPositive(
+      placeholderRect.height,
+      parentRect.height,
+      lastKnownAnchorRect.height
+    );
+    const left = firstFinite(placeholderRect.left, parentRect.left, lastKnownAnchorRect.left);
+    const top = firstFinite(placeholderRect.top, parentRect.top, lastKnownAnchorRect.top);
+
+    if (width === null || height === null || left === null || top === null) {
+      return null;
+    }
+
+    const anchorRect = {
+      height,
+      left,
+      top,
+      width,
+    };
+
+    activePlacement.lastKnownAnchorRect = anchorRect;
+    return anchorRect;
+  }
+
   private syncCandidatePosition(record: CandidateRecord): void {
     const activePlacement = record.activePlacement;
 
@@ -378,23 +483,29 @@ class WidePlayerContentApp {
       return;
     }
 
-    const placeholderRect = activePlacement.placeholder.getBoundingClientRect();
+    if (!this.ensureActivePlacementConnection(record)) {
+      this.deactivateCandidate(record);
+      return;
+    }
 
-    if (placeholderRect.width <= 0) {
+    const anchorRect = this.resolveAnchorRect(record);
+
+    if (!anchorRect || anchorRect.width <= 0) {
+      this.deactivateCandidate(record);
       return;
     }
 
     const aspectRatio = this.resolveAspectRatio(record);
-    const expandedWidth = placeholderRect.width * (this.settings.widthPercent / 100);
-    const maximumWidth = Math.max(placeholderRect.width, window.innerWidth - VIEWPORT_GUTTER * 2);
+    const expandedWidth = anchorRect.width * (this.settings.widthPercent / 100);
+    const maximumWidth = Math.max(anchorRect.width, window.innerWidth - VIEWPORT_GUTTER * 2);
     const targetWidth = Math.min(expandedWidth, maximumWidth);
     const targetHeight = targetWidth / aspectRatio;
-    const preferredLeft = placeholderRect.left + placeholderRect.width / 2 - targetWidth / 2;
+    const preferredLeft = anchorRect.left + anchorRect.width / 2 - targetWidth / 2;
     const maxLeft = Math.max(VIEWPORT_GUTTER, window.innerWidth - targetWidth - VIEWPORT_GUTTER);
     const targetLeft = clamp(preferredLeft, VIEWPORT_GUTTER, maxLeft);
 
     activePlacement.frame.style.left = `${Math.round(targetLeft)}px`;
-    activePlacement.frame.style.top = `${Math.round(placeholderRect.top)}px`;
+    activePlacement.frame.style.top = `${Math.round(anchorRect.top)}px`;
     activePlacement.frame.style.width = `${Math.round(targetWidth)}px`;
     activePlacement.frame.style.height = `${Math.round(targetHeight)}px`;
     updatePlaceholderHeight(activePlacement, targetHeight);
@@ -447,9 +558,10 @@ class WidePlayerContentApp {
   }
 
   private updateCandidate(record: CandidateRecord, elements: CandidateElements): void {
+    const anchorChanged = record.anchorElement !== elements.anchorElement;
     const playerChanged = record.playerElement !== elements.playerElement;
 
-    if (record.activePlacement && playerChanged) {
+    if (record.activePlacement && (anchorChanged || playerChanged)) {
       this.destroyCandidate(record);
       this.createCandidate(elements);
       return;
@@ -462,6 +574,7 @@ class WidePlayerContentApp {
     }
 
     record.video = elements.video;
+    record.anchorElement = elements.anchorElement;
     record.playerElement = elements.playerElement;
     record.playerElement.classList.add("wideplayer-player-root");
     record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";

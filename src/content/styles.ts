@@ -2,7 +2,8 @@ export const contentStyles = `
 :root {
   --wideplayer-width-percent: 135;
   --wideplayer-overlay-radius: 16px;
-  --wideplayer-overlay-shadow: 0 20px 50px rgba(15, 20, 25, 0.28);
+  --wideplayer-overlay-shadow: 0 10px 28px rgba(15, 20, 25, 0.18),
+    0 0 0 1px rgba(15, 20, 25, 0.08);
   --wideplayer-toggle-background: rgba(15, 20, 25, 0.88);
   --wideplayer-toggle-color: #ffffff;
 }
@@ -28,20 +29,25 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
 }
 
 .wideplayer-overlay-frame {
-  pointer-events: none;
+  border-radius: var(--wideplayer-overlay-radius);
+  box-shadow: var(--wideplayer-overlay-shadow);
+  overflow: hidden;
+  pointer-events: auto;
   position: absolute;
 }
 
 .wideplayer-overlay-surface {
-  border-radius: var(--wideplayer-overlay-radius);
-  box-shadow: var(--wideplayer-overlay-shadow);
+  background: transparent;
+  border-radius: inherit;
   height: 100%;
+  isolation: isolate;
   overflow: hidden;
   pointer-events: auto;
   width: 100%;
 }
 
 .wideplayer-overlay-surface > * {
+  border-radius: inherit;
   height: 100%;
   width: 100%;
 }
@@ -53,7 +59,9 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
 }
 
 .wideplayer-player-mounted {
+  border-radius: inherit;
   height: 100%;
+  overflow: hidden;
   width: 100%;
 }
 
