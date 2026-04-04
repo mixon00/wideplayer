@@ -1,7 +1,14 @@
 import { OVERLAY_ROOT_ID } from "../shared/constants";
 import type { OverlayFrameElements } from "./types";
 
+type OverlayRootPlacement = {
+  host: HTMLElement;
+  insertBefore: HTMLElement | null;
+  layeredMain: HTMLElement | null;
+};
+
 export class OverlayRootManager {
+  private layeredMain: HTMLElement | null = null;
   private root: HTMLElement;
 
   constructor() {
@@ -25,8 +32,8 @@ export class OverlayRootManager {
   }
 
   destroy(): void {
-    this.root = this.ensureRoot();
     this.root.remove();
+    this.syncLayeredMain(null);
   }
 
   removeFrame(frame: HTMLElement): void {
@@ -34,7 +41,8 @@ export class OverlayRootManager {
   }
 
   private ensureRoot(): HTMLElement {
-    const host = this.resolveHost();
+    const placement = this.resolvePlacement();
+    const { host, insertBefore, layeredMain } = placement;
     let root = document.getElementById(OVERLAY_ROOT_ID);
 
     if (!root) {
@@ -42,20 +50,76 @@ export class OverlayRootManager {
       root.id = OVERLAY_ROOT_ID;
     }
 
+    this.syncLayeredMain(layeredMain);
+
     if (root.parentElement !== host) {
-      host.appendChild(root);
+      if (insertBefore) {
+        host.insertBefore(root, insertBefore);
+      } else {
+        host.appendChild(root);
+      }
+    } else if (insertBefore && root !== insertBefore && root.nextElementSibling !== insertBefore) {
+      host.insertBefore(root, insertBefore);
     }
 
     return root;
   }
 
-  private resolveHost(): HTMLElement {
+  private findPrimaryColumnHost(reactRoot: HTMLElement): OverlayRootPlacement | null {
+    const primaryColumn = reactRoot.querySelector<HTMLElement>("[data-testid='primaryColumn']");
+    const mainElement = reactRoot.querySelector<HTMLElement>("main[role='main'], main");
+
+    if (!primaryColumn) {
+      return null;
+    }
+
+    const host =
+      primaryColumn.firstElementChild instanceof HTMLElement
+        ? primaryColumn.firstElementChild
+        : primaryColumn;
+    const insertBefore =
+      Array.from(host.children).find((element) =>
+        element instanceof HTMLElement
+          ? window.getComputedStyle(element).position === "sticky"
+          : false
+      ) ?? null;
+
+    return {
+      host,
+      insertBefore: insertBefore instanceof HTMLElement ? insertBefore : null,
+      layeredMain: mainElement ?? null,
+    };
+  }
+
+  private resolvePlacement(): OverlayRootPlacement {
     const reactRoot = document.getElementById("react-root");
 
     if (reactRoot instanceof HTMLElement) {
-      return reactRoot;
+      return (
+        this.findPrimaryColumnHost(reactRoot) ?? {
+          host: reactRoot,
+          insertBefore: null,
+          layeredMain: null,
+        }
+      );
     }
 
-    return document.body;
+    return {
+      host: document.body,
+      insertBefore: null,
+      layeredMain: null,
+    };
+  }
+
+  private syncLayeredMain(nextMain: HTMLElement | null): void {
+    if (this.layeredMain && this.layeredMain !== nextMain) {
+      this.layeredMain.removeAttribute("data-wideplayer-overlay-layer");
+    }
+
+    if (nextMain) {
+      nextMain.setAttribute("data-wideplayer-overlay-layer", "true");
+    }
+
+    this.layeredMain = nextMain;
   }
 }

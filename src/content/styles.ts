@@ -19,7 +19,12 @@ export const contentStyles = `
   overflow: visible;
   pointer-events: none;
   position: fixed;
-  z-index: 2147483000;
+  z-index: 1;
+}
+
+main[data-wideplayer-overlay-layer="true"] {
+  position: relative;
+  z-index: 4;
 }
 
 article[data-wideplayer-candidate="true"] {

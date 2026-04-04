@@ -6,7 +6,7 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `0.3.3`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.4`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
@@ -14,6 +14,7 @@ As of version `0.3.3`, the project ships a functional extension MVP with these b
 - supports automatic mode and manual per-video expand/collapse controls
 - keeps popup and options settings synchronized through extension storage
 - previews width changes live while the slider is being dragged and saves the final value on release
+- keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
 - builds separate distributions for Chrome, Firefox, and Safari
 
 ## What Works Today
@@ -50,6 +51,7 @@ Width changes now behave in two phases:
 - candidate detection re-runs on feed mutations
 - active overlays are restored back into the tweet when the player is collapsed
 - cleanup paths handle disconnects, navigation changes, and removed nodes
+- the widened overlay stays under X's sticky top bar while still rendering above the side columns
 - if the enhancement cannot be applied, the original in-feed player remains usable
 
 ## Current Limitations

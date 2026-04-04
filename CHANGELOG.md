@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.4 - 2026-04-04
+
+### Fixed
+
+- Fixed the overlay layering on X so widened players stay below the sticky top bar instead of covering it.
+- Fixed widened players so they can still render above the side columns while remaining attached to the feed layout.
+- Project metadata now reflects `0.3.4` across `package.json` and all browser manifests.
+
 ## 0.3.3 - 2026-04-04
 
 ### Improved
