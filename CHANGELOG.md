@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.3 - 2026-04-04
+
+### Improved
+
+- Width changes from popup and options now preview live on active players while you drag the slider.
+- Final width settings are still saved only when the slider change is committed, which keeps persisted settings stable without requiring a page reload.
+- Project metadata now reflects `0.3.3` across `package.json` and all browser manifests.
+
 ## 0.3.2 - 2026-04-04
 
 ### Improved

@@ -1,5 +1,10 @@
 import { getExtensionApi } from "../browser-api";
-import { clampWidthPercent, loadSettings, saveSettings } from "../settings";
+import {
+  clampWidthPercent,
+  loadSettings,
+  saveLiveWidthPreview,
+  saveSettings,
+} from "../settings";
 
 interface SettingsScreenElements {
   autoEnableInput: HTMLInputElement;
@@ -45,6 +50,22 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
     widthOutput.value = `${normalizedWidth}%`;
   }
 
+  let queuedPreviewWidth: number | null = null;
+  let previewFrame = 0;
+
+  function scheduleWidthPreview(widthPercent: number | null): void {
+    queuedPreviewWidth = widthPercent;
+
+    if (previewFrame) {
+      return;
+    }
+
+    previewFrame = window.requestAnimationFrame(() => {
+      previewFrame = 0;
+      void saveLiveWidthPreview(queuedPreviewWidth);
+    });
+  }
+
   async function persistSettings(): Promise<void> {
     try {
       setStatus("Saving...");
@@ -57,6 +78,7 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
       autoEnableInput.checked = savedSettings.autoEnable;
       syncWidthControls(savedSettings.widthPercent);
       updateModeCopy(savedSettings.autoEnable);
+      await saveLiveWidthPreview(null);
       setStatus("Saved");
     } catch (error) {
       console.error("Unable to save settings.", error);
@@ -83,10 +105,20 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
 
   widthRangeInput.addEventListener("input", () => {
     syncWidthControls(widthRangeInput.value);
+    scheduleWidthPreview(Number(widthRangeInput.value));
   });
 
   widthRangeInput.addEventListener("change", () => {
     void persistSettings();
+  });
+
+  window.addEventListener("pagehide", () => {
+    if (previewFrame) {
+      window.cancelAnimationFrame(previewFrame);
+      previewFrame = 0;
+    }
+
+    void saveLiveWidthPreview(null);
   });
 
   openOptionsButton?.addEventListener("click", () => {

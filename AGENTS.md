@@ -4,7 +4,7 @@
 
 WidePlayer for X is a Vite + TypeScript browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The repository currently contains a working MVP, not just a scaffold. As of version `0.3.2`, the extension:
+The repository currently contains a working MVP, not just a scaffold. As of version `0.3.3`, the extension:
 
 - supports `x.com` and `twitter.com`
 - detects supported in-feed video candidates
@@ -12,6 +12,7 @@ The repository currently contains a working MVP, not just a scaffold. As of vers
 - preserves feed layout with a placeholder while the player is expanded
 - supports automatic mode and manual per-video controls
 - keeps popup and options settings synchronized through extension storage
+- previews width changes live while the settings slider is being dragged and persists the final value when the change is committed
 - builds separate distributions for Chrome, Firefox, and Safari
 
 Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, and `AGENTS.md` aligned with the actual repository state.
@@ -30,7 +31,7 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 
 - `src/content` contains the content script entrypoint, detection logic, overlay positioning, and player-move behavior for X/Twitter pages
 - `src/background` contains the background service worker entrypoint that ensures default settings exist
-- `src/shared` contains browser API access, storage, settings normalization, constants, build info, and shared UI logic
+- `src/shared` contains browser API access, storage, settings normalization, live preview state, constants, build info, and shared UI logic
 - `src/popup` and `src/options` contain the two settings surfaces
 - `chrome`, `firefox`, and `safari` contain browser-specific manifests and compatibility overrides
 - `scripts/prepare-build.mjs` generates the build id used by popup/options and prepares build metadata
@@ -48,12 +49,14 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 - Keep DOM updates idempotent and resilient to frequent X feed rerenders
 - Keep cleanup paths working for disconnects, navigation changes, and removed tweet nodes
 - Fail safely: if enhancement logic cannot be applied, the original in-feed player should remain usable
+- Width changes from settings should feel immediate without requiring a page reload
 
 ## Working Rules
 
 - Keep shared logic in `src/shared`; use browser folders only for compatibility-specific differences
 - Treat Chrome as the baseline build unless a browser requires a specific override
 - Preserve the current lightweight, framework-free TypeScript architecture
+- Do not change `package.json` metadata such as `description`, `name`, or unrelated fields unless the user explicitly asks for it
 - Prefer existing abstractions in `src/shared/browser-api.ts`, `src/shared/storage.ts`, and `src/shared/settings.ts` over scattering raw browser API calls
 - When changing settings, keep defaults, normalization, persistence, popup UI, and options UI aligned
 - When changing content-script behavior, preserve the moved-player overlay architecture unless the user explicitly asks for an architectural change

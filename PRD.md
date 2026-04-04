@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.2`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.3`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -35,6 +35,7 @@ The current project already implements:
 - automatic enlargement mode enabled by default
 - manual mode with per-video `Expand` / `Collapse` controls
 - storage-backed settings shared between popup and options pages
+- realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
 - placeholder-based layout preservation while a player is widened
 - scroll and resize synchronization for active overlays
@@ -116,6 +117,12 @@ Current defaults:
 - `autoEnable: true`
 - `widthPercent: 35`
 
+Settings behavior requirements:
+
+- slider drag should update active players in realtime
+- final width should persist only after the user commits the slider change
+- realtime preview should not require a page reload
+
 ### 5.4 Fail-safe behavior
 
 If enhancement cannot be safely applied, the extension must:
@@ -135,6 +142,7 @@ The experience must continue to honor these constraints:
 - scrolling should remain natural
 - the widened player should not feel detached from its originating tweet
 - manual controls should stay obvious but lightweight
+- width controls should feel immediate while adjusting settings
 
 ---
 
@@ -148,6 +156,7 @@ Implementation rules for the current architecture:
 - content-script DOM mutations must be idempotent
 - cleanup paths must continue working when nodes disconnect or the feed rerenders
 - generated output in `dist` must never be edited manually
+- do not change the moved-player mounting approach unless explicitly requested
 
 ---
 
@@ -182,4 +191,5 @@ The current MVP should be considered healthy when:
 - `npm run typecheck` passes after TypeScript or UI wiring changes
 - `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
 - popup and options stay synchronized for `autoEnable` and `widthPercent`
+- width changes preview live without reloading the page
 - supported videos can widen and restore without breaking the surrounding feed

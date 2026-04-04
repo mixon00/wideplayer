@@ -1,5 +1,11 @@
 import { DEFAULT_SETTINGS, STYLE_ELEMENT_ID, SUPPORTED_HOSTS, type Settings } from "../shared/constants";
-import { loadSettings, subscribeToSettings } from "../shared/settings";
+import {
+  loadLiveWidthPreview,
+  loadSettings,
+  subscribeToLiveWidthPreview,
+  subscribeToSettings,
+  type LiveWidthPreview,
+} from "../shared/settings";
 import { detectFeedVideoCandidates } from "./detector";
 import { OverlayRootManager } from "./overlay-root";
 import {
@@ -11,6 +17,7 @@ import { contentStyles } from "./styles";
 import type { CandidateElements, CandidateRecord, RectSnapshot } from "./types";
 
 const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
+const LIVE_WIDTH_PREVIEW_TTL_MS = 400;
 const VIEWPORT_GUTTER = 16;
 
 function clamp(value: number, min: number, max: number): number {
@@ -107,9 +114,12 @@ class WidePlayerContentApp {
   private intersectionObserver: IntersectionObserver | null = null;
   private mutationObserver: MutationObserver | null = null;
   private overlayRootManager: OverlayRootManager | null = null;
+  private liveWidthPreview: LiveWidthPreview | null = null;
+  private liveWidthPreviewTimeoutId: number | null = null;
   private scanQueued = false;
   private settings: Settings = DEFAULT_SETTINGS;
   private syncQueued = false;
+  private unsubscribeLiveWidthPreview: (() => void) | null = null;
   private unsubscribe: (() => void) | null = null;
 
   async init(): Promise<void> {
@@ -124,12 +134,16 @@ class WidePlayerContentApp {
     this.injectStyles();
     this.overlayRootManager = new OverlayRootManager();
     this.settings = await loadSettings();
+    this.liveWidthPreview = await loadLiveWidthPreview();
     this.applySettings();
     this.createIntersectionObserver();
     this.observeMutations();
     this.scanForCandidates();
     this.unsubscribe = subscribeToSettings(async (nextSettings) => {
       this.handleSettingsChange(nextSettings);
+    });
+    this.unsubscribeLiveWidthPreview = subscribeToLiveWidthPreview((nextPreview) => {
+      this.handleLiveWidthPreviewChange(nextPreview);
     });
 
     window.addEventListener("scroll", this.handleScrollOrResize, { passive: true });
@@ -171,7 +185,7 @@ class WidePlayerContentApp {
     document.documentElement.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
     document.documentElement.style.setProperty(
       "--wideplayer-width-percent",
-      String(this.settings.widthPercent)
+      String(this.getEffectiveWidthPercent())
     );
   }
 
@@ -266,6 +280,74 @@ class WidePlayerContentApp {
     if (!modeChanged && this.hasActiveCandidates()) {
       this.schedulePositionSync();
     }
+  }
+
+  private handleLiveWidthPreviewChange(nextPreview: LiveWidthPreview | null): void {
+    this.liveWidthPreview = nextPreview;
+    this.scheduleLiveWidthPreviewExpiry();
+    this.applySettings();
+
+    if (this.hasActiveCandidates()) {
+      this.schedulePositionSync();
+    }
+  }
+
+  private clearLiveWidthPreview(): void {
+    this.liveWidthPreview = null;
+
+    if (this.liveWidthPreviewTimeoutId !== null) {
+      window.clearTimeout(this.liveWidthPreviewTimeoutId);
+      this.liveWidthPreviewTimeoutId = null;
+    }
+  }
+
+  private getEffectiveWidthPercent(): number {
+    if (!this.liveWidthPreview) {
+      return this.settings.widthPercent;
+    }
+
+    if (Date.now() - this.liveWidthPreview.updatedAt > LIVE_WIDTH_PREVIEW_TTL_MS) {
+      this.clearLiveWidthPreview();
+      return this.settings.widthPercent;
+    }
+
+    return this.liveWidthPreview.widthPercent;
+  }
+
+  private scheduleLiveWidthPreviewExpiry(): void {
+    if (this.liveWidthPreviewTimeoutId !== null) {
+      window.clearTimeout(this.liveWidthPreviewTimeoutId);
+      this.liveWidthPreviewTimeoutId = null;
+    }
+
+    if (!this.liveWidthPreview) {
+      return;
+    }
+
+    const timeRemaining = Math.max(
+      0,
+      LIVE_WIDTH_PREVIEW_TTL_MS - (Date.now() - this.liveWidthPreview.updatedAt)
+    );
+
+    this.liveWidthPreviewTimeoutId = window.setTimeout(() => {
+      this.liveWidthPreviewTimeoutId = null;
+
+      if (!this.liveWidthPreview) {
+        return;
+      }
+
+      if (Date.now() - this.liveWidthPreview.updatedAt < LIVE_WIDTH_PREVIEW_TTL_MS) {
+        this.scheduleLiveWidthPreviewExpiry();
+        return;
+      }
+
+      this.clearLiveWidthPreview();
+      this.applySettings();
+
+      if (this.hasActiveCandidates()) {
+        this.schedulePositionSync();
+      }
+    }, timeRemaining + 1);
   }
 
   private hasActiveCandidates(): boolean {
@@ -532,7 +614,7 @@ class WidePlayerContentApp {
     const maximumWidth = Math.min(maximumWidthByViewport, maximumWidthByHeight);
     const expandedWidth =
       anchorRect.width +
-      (maximumWidth - anchorRect.width) * (this.settings.widthPercent / 100);
+      (maximumWidth - anchorRect.width) * (this.getEffectiveWidthPercent() / 100);
     const expandedHeight = expandedWidth / aspectRatio;
     const preferredLeft = anchorRect.left + anchorRect.width / 2 - expandedWidth / 2;
     const maxLeft = Math.max(
@@ -653,7 +735,13 @@ class WidePlayerContentApp {
     this.mutationObserver?.disconnect();
     this.intersectionObserver?.disconnect();
     this.unsubscribe?.();
+    this.unsubscribeLiveWidthPreview?.();
     this.collapseAll();
+
+    if (this.liveWidthPreviewTimeoutId !== null) {
+      window.clearTimeout(this.liveWidthPreviewTimeoutId);
+      this.liveWidthPreviewTimeoutId = null;
+    }
 
     for (const record of this.candidates.values()) {
       this.removeToggleButton(record);

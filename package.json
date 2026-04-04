@@ -1,6 +1,6 @@
 {
   "name": "wideplayer-for-x",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "description": "Vite + TypeScript scaffold for the WidePlayer for X browser extension",
   "type": "module",

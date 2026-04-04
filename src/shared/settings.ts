@@ -8,10 +8,25 @@ interface StoredSettingsInput {
   expansionPercent?: unknown;
 }
 
+interface LiveWidthPreviewInput {
+  updatedAt?: unknown;
+  widthPercent?: unknown;
+}
+
+export interface LiveWidthPreview {
+  updatedAt: number;
+  widthPercent: number;
+}
+
 const STORAGE_DEFAULTS: StoredSettingsInput = {
   autoEnable: DEFAULT_SETTINGS.autoEnable,
   widthPercent: DEFAULT_SETTINGS.widthPercent,
   expansionPercent: undefined,
+};
+
+const LIVE_WIDTH_PREVIEW_KEY = "liveWidthPreview";
+const LIVE_WIDTH_PREVIEW_DEFAULTS: Record<typeof LIVE_WIDTH_PREVIEW_KEY, LiveWidthPreviewInput | null> = {
+  liveWidthPreview: null,
 };
 
 function normalizeStoredWidthPercent(input?: StoredSettingsInput): number {
@@ -59,6 +74,24 @@ export function normalizeSettings(input?: StoredSettingsInput): Settings {
   };
 }
 
+function normalizeLiveWidthPreview(input?: LiveWidthPreviewInput | null): LiveWidthPreview | null {
+  if (!input) {
+    return null;
+  }
+
+  const widthPercent = clampWidthPercent(input.widthPercent);
+  const updatedAt = Number(input.updatedAt);
+
+  if (!Number.isFinite(updatedAt) || updatedAt <= 0) {
+    return null;
+  }
+
+  return {
+    updatedAt,
+    widthPercent,
+  };
+}
+
 export async function loadSettings(): Promise<Settings> {
   const storedSettings = await readStorage(STORAGE_DEFAULTS);
   return normalizeSettings(storedSettings);
@@ -74,6 +107,28 @@ export async function saveSettings(nextSettings: Partial<Settings>): Promise<Set
   await writeStorage(normalizedSettings);
 
   return normalizedSettings;
+}
+
+export async function saveLiveWidthPreview(widthPercent: unknown | null): Promise<void> {
+  const nextPreview =
+    widthPercent === null
+      ? null
+      : {
+          updatedAt: Date.now(),
+          widthPercent: clampWidthPercent(widthPercent),
+        };
+
+  await writeStorage(
+    {
+      [LIVE_WIDTH_PREVIEW_KEY]: nextPreview,
+    },
+    "local"
+  );
+}
+
+export async function loadLiveWidthPreview(): Promise<LiveWidthPreview | null> {
+  const storedPreview = await readStorage(LIVE_WIDTH_PREVIEW_DEFAULTS, "local");
+  return normalizeLiveWidthPreview(storedPreview.liveWidthPreview);
 }
 
 export function subscribeToSettings(listener: (settings: Settings) => void): () => void {
@@ -97,6 +152,30 @@ export function subscribeToSettings(listener: (settings: Settings) => void): () 
     }
 
     listener(await loadSettings());
+  };
+
+  storage.onChanged.addListener(handleStorageChange);
+
+  return () => {
+    storage.onChanged?.removeListener(handleStorageChange);
+  };
+}
+
+export function subscribeToLiveWidthPreview(
+  listener: (preview: LiveWidthPreview | null) => void
+): () => void {
+  const storage = getExtensionApi()?.storage;
+
+  if (!storage?.onChanged) {
+    return () => {};
+  }
+
+  const handleStorageChange: StorageChangeListener = (changes, areaName) => {
+    if (areaName !== "local" || !(LIVE_WIDTH_PREVIEW_KEY in changes)) {
+      return;
+    }
+
+    listener(normalizeLiveWidthPreview(changes[LIVE_WIDTH_PREVIEW_KEY]?.newValue as LiveWidthPreviewInput | null));
   };
 
   storage.onChanged.addListener(handleStorageChange);

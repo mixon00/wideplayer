@@ -2,17 +2,18 @@
 
 WidePlayer for X is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, and browser-specific build outputs for Chrome, Firefox, and Safari.
+The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, realtime width preview from popup/options, and browser-specific build outputs for Chrome, Firefox, and Safari.
 
 ## Current Status
 
-As of version `0.3.2`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.3`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
 - keeps popup and options settings synchronized through extension storage
+- previews width changes live while the slider is being dragged and saves the final value on release
 - builds separate distributions for Chrome, Firefox, and Safari
 
 ## What Works Today
@@ -38,6 +39,11 @@ Current defaults:
 - `widthPercent: 35`
 
 Both popup and options pages read from the same storage layer and stay aligned through shared UI logic in `src/shared`.
+
+Width changes now behave in two phases:
+
+- realtime preview during slider drag is broadcast immediately for active players
+- final persisted value is saved when the slider change is committed
 
 ### Stability and cleanup
 
