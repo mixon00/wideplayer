@@ -6,12 +6,13 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `0.3.4`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.5`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
+- uses icon-based manual controls that appear only while hovering or focusing the player
 - keeps popup and options settings synchronized through extension storage
 - previews width changes live while the slider is being dragged and saves the final value on release
 - keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
@@ -22,7 +23,8 @@ As of version `0.3.4`, the project ships a functional extension MVP with these b
 ### Video behavior
 
 - Auto mode is enabled by default
-- Manual mode adds an `Expand` / `Collapse` button to supported players
+- Manual mode adds icon-based `Expand` / `Collapse` controls to supported players
+- Manual controls stay hidden until the pointer is over the player or the control receives focus
 - Expanded width is constrained by viewport width, viewport height, and the user-selected width setting
 - While visible, the expanded player is continuously repositioned on scroll and resize
 - The current implementation scales the widened player with viewport position: it starts near the original size when entering the screen, reaches the configured target size near the viewport center, and shrinks again while leaving the screen

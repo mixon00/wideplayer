@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.5 - 2026-04-04
+
+### Improved
+
+- Manual expand and collapse controls now use icon buttons instead of text labels.
+- Manual controls now stay hidden until you hover the player, which better matches the native X player behavior.
+- Project metadata now reflects `0.3.5` across `package.json` and all browser manifests.
+
 ## 0.3.4 - 2026-04-04
 
 ### Fixed

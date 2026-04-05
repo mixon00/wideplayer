@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.4`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.5`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -33,7 +33,7 @@ The current project already implements:
 
 - support for `x.com` and `twitter.com`
 - automatic enlargement mode enabled by default
-- manual mode with per-video `Expand` / `Collapse` controls
+- manual mode with per-video icon-based `Expand` / `Collapse` controls
 - storage-backed settings shared between popup and options pages
 - realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
@@ -79,7 +79,8 @@ Status: implemented
 Behavior:
 
 - used when `autoEnable = false`
-- injects a per-video button into supported players
+- injects a per-video icon button into supported players
+- the control appears while the player is hovered or focused
 - button toggles between `Expand` and `Collapse`
 - uses the same moved-player overlay architecture as auto mode
 
