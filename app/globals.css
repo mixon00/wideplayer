@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-cream: #FCF9F5;
+  --color-warm-neutral: #F7F1EA;
+  --color-earth-green: #1E3A24;
+  --color-bright-green: #4ADE80;
+  --color-soft-bronze: #C4A484;
+  --color-muted-text: #6B665F;
+  --color-ui-bg: #FFFFFF;
+
+  /* Font families — CSS vars injected by next/font are referenced here */
+  --font-headline: var(--font-playfair), "Playfair Display", serif;
+  --font-body: var(--font-inter), "Inter", sans-serif;
+}
+
+/* Global base */
+body {
+  background-color: #FCF9F5;
+  color: #1E3A24;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Frosted glass nav blur */
+.apple-blur {
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+}
+
+/* Browser mockup shadow */
+.browser-frame {
+  box-shadow:
+    0 50px 100px -20px rgba(30, 58, 36, 0.15),
+    0 30px 60px -30px rgba(0, 0, 0, 0.2);
+}
+
+/* Material Symbols variable font settings */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+}
