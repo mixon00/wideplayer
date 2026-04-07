@@ -14,10 +14,11 @@ import {
   updatePlaceholderHeight,
 } from "./player-placement";
 import { contentStyles } from "./styles";
-import type { CandidateElements, CandidateRecord, RectSnapshot } from "./types";
+import type { ActivePlacement, CandidateElements, CandidateRecord, RectSnapshot } from "./types";
 
 const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
 const LIVE_WIDTH_PREVIEW_TTL_MS = 400;
+const MANUAL_TOGGLE_TRANSITION_MS = 180;
 const VIEWPORT_GUTTER = 16;
 const EXPAND_ICON_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -95,8 +96,33 @@ function isElementVisible(element: HTMLElement): boolean {
   return visibleHeight > 0;
 }
 
+interface CandidateGeometry {
+  expansionProgress: number;
+  height: number;
+  left: number;
+  top: number;
+  width: number;
+}
+
 class WidePlayerContentApp {
   private readonly candidates = new Map<HTMLElement, CandidateRecord>();
+  private readonly handleDocumentClick = (event: MouseEvent): void => {
+    if (this.settings.autoEnable || !this.hasActiveCandidates()) {
+      return;
+    }
+
+    const target = event.target;
+
+    if (!(target instanceof Node)) {
+      return;
+    }
+
+    if (this.isWithinAnyToggleButton(target) || this.isWithinAnyActiveOverlay(target)) {
+      return;
+    }
+
+    this.collapseAll({ animate: true });
+  };
   private readonly handlePageHide = (): void => {
     this.dispose();
   };
@@ -169,6 +195,7 @@ class WidePlayerContentApp {
     window.addEventListener("scroll", this.handleScrollOrResize, { passive: true });
     window.addEventListener("resize", this.handleScrollOrResize);
     window.addEventListener("pagehide", this.handlePageHide, { once: true });
+    document.addEventListener("click", this.handleDocumentClick, true);
   }
 
   private activateCandidate(record: CandidateRecord): void {
@@ -197,8 +224,14 @@ class WidePlayerContentApp {
     record.article.dataset.wideplayerState = "expanded";
     record.playerElement.dataset.wideplayerExpanded = "true";
     this.updateToggleButtonState(record);
-    this.syncCandidatePosition(record);
-    this.schedulePositionSync();
+
+    if (this.settings.autoEnable) {
+      this.syncCandidatePosition(record);
+      this.schedulePositionSync();
+      return;
+    }
+
+    this.animateCandidateExpansion(record);
   }
 
   private applySettings(): void {
@@ -209,9 +242,96 @@ class WidePlayerContentApp {
     );
   }
 
-  private collapseAll(): void {
+  private animateCandidateExpansion(record: CandidateRecord): void {
+    const activePlacement = record.activePlacement;
+
+    if (!activePlacement) {
+      return;
+    }
+
+    this.cancelCandidateAnimation(record);
+
+    const collapsedGeometry = this.resolveCandidateGeometry(record, 0);
+
+    if (!collapsedGeometry) {
+      this.syncCandidatePosition(record);
+      this.schedulePositionSync();
+      return;
+    }
+
+    const animationToken = ++record.animationToken;
+    record.manualTransitionState = "expanding";
+
+    activePlacement.frame.dataset.wideplayerTransition = "manual";
+    activePlacement.placeholder.dataset.wideplayerTransition = "manual";
+    this.applyCandidateGeometry(activePlacement, collapsedGeometry);
+
+    record.animationFrameId = window.requestAnimationFrame(() => {
+      record.animationFrameId = null;
+
+      if (animationToken !== record.animationToken || record.activePlacement !== activePlacement) {
+        return;
+      }
+
+      this.syncCandidatePosition(record);
+      this.schedulePositionSync();
+      record.animationTimeoutId = window.setTimeout(() => {
+        record.animationTimeoutId = null;
+
+        if (animationToken !== record.animationToken || record.activePlacement !== activePlacement) {
+          return;
+        }
+
+        record.manualTransitionState = "idle";
+        this.clearCandidateAnimationStyles(activePlacement);
+      }, MANUAL_TOGGLE_TRANSITION_MS);
+    });
+  }
+
+  private applyCandidateGeometry(
+    activePlacement: ActivePlacement,
+    geometry: CandidateGeometry
+  ): void {
+    activePlacement.frame.style.setProperty(
+      "--wideplayer-scroll-progress",
+      geometry.expansionProgress.toFixed(4)
+    );
+    activePlacement.placeholder.style.setProperty(
+      "--wideplayer-scroll-progress",
+      geometry.expansionProgress.toFixed(4)
+    );
+    activePlacement.frame.style.left = `${Math.round(geometry.left)}px`;
+    activePlacement.frame.style.top = `${Math.round(geometry.top)}px`;
+    activePlacement.frame.style.width = `${Math.round(geometry.width)}px`;
+    activePlacement.frame.style.height = `${Math.round(geometry.height)}px`;
+    updatePlaceholderHeight(activePlacement, geometry.height);
+  }
+
+  private cancelCandidateAnimation(record: CandidateRecord): void {
+    record.animationToken += 1;
+    record.manualTransitionState = "idle";
+
+    if (record.animationFrameId !== null) {
+      window.cancelAnimationFrame(record.animationFrameId);
+      record.animationFrameId = null;
+    }
+
+    if (record.animationTimeoutId !== null) {
+      window.clearTimeout(record.animationTimeoutId);
+      record.animationTimeoutId = null;
+    }
+
+    this.clearCandidateAnimationStyles(record.activePlacement);
+  }
+
+  private clearCandidateAnimationStyles(activePlacement: CandidateRecord["activePlacement"]): void {
+    activePlacement?.frame.removeAttribute("data-wideplayer-transition");
+    activePlacement?.placeholder.removeAttribute("data-wideplayer-transition");
+  }
+
+  private collapseAll(options: { animate?: boolean } = {}): void {
     for (const record of this.candidates.values()) {
-      this.deactivateCandidate(record);
+      this.deactivateCandidate(record, options);
     }
   }
 
@@ -224,9 +344,13 @@ class WidePlayerContentApp {
         event.stopPropagation();
         this.toggleCandidate(record);
       },
+      animationFrameId: null,
+      animationTimeoutId: null,
+      animationToken: 0,
       id: `wideplayer-${++this.candidateSequence}`,
       isVisible: this.intersectionObserver ? false : isElementVisible(elements.article),
       lastKnownAspectRatio: null,
+      manualTransitionState: "idle",
       toggleButton: null,
     };
 
@@ -253,13 +377,59 @@ class WidePlayerContentApp {
     });
   }
 
-  private deactivateCandidate(record: CandidateRecord): void {
+  private deactivateCandidate(record: CandidateRecord, options: { animate?: boolean } = {}): void {
     const activePlacement = record.activePlacement;
 
     if (!activePlacement) {
       this.updateToggleButtonState(record);
       return;
     }
+
+    this.cancelCandidateAnimation(record);
+
+    if (options.animate) {
+      const currentGeometry = this.resolveCandidateGeometry(record);
+      const collapsedGeometry = this.resolveCandidateGeometry(record, 0);
+
+      if (currentGeometry && collapsedGeometry) {
+        const animationToken = ++record.animationToken;
+        record.manualTransitionState = "collapsing";
+
+        activePlacement.frame.dataset.wideplayerTransition = "manual";
+        activePlacement.placeholder.dataset.wideplayerTransition = "manual";
+        this.applyCandidateGeometry(activePlacement, currentGeometry);
+
+        record.animationFrameId = window.requestAnimationFrame(() => {
+          record.animationFrameId = null;
+
+          if (animationToken !== record.animationToken || record.activePlacement !== activePlacement) {
+            return;
+          }
+
+          this.applyCandidateGeometry(activePlacement, collapsedGeometry);
+          record.animationTimeoutId = window.setTimeout(() => {
+            record.animationTimeoutId = null;
+
+            if (animationToken !== record.animationToken || record.activePlacement !== activePlacement) {
+              return;
+            }
+
+            this.finalizeCandidateDeactivation(record, activePlacement);
+          }, MANUAL_TOGGLE_TRANSITION_MS);
+        });
+        return;
+      }
+    }
+
+    this.finalizeCandidateDeactivation(record, activePlacement);
+  }
+
+  private finalizeCandidateDeactivation(
+    record: CandidateRecord,
+    activePlacement: NonNullable<CandidateRecord["activePlacement"]>
+  ): void {
+    record.manualTransitionState = "idle";
+    this.clearCandidateAnimationStyles(activePlacement);
 
     try {
       restorePlayerPlacement(activePlacement);
@@ -391,6 +561,26 @@ class WidePlayerContentApp {
     document.head.appendChild(styleElement);
   }
 
+  private isWithinAnyActiveOverlay(target: Node): boolean {
+    for (const record of this.candidates.values()) {
+      if (record.activePlacement?.frame.contains(target)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private isWithinAnyToggleButton(target: Node): boolean {
+    for (const record of this.candidates.values()) {
+      if (record.toggleButton?.contains(target)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private observeMutations(): void {
     this.mutationObserver = new MutationObserver(() => {
       this.scheduleScan();
@@ -407,6 +597,7 @@ class WidePlayerContentApp {
       return;
     }
 
+    this.cancelCandidateAnimation(record);
     record.toggleButton.removeEventListener("click", record.handleToggleClick);
     record.toggleButton.remove();
     record.toggleButton = null;
@@ -599,28 +790,30 @@ class WidePlayerContentApp {
     return clamp(1 - (centeredTop - anchorTop) / distanceFromCenterToExit, 0, 1);
   }
 
-  private syncCandidatePosition(record: CandidateRecord): void {
+  private resolveCandidateGeometry(
+    record: CandidateRecord,
+    expansionProgressOverride?: number
+  ): CandidateGeometry | null {
     const activePlacement = record.activePlacement;
 
     if (!activePlacement) {
-      return;
+      return null;
     }
 
     if (!record.article.isConnected || !activePlacement.placeholder.isConnected) {
       this.destroyCandidate(record);
-      return;
+      return null;
     }
 
     if (!this.ensureActivePlacementConnection(record)) {
       this.deactivateCandidate(record);
-      return;
+      return null;
     }
 
     const anchorRect = this.resolveAnchorRect(record);
 
     if (!anchorRect || anchorRect.width <= 0) {
-      this.deactivateCandidate(record);
-      return;
+      return null;
     }
 
     const aspectRatio = this.resolveAspectRatio(record);
@@ -642,26 +835,52 @@ class WidePlayerContentApp {
       window.innerWidth - expandedWidth - VIEWPORT_GUTTER
     );
     const expandedLeft = clamp(preferredLeft, VIEWPORT_GUTTER, maxLeft);
-    const expansionProgress = smoothstep(
-      this.resolveViewportExpansionProgress(anchorRect.top, collapsedHeight, expandedHeight)
-    );
+    const expansionProgress =
+      expansionProgressOverride === undefined
+        ? smoothstep(this.resolveViewportExpansionProgress(anchorRect.top, collapsedHeight, expandedHeight))
+        : clamp(expansionProgressOverride, 0, 1);
     const currentWidth = lerp(collapsedWidth, expandedWidth, expansionProgress);
     const currentHeight = currentWidth / aspectRatio;
     const currentLeft = lerp(anchorRect.left, expandedLeft, expansionProgress);
 
-    activePlacement.frame.style.setProperty(
-      "--wideplayer-scroll-progress",
-      expansionProgress.toFixed(4)
-    );
-    activePlacement.placeholder.style.setProperty(
-      "--wideplayer-scroll-progress",
-      expansionProgress.toFixed(4)
-    );
-    activePlacement.frame.style.left = `${Math.round(currentLeft)}px`;
-    activePlacement.frame.style.top = `${Math.round(anchorRect.top)}px`;
-    activePlacement.frame.style.width = `${Math.round(currentWidth)}px`;
-    activePlacement.frame.style.height = `${Math.round(currentHeight)}px`;
-    updatePlaceholderHeight(activePlacement, currentHeight);
+    return {
+      expansionProgress,
+      height: currentHeight,
+      left: currentLeft,
+      top: anchorRect.top,
+      width: currentWidth,
+    };
+  }
+
+  private syncCandidatePosition(record: CandidateRecord): void {
+    const activePlacement = record.activePlacement;
+
+    if (!activePlacement) {
+      return;
+    }
+
+    if (record.manualTransitionState === "collapsing") {
+      return;
+    }
+
+    if (!record.article.isConnected || !activePlacement.placeholder.isConnected) {
+      this.destroyCandidate(record);
+      return;
+    }
+
+    if (!this.ensureActivePlacementConnection(record)) {
+      this.deactivateCandidate(record);
+      return;
+    }
+
+    const geometry = this.resolveCandidateGeometry(record);
+
+    if (!geometry) {
+      this.deactivateCandidate(record);
+      return;
+    }
+
+    this.applyCandidateGeometry(activePlacement, geometry);
   }
 
   private syncFallbackVisibility(): void {
@@ -703,7 +922,7 @@ class WidePlayerContentApp {
     }
 
     if (record.activePlacement) {
-      this.deactivateCandidate(record);
+      this.deactivateCandidate(record, { animate: true });
       return;
     }
 
@@ -764,6 +983,7 @@ class WidePlayerContentApp {
     }
 
     for (const record of this.candidates.values()) {
+      this.cancelCandidateAnimation(record);
       this.removeToggleButton(record);
       record.playerElement.classList.remove("wideplayer-player-root");
       delete record.playerElement.dataset.wideplayerExpanded;
@@ -778,6 +998,7 @@ class WidePlayerContentApp {
     window.removeEventListener("scroll", this.handleScrollOrResize);
     window.removeEventListener("resize", this.handleScrollOrResize);
     window.removeEventListener("pagehide", this.handlePageHide);
+    document.removeEventListener("click", this.handleDocumentClick, true);
 
     const styleElement = document.getElementById(STYLE_ELEMENT_ID);
     styleElement?.remove();

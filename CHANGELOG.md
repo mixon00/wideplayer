@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.6 - 2026-04-07
+
+### Improved
+
+- In manual mode, clicking outside an expanded player now collapses it just like pressing the collapse button.
+- Manual expand and collapse transitions are now animated smoothly instead of jumping between states.
+- Project metadata now reflects `0.3.6` across `package.json` and all browser manifests.
+
 ## 0.3.5 - 2026-04-04
 
 ### Improved

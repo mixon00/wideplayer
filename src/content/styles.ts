@@ -8,6 +8,8 @@ export const contentStyles = `
 :root {
   --wideplayer-width-percent: 135;
   --wideplayer-overlay-radius: 16px;
+  --wideplayer-manual-transition-duration: 180ms;
+  --wideplayer-manual-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --wideplayer-overlay-shadow: 0 10px 28px rgba(15, 20, 25, 0.18),
     0 0 0 1px rgba(15, 20, 25, 0.08);
   --wideplayer-toggle-background: rgba(255, 255, 255, 0.14);
@@ -52,6 +54,15 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
   will-change: height, left, top, width;
 }
 
+.wideplayer-overlay-frame[data-wideplayer-transition] {
+  transition:
+    box-shadow var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing),
+    height var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing),
+    left var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing),
+    top var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing),
+    width var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing);
+}
+
 .wideplayer-overlay-surface {
   background: transparent;
   border-radius: inherit;
@@ -73,6 +84,10 @@ article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
   pointer-events: none;
   will-change: height;
   width: 100%;
+}
+
+.wideplayer-placeholder[data-wideplayer-transition] {
+  transition: height var(--wideplayer-manual-transition-duration) var(--wideplayer-manual-transition-easing);
 }
 
 .wideplayer-player-mounted {

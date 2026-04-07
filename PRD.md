@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.5`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.6`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -82,6 +82,7 @@ Behavior:
 - injects a per-video icon button into supported players
 - the control appears while the player is hovered or focused
 - button toggles between `Expand` and `Collapse`
+- clicking outside an expanded manual player collapses it the same way as pressing `Collapse`
 - uses the same moved-player overlay architecture as auto mode
 
 ---

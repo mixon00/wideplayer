@@ -38,9 +38,13 @@ export interface ActivePlacement {
 
 export interface CandidateRecord extends CandidateElements {
   activePlacement: ActivePlacement | null;
+  animationFrameId: number | null;
+  animationTimeoutId: number | null;
+  animationToken: number;
   handleToggleClick: (event: MouseEvent) => void;
   id: string;
   isVisible: boolean;
   lastKnownAspectRatio: number | null;
+  manualTransitionState: "idle" | "expanding" | "collapsing";
   toggleButton: HTMLButtonElement | null;
 }
