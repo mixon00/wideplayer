@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.9 - 2026-04-08
+
+### Improved
+
+- Manual expand and collapse controls now sit over a top fade for better contrast against bright video frames.
+- The manual control button now uses a subtle hover-only background instead of showing a persistent button fill.
+- Project metadata now reflects `0.3.9` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 0.3.8 - 2026-04-08
 
 ### Fixed

@@ -6,13 +6,13 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `0.3.8`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.9`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
-- uses icon-based manual controls that appear only while hovering or focusing the player
+- uses icon-based manual controls that appear only while hovering or focusing the player, with a top fade and a subtle hover-only button background
 - keeps popup and options settings synchronized through extension storage
 - previews width changes live while the slider is being dragged and saves the final value on release
 - keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
