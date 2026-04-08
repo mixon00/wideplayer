@@ -2,18 +2,19 @@
 
 WidePlayer for X is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, realtime width preview from popup/options, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
+The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, a popup-first settings flow, realtime width preview from the popup, an About & Help options page, a shared cream-and-green visual system aligned with the landing page, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
 
 ## Current Status
 
-As of version `0.3.9`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.10`, the project ships a functional extension MVP with these behaviors:
 
-- detects supported in-feed videos on `x.com` and `twitter.com`
+- detects supported in-feed videos on `x.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
 - uses icon-based manual controls that appear only while hovering or focusing the player, with a top fade and a subtle hover-only button background
-- keeps popup and options settings synchronized through extension storage
+- styles the popup and About & Help page with the shared cream, earth-green, bright-green, and bronze design palette used by the landing page
+- uses the popup as the primary place for quick settings and the options page for About, FAQ, and release-note style help content
 - previews width changes live while the slider is being dragged and saves the final value on release
 - keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
 - builds separate distributions for Chrome, Firefox, and Safari
@@ -33,7 +34,7 @@ As of version `0.3.9`, the project ships a functional extension MVP with these b
 
 ### Settings
 
-The extension currently exposes two settings:
+The extension currently exposes two settings in the popup:
 
 - `autoEnable`
 - `widthPercent`
@@ -43,7 +44,9 @@ Current defaults:
 - `autoEnable: true`
 - `widthPercent: 35`
 
-Both popup and options pages read from the same storage layer and stay aligned through shared UI logic in `src/shared`.
+The popup is now the primary settings surface. The options page is used for About, FAQ, and recent update notes instead of duplicating the same controls.
+
+The extension UI shares the same visual design tokens, rounded card treatment, and light color palette so it feels consistent with the marketing site.
 
 Width changes now behave in two phases:
 
@@ -165,7 +168,7 @@ Release packaging generates:
 - `release/wideplayer-for-x-<version>-firefox.zip`
 - `release/wideplayer-for-x-<version>-safari.zip`
 
-Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and options UI.
+Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and About & Help UI.
 Release ZIPs preserve the built directory layout and omit sourcemaps and source artwork that are not needed for distribution.
 
 ## Loading The Extension

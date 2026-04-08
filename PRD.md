@@ -7,13 +7,13 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.9`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.10`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
 ## 2. Product Goal
 
-Build a browser extension family for X (Twitter) that enlarges supported in-feed videos without entering fullscreen.
+Build a browser extension for X that enlarges supported in-feed videos without entering fullscreen.
 
 Core principles:
 
@@ -31,11 +31,13 @@ Core principles:
 
 The current project already implements:
 
-- support for `x.com` and `twitter.com`
+- support for `x.com`
 - automatic enlargement mode enabled by default
 - manual mode with per-video icon-based `Expand` / `Collapse` controls
 - manual controls with a top fade overlay and a subtle hover-only button background for better contrast over video
-- storage-backed settings shared between popup and options pages
+- storage-backed settings managed from the popup
+- an options page that now acts as About & Help content instead of duplicating popup controls
+- the popup and About & Help surfaces styled with the same cream, earth-green, bright-green, and bronze visual language used by the landing page
 - realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
 - placeholder-based layout preservation while a player is widened
@@ -114,7 +116,7 @@ When a candidate activates, the extension must:
 
 ### 5.3 Settings
 
-The extension must keep these values aligned across popup, options, storage, and runtime behavior:
+The extension must keep these values aligned across the popup, storage, and runtime behavior:
 
 - `autoEnable`
 - `widthPercent`
@@ -130,7 +132,15 @@ Settings behavior requirements:
 - final width should persist only after the user commits the slider change
 - realtime preview should not require a page reload
 
-### 5.4 Fail-safe behavior
+### 5.4 About & Help page
+
+The extension should provide an options page that:
+
+- explains what WidePlayer does in a short About section
+- answers the core usage and limitation questions in a concise FAQ
+- highlights recent product changes without requiring the full changelog inside the popup
+
+### 5.5 Fail-safe behavior
 
 If enhancement cannot be safely applied, the extension must:
 
@@ -175,7 +185,7 @@ The current MVP does not yet aim to deliver:
 - browser-specific feature forks beyond manifest-level differences
 - a dedicated automated test harness
 - browser-store listing assets, submission automation, or notarization workflows
-- a finalized visual design system for popup/options beyond the functional settings UI
+- a fully custom icon font pipeline or bundled webfont set for every extension surface
 
 ---
 
@@ -184,7 +194,7 @@ The current MVP does not yet aim to deliver:
 The next iterations should focus on:
 
 - improving support coverage for more X media layouts
-- refining activation heuristics and visual polish
+- extending the shared visual system to any future onboarding, help, or release-note surfaces inside the extension
 - tuning manual controls and per-video affordances
 - validating browser-specific quirks where Chrome, Firefox, and Safari diverge
 - adding stronger validation around DOM behavior and settings synchronization
@@ -198,6 +208,6 @@ The current MVP should be considered healthy when:
 - `npm run typecheck` passes after TypeScript or UI wiring changes
 - `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
 - `npm run package:release` produces ZIP archives in `release` for the built browser targets
-- popup and options stay synchronized for `autoEnable` and `widthPercent`
+- popup controls `autoEnable` and `widthPercent` without requiring a duplicate settings page
 - width changes preview live without reloading the page
 - supported videos can widen and restore without breaking the surrounding feed

@@ -11,10 +11,12 @@ interface SettingsScreenElements {
   widthRangeInput: HTMLInputElement;
   widthOutput: HTMLOutputElement;
   widthNumberInput?: HTMLInputElement | null;
-  modeCopy: HTMLElement;
+  modeCopy?: HTMLElement | null;
   statusText: HTMLElement;
   autoModeDescription: string;
   manualModeDescription: string;
+  initialStatusText?: string;
+  clearSavedStatusAfterMs?: number;
   openOptionsButton?: HTMLButtonElement | null;
 }
 
@@ -28,14 +30,34 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
     statusText,
     autoModeDescription,
     manualModeDescription,
+    initialStatusText,
+    clearSavedStatusAfterMs,
     openOptionsButton,
   } = elements;
 
+  let statusResetTimeoutId = 0;
+
   function setStatus(message: string): void {
+    if (statusResetTimeoutId) {
+      window.clearTimeout(statusResetTimeoutId);
+      statusResetTimeoutId = 0;
+    }
+
     statusText.textContent = message;
+
+    if (message === "Saved" && clearSavedStatusAfterMs) {
+      statusResetTimeoutId = window.setTimeout(() => {
+        statusResetTimeoutId = 0;
+        statusText.textContent = "";
+      }, clearSavedStatusAfterMs);
+    }
   }
 
   function updateModeCopy(autoEnable: boolean): void {
+    if (!modeCopy) {
+      return;
+    }
+
     modeCopy.textContent = autoEnable ? autoModeDescription : manualModeDescription;
   }
 
@@ -92,7 +114,7 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
       autoEnableInput.checked = settings.autoEnable;
       syncWidthControls(settings.widthPercent);
       updateModeCopy(settings.autoEnable);
-      setStatus("Ready");
+      setStatus(initialStatusText ?? "Ready");
     } catch (error) {
       console.error("Unable to load settings.", error);
       setStatus("Unable to load");
@@ -113,6 +135,11 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
   });
 
   window.addEventListener("pagehide", () => {
+    if (statusResetTimeoutId) {
+      window.clearTimeout(statusResetTimeoutId);
+      statusResetTimeoutId = 0;
+    }
+
     if (previewFrame) {
       window.cancelAnimationFrame(previewFrame);
       previewFrame = 0;

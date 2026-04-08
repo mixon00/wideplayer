@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.10 - 2026-04-08
+
+### Improved
+
+- Popup and the About & Help page now use the landing page visual palette with cream surfaces, earth-green accents, bright-green highlights, and bronze eyebrow styling.
+- The popup is now the primary place for quick settings, while the options page now works as a lightweight About & Help screen with FAQ and recent updates.
+- Project metadata now reflects `0.3.10` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 0.3.9 - 2026-04-08
 
 ### Improved

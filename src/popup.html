@@ -9,40 +9,27 @@
     <main class="popup-shell">
       <header class="popup-header">
         <p class="eyebrow">WidePlayer for X</p>
-        <h1>Quick Settings</h1>
-        <p class="description">Choose whether videos expand automatically and set the target width.</p>
+        <h1>Quick settings</h1>
       </header>
 
       <section class="setting-card">
         <label class="toggle-row" for="auto-enable">
-          <div>
-            <span class="setting-label">Auto enable</span>
-            <p class="setting-hint">Enable automatic behavior when a supported video appears in the feed.</p>
-          </div>
+          <span class="setting-label">Auto enable</span>
           <input id="auto-enable" type="checkbox" />
         </label>
       </section>
 
       <section class="setting-card">
         <div class="range-header">
-          <div>
-            <span class="setting-label">Width</span>
-            <p class="setting-hint">0% keeps the original size. 100% reaches the widest safe overlay size in the current viewport.</p>
-          </div>
+          <label for="width-range" class="setting-label">Width</label>
           <output id="width-output" for="width-range">35%</output>
         </div>
         <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
       </section>
 
-      <section class="setting-card info-card">
-        <p id="mode-copy" class="info-copy">
-          Auto mode expands supported videos automatically.
-        </p>
-      </section>
-
       <footer class="popup-footer">
-        <button id="open-options" class="secondary-button" type="button">Open Options</button>
-        <p id="status-text" class="status-text" role="status">Ready</p>
+        <button id="open-options" class="secondary-button" type="button">Help</button>
+        <p id="status-text" class="status-text" role="status"></p>
       </footer>
       <p id="build-id" class="build-text">Build</p>
     </main>
