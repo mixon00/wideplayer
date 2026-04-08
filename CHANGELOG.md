@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.7 - 2026-04-08
+
+### Improved
+
+- Manually expanded players now scroll into the vertical center of the viewport while opening.
+- Project metadata now reflects `0.3.7` across `package.json` and all browser manifests.
+
 ## 0.3.6 - 2026-04-07
 
 ### Improved

@@ -19,6 +19,7 @@ import type { ActivePlacement, CandidateElements, CandidateRecord, RectSnapshot 
 const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
 const LIVE_WIDTH_PREVIEW_TTL_MS = 400;
 const MANUAL_TOGGLE_TRANSITION_MS = 180;
+const MANUAL_CENTERING_SCROLL_TOLERANCE_PX = 2;
 const VIEWPORT_GUTTER = 16;
 const EXPAND_ICON_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
@@ -232,6 +233,7 @@ class WidePlayerContentApp {
     }
 
     this.animateCandidateExpansion(record);
+    this.scrollCandidateToViewportCenter(record);
   }
 
   private applySettings(): void {
@@ -327,6 +329,37 @@ class WidePlayerContentApp {
   private clearCandidateAnimationStyles(activePlacement: CandidateRecord["activePlacement"]): void {
     activePlacement?.frame.removeAttribute("data-wideplayer-transition");
     activePlacement?.placeholder.removeAttribute("data-wideplayer-transition");
+  }
+
+  private scrollCandidateToViewportCenter(record: CandidateRecord): void {
+    const expandedGeometry = this.resolveCandidateGeometry(record, 1);
+
+    if (!expandedGeometry) {
+      return;
+    }
+
+    const currentScrollTop = window.scrollY;
+    const centeredTop = (window.innerHeight - expandedGeometry.height) / 2;
+    const scrollingElement = document.scrollingElement ?? document.documentElement;
+    const maximumScrollTop = Math.max(0, scrollingElement.scrollHeight - window.innerHeight);
+    const targetScrollTop = clamp(
+      currentScrollTop + expandedGeometry.top - centeredTop,
+      0,
+      maximumScrollTop
+    );
+
+    if (Math.abs(targetScrollTop - currentScrollTop) <= MANUAL_CENTERING_SCROLL_TOLERANCE_PX) {
+      return;
+    }
+
+    const behavior: ScrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto"
+      : "smooth";
+
+    window.scrollTo({
+      behavior,
+      top: Math.round(targetScrollTop),
+    });
   }
 
   private collapseAll(options: { animate?: boolean } = {}): void {

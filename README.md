@@ -6,7 +6,7 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `0.3.6`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.7`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
@@ -25,6 +25,7 @@ As of version `0.3.6`, the project ships a functional extension MVP with these b
 - Auto mode is enabled by default
 - Manual mode adds icon-based `Expand` / `Collapse` controls to supported players
 - Clicking outside an expanded manual player collapses it just like pressing the `Collapse` button
+- Manually expanded players automatically scroll into the vertical center of the viewport
 - Manual controls stay hidden until the pointer is over the player or the control receives focus
 - Expanded width is constrained by viewport width, viewport height, and the user-selected width setting
 - While visible, the expanded player is continuously repositioned on scroll and resize
