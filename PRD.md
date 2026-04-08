@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.7`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.8`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -43,6 +43,7 @@ The current project already implements:
 - viewport-aware sizing that grows a visible player toward its configured width near the center of the screen and reduces it again toward entry and exit
 - cleanup logic for rerenders, disconnects, navigation changes, and removed tweet nodes
 - separate build outputs for Chrome, Firefox, and Safari
+- release ZIP archives generated from the built Chrome, Firefox, and Safari outputs
 
 ### 3.2 Current limitations
 
@@ -54,7 +55,7 @@ Known limitations:
 - unusual embed structures, galleries, or unsupported DOM layouts may be skipped
 - browser-specific behavior is mostly shared; platform divergences are not deeply optimized yet
 - there is no dedicated test suite yet
-- Safari output is generated, but final packaging still depends on Safari tooling outside this repository
+- Safari output and release ZIPs can be generated here, but final Safari packaging still depends on Safari tooling outside this repository
 
 ---
 
@@ -172,7 +173,7 @@ The current MVP does not yet aim to deliver:
 - universal support for every X media layout
 - browser-specific feature forks beyond manifest-level differences
 - a dedicated automated test harness
-- store packaging, listing assets, or release automation
+- browser-store listing assets, submission automation, or notarization workflows
 - a finalized visual design system for popup/options beyond the functional settings UI
 
 ---
@@ -195,6 +196,7 @@ The current MVP should be considered healthy when:
 
 - `npm run typecheck` passes after TypeScript or UI wiring changes
 - `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
+- `npm run package:release` produces ZIP archives in `release` for the built browser targets
 - popup and options stay synchronized for `autoEnable` and `widthPercent`
 - width changes preview live without reloading the page
 - supported videos can widen and restore without breaking the surrounding feed

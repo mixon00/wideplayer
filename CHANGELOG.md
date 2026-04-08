@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.8 - 2026-04-08
+
+### Fixed
+
+- Release ZIP archives now preserve the built folder structure so manifest-referenced icons, assets, and chunks stay at the correct paths.
+- Release ZIP archives now omit source maps and source-only icon artwork that are not needed for distribution.
+- Project metadata now reflects `0.3.8` across `package.json` and all browser manifests.
+
 ## 0.3.7 - 2026-04-08
 
 ### Improved

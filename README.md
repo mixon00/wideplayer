@@ -2,11 +2,11 @@
 
 WidePlayer for X is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, realtime width preview from popup/options, and browser-specific build outputs for Chrome, Firefox, and Safari.
+The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, synchronized settings surfaces, realtime width preview from popup/options, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
 
 ## Current Status
 
-As of version `0.3.7`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.8`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com` and `twitter.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
@@ -78,6 +78,7 @@ Width changes now behave in two phases:
   manifest.json
 
 /scripts
+  package-release.mjs
   prepare-build.mjs
 
 /src
@@ -120,6 +121,20 @@ npm run build:firefox
 npm run build:safari
 ```
 
+Package release ZIPs:
+
+```bash
+npm run package:release
+```
+
+Or package a single browser build:
+
+```bash
+npm run package:chrome
+npm run package:firefox
+npm run package:safari
+```
+
 Run type checking:
 
 ```bash
@@ -144,7 +159,14 @@ The build generates:
 - `dist/firefox`
 - `dist/safari`
 
+Release packaging generates:
+
+- `release/wideplayer-for-x-<version>-chrome.zip`
+- `release/wideplayer-for-x-<version>-firefox.zip`
+- `release/wideplayer-for-x-<version>-safari.zip`
+
 Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and options UI.
+Release ZIPs preserve the built directory layout and omit sourcemaps and source artwork that are not needed for distribution.
 
 ## Loading The Extension
 

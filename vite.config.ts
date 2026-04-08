@@ -8,6 +8,7 @@ const rootDirectory = dirname(currentFile);
 const sourceDirectory = join(rootDirectory, "src");
 const browserDirectories = ["chrome", "firefox", "safari"] as const;
 const buildTargets = ["ui", "content", "background"] as const;
+const sharedAssetDirectories = ["icons"] as const;
 const ignoredEntries = new Set([".DS_Store"]);
 const buildStatePath = join(rootDirectory, ".wideplayer-build.json");
 const packageJson = JSON.parse(readFileSync(join(rootDirectory, "package.json"), "utf8")) as {
@@ -88,6 +89,16 @@ function copyBrowserFilesPlugin(browser: BrowserName, outputDirectory: string): 
       }
 
       copyDirectory(browserSourceDirectory, outputDirectory);
+
+      for (const directoryName of sharedAssetDirectories) {
+        const assetSourceDirectory = join(rootDirectory, directoryName);
+
+        if (!existsSync(assetSourceDirectory)) {
+          continue;
+        }
+
+        copyDirectory(assetSourceDirectory, join(outputDirectory, directoryName));
+      }
     },
   };
 }

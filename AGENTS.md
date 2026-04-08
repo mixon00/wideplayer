@@ -4,7 +4,7 @@
 
 WidePlayer for X is a Vite + TypeScript browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The repository currently contains a working MVP, not just a scaffold. As of version `0.3.5`, the extension:
+The repository currently contains a working MVP, not just a scaffold. As of version `0.3.8`, the extension:
 
 - supports `x.com` and `twitter.com`
 - detects supported in-feed video candidates
@@ -12,10 +12,13 @@ The repository currently contains a working MVP, not just a scaffold. As of vers
 - preserves feed layout with a placeholder while the player is expanded
 - supports automatic mode and manual per-video controls
 - uses icon-based manual controls that appear on player hover or focus
+- collapses manually expanded players when the user clicks outside them
+- scrolls manually expanded players toward the vertical center of the viewport while opening
 - keeps popup and options settings synchronized through extension storage
 - previews width changes live while the settings slider is being dragged and persists the final value when the change is committed
 - keeps the widened overlay below X's sticky top bar while still rendering above the side columns
 - builds separate distributions for Chrome, Firefox, and Safari
+- can package browser-specific release ZIPs from built output
 
 Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, and `AGENTS.md` aligned with the actual repository state.
 
@@ -26,6 +29,8 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 - `npm run typecheck` to validate TypeScript
 - `npm run build` to generate `dist/chrome`, `dist/firefox`, and `dist/safari`
 - `npm run build:chrome`, `npm run build:firefox`, `npm run build:safari` to build individual targets
+- `npm run package:release` to generate browser-specific ZIP archives in `release`
+- `npm run package:chrome`, `npm run package:firefox`, `npm run package:safari` to package individual targets
 - `npm run dev:chrome` to run the Chrome-focused watch flow
 - `npm run clean` to remove generated build output
 
@@ -37,6 +42,7 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 - `src/popup` and `src/options` contain the two settings surfaces
 - `chrome`, `firefox`, and `safari` contain browser-specific manifests and compatibility overrides
 - `scripts/prepare-build.mjs` generates the build id used by popup/options and prepares build metadata
+- `scripts/package-release.mjs` packages built browser outputs into release ZIP archives
 - `README.md` describes the current developer-facing state of the project
 - `CHANGELOG.md` contains user-facing release notes
 - `PRD.md` tracks current MVP scope, constraints, and near-term direction
