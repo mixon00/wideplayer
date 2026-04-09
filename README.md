@@ -6,13 +6,14 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `0.3.11`, the project ships a functional extension MVP with these behaviors:
+As of version `0.3.12`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
 - uses icon-based manual controls that appear only while hovering or focusing the player, with a top fade and a subtle hover-only button background
+- horizontally centers expanded videos in the viewport instead of keeping them anchored to the original in-feed box
 - styles the popup and About & Help page with the shared cream, earth-green, bright-green, and bronze design palette used by the landing page
 - uses the popup as the primary place for quick settings and the options page for About, FAQ, and release-note style help content
 - previews width changes live while the slider is being dragged and saves the final value on release
@@ -28,6 +29,7 @@ As of version `0.3.11`, the project ships a functional extension MVP with these 
 - Clicking outside an expanded manual player collapses it just like pressing the `Collapse` button
 - Manually expanded players automatically scroll into the vertical center of the viewport
 - Manual controls stay hidden until the pointer is over the player or the control receives focus
+- Expanded videos shift toward the horizontal center of the viewport as they widen
 - Expanded width is constrained by viewport width, viewport height, and the user-selected width setting
 - While visible, the expanded player is continuously repositioned on scroll and resize
 - The current implementation scales the widened player with viewport position: it starts near the original size when entering the screen, reaches the configured target size near the viewport center, and shrinks again while leaving the screen

@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.11`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `0.3.12`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -41,6 +41,7 @@ The current project already implements:
 - realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
 - placeholder-based layout preservation while a player is widened
+- expanded videos shift toward the horizontal center of the viewport instead of staying anchored to the original in-feed box
 - scroll and resize synchronization for active overlays
 - overlay layering that keeps the widened player below X's sticky top bar while still allowing it to render above the side columns
 - viewport-aware sizing that grows a visible player toward its configured width near the center of the screen and reduces it again toward entry and exit
@@ -110,6 +111,7 @@ When a candidate activates, the extension must:
 - move the original player into an overlay frame
 - preserve the tweet flow with a placeholder of matching height
 - keep the overlay aligned with the tweet as the page scrolls
+- keep widened videos horizontally centered in the viewport even when the in-feed player starts from a narrower box
 - clamp widened size so it stays usable inside the viewport
 - keep the widened player below the sticky top bar while still rendering above the side columns
 - restore the original player cleanly when the candidate deactivates

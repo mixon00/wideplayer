@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+## 0.3.12 - 2026-04-09
+
+### Fixed
+
+- Expanded videos now shift toward the horizontal center of the viewport instead of staying anchored to the original in-feed box.
+
 ## 0.3.11 - 2026-04-09
 
 ### Improved

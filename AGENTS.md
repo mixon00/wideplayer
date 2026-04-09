@@ -4,9 +4,9 @@
 
 WidePlayer for X is a Vite + TypeScript browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
 
-The repository currently contains a working MVP, not just a scaffold. As of version `0.3.8`, the extension:
+The repository currently contains a working MVP, not just a scaffold. As of version `0.3.12`, the extension:
 
-- supports `x.com` and `twitter.com`
+- supports `x.com`
 - detects supported in-feed video candidates
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed layout with a placeholder while the player is expanded
@@ -16,7 +16,9 @@ The repository currently contains a working MVP, not just a scaffold. As of vers
 - scrolls manually expanded players toward the vertical center of the viewport while opening
 - keeps popup and options settings synchronized through extension storage
 - previews width changes live while the settings slider is being dragged and persists the final value when the change is committed
+- uses the popup as the primary settings surface and the options page for About & Help content
 - keeps the widened overlay below X's sticky top bar while still rendering above the side columns
+- shifts expanded videos toward the horizontal center of the viewport instead of anchoring them to the original in-feed box
 - builds separate distributions for Chrome, Firefox, and Safari
 - can package browser-specific release ZIPs from built output
 
@@ -78,6 +80,7 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
   - `README.md`
   - `CHANGELOG.md`
   - `PRD.md`
+- After a version bump and the required documentation updates, propose a commit message for the current set of changes without mentioning the version bump itself unless the user explicitly asks for that
 - If a version bump changes shipped behavior, make sure the changelog entry is user-facing and the README/PRD describe the new current state accurately
 
 ## Validation Expectations

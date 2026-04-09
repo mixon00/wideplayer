@@ -862,7 +862,8 @@ class WidePlayerContentApp {
       anchorRect.width +
       (maximumWidth - anchorRect.width) * (this.getEffectiveWidthPercent() / 100);
     const expandedHeight = expandedWidth / aspectRatio;
-    const preferredLeft = anchorRect.left + anchorRect.width / 2 - expandedWidth / 2;
+    const preferredLeft = (window.innerWidth - expandedWidth) / 2;
+
     const maxLeft = Math.max(
       VIEWPORT_GUTTER,
       window.innerWidth - expandedWidth - VIEWPORT_GUTTER

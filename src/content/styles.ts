@@ -119,9 +119,26 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root:focus-within::after 
 
 .wideplayer-player-mounted {
   border-radius: inherit;
+  display: flex;
   height: 100%;
+  justify-content: center;
   overflow: hidden;
   width: 100%;
+}
+
+.wideplayer-player-mounted > * {
+  max-width: 100%;
+}
+
+.wideplayer-player-root[data-wideplayer-expanded="true"] {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}
+
+.wideplayer-player-root[data-wideplayer-expanded="true"] > :not(.wideplayer-toggle-button) {
+  flex-shrink: 0;
+  max-width: 100%;
 }
 
 .wideplayer-toggle-button {
