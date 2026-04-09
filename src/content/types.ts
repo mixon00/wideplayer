@@ -41,7 +41,15 @@ export interface CandidateRecord extends CandidateElements {
   animationFrameId: number | null;
   animationTimeoutId: number | null;
   animationToken: number;
+  controlsHideTimeoutId: number | null;
   handleToggleClick: (event: MouseEvent) => void;
+  handlePlayerFocusIn: (event: FocusEvent) => void;
+  handlePlayerFocusOut: () => void;
+  handlePlayerPointerEnter: (event: PointerEvent) => void;
+  handlePlayerPointerLeave: () => void;
+  handlePlayerPointerMove: (event: PointerEvent) => void;
+  handleVideoPause: () => void;
+  handleVideoPlay: () => void;
   id: string;
   isVisible: boolean;
   lastKnownAspectRatio: number | null;

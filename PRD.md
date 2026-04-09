@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `0.3.12`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
+The repository is no longer a blank scaffold. As of version `1.0.0`, it contains a working browser extension with a real in-feed widening flow for supported X videos.
 
 ---
 
@@ -34,7 +34,7 @@ The current project already implements:
 - support for `x.com`
 - automatic enlargement mode enabled by default
 - manual mode with per-video icon-based `Expand` / `Collapse` controls
-- manual controls with a top fade overlay and a subtle hover-only button background for better contrast over video
+- manual controls with a top fade overlay that appear on hover or focus, fade away again after about 2 seconds of pointer inactivity, and stay visible while the video is paused
 - storage-backed settings managed from the popup
 - an options page that now acts as About & Help content instead of duplicating popup controls
 - the popup and About & Help surfaces styled with the same cream, earth-green, bright-green, and bronze visual language used by the landing page
@@ -85,7 +85,7 @@ Behavior:
 
 - used when `autoEnable = false`
 - injects a per-video icon button into supported players
-- the control appears while the player is hovered or focused
+- the control appears while the player is hovered or focused, then hides again after a short idle period without pointer movement unless the video is paused
 - button toggles between `Expand` and `Collapse`
 - clicking outside an expanded manual player collapses it the same way as pressing `Collapse`
 - expanding a manual player scrolls the page so the widened player lands near the vertical center of the viewport

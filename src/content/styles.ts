@@ -63,8 +63,7 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root::after {
   z-index: 1;
 }
 
-html[data-wideplayer-mode="manual"] .wideplayer-player-root:hover::after,
-html[data-wideplayer-mode="manual"] .wideplayer-player-root:focus-within::after {
+html[data-wideplayer-mode="manual"] .wideplayer-player-root[data-wideplayer-controls-visible="true"]::after {
   opacity: 1;
 }
 
@@ -164,9 +163,8 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root:focus-within::after 
   z-index: 2;
 }
 
-.wideplayer-player-root:hover .wideplayer-toggle-button,
-.wideplayer-player-root:focus-within .wideplayer-toggle-button,
-.wideplayer-toggle-button:focus-visible {
+.wideplayer-player-root[data-wideplayer-controls-visible="true"] .wideplayer-toggle-button,
+.wideplayer-player-root[data-wideplayer-controls-visible="true"] .wideplayer-toggle-button:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }

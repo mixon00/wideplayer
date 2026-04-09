@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.0.0 - 2026-04-09
+
+### Improved
+
+- Manual expand and collapse controls now hide together with the top fade after about 2 seconds of pointer inactivity and stay visible while the video is paused.
+- Project metadata now reflects `1.0.0` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 0.3.12 - 2026-04-09
 
 ### Fixed

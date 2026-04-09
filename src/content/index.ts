@@ -19,6 +19,7 @@ import type { ActivePlacement, CandidateElements, CandidateRecord, RectSnapshot 
 const MAX_VIEWPORT_HEIGHT_RATIO = 0.9;
 const LIVE_WIDTH_PREVIEW_TTL_MS = 400;
 const MANUAL_TOGGLE_TRANSITION_MS = 180;
+const MANUAL_CONTROLS_IDLE_TIMEOUT_MS = 2000;
 const MANUAL_CENTERING_SCROLL_TOLERANCE_PX = 2;
 const VIEWPORT_GUTTER = 16;
 const EXPAND_ICON_SVG = `
@@ -331,6 +332,73 @@ class WidePlayerContentApp {
     activePlacement?.placeholder.removeAttribute("data-wideplayer-transition");
   }
 
+  private clearControlsHideTimeout(record: CandidateRecord): void {
+    if (record.controlsHideTimeoutId !== null) {
+      window.clearTimeout(record.controlsHideTimeoutId);
+      record.controlsHideTimeoutId = null;
+    }
+  }
+
+  private setControlsVisibility(record: CandidateRecord, isVisible: boolean): void {
+    record.playerElement.dataset.wideplayerControlsVisible = String(isVisible);
+  }
+
+  private isToggleButtonFocusVisible(record: CandidateRecord): boolean {
+    return Boolean(record.toggleButton?.matches(":focus-visible"));
+  }
+
+  private scheduleControlsHide(record: CandidateRecord): void {
+    if (
+      this.settings.autoEnable ||
+      this.isToggleButtonFocusVisible(record) ||
+      record.video.paused
+    ) {
+      this.clearControlsHideTimeout(record);
+      return;
+    }
+
+    this.clearControlsHideTimeout(record);
+    record.controlsHideTimeoutId = window.setTimeout(() => {
+      record.controlsHideTimeoutId = null;
+
+      if (!this.isToggleButtonFocusVisible(record) && !record.video.paused) {
+        this.setControlsVisibility(record, false);
+      }
+    }, MANUAL_CONTROLS_IDLE_TIMEOUT_MS);
+  }
+
+  private handlePlayerPointerActivity(record: CandidateRecord, event: PointerEvent): void {
+    if (this.settings.autoEnable || (event.pointerType && event.pointerType === "touch")) {
+      return;
+    }
+
+    this.setControlsVisibility(record, true);
+    this.scheduleControlsHide(record);
+  }
+
+  private attachControlVisibilityListeners(record: CandidateRecord): void {
+    record.playerElement.dataset.wideplayerControlsVisible = "false";
+    record.playerElement.addEventListener("focusin", record.handlePlayerFocusIn);
+    record.playerElement.addEventListener("focusout", record.handlePlayerFocusOut);
+    record.playerElement.addEventListener("pointerenter", record.handlePlayerPointerEnter);
+    record.playerElement.addEventListener("pointerleave", record.handlePlayerPointerLeave);
+    record.playerElement.addEventListener("pointermove", record.handlePlayerPointerMove);
+    record.video.addEventListener("pause", record.handleVideoPause);
+    record.video.addEventListener("play", record.handleVideoPlay);
+  }
+
+  private detachControlVisibilityListeners(record: CandidateRecord): void {
+    this.clearControlsHideTimeout(record);
+    record.playerElement.removeEventListener("focusin", record.handlePlayerFocusIn);
+    record.playerElement.removeEventListener("focusout", record.handlePlayerFocusOut);
+    record.playerElement.removeEventListener("pointerenter", record.handlePlayerPointerEnter);
+    record.playerElement.removeEventListener("pointerleave", record.handlePlayerPointerLeave);
+    record.playerElement.removeEventListener("pointermove", record.handlePlayerPointerMove);
+    record.video.removeEventListener("pause", record.handleVideoPause);
+    record.video.removeEventListener("play", record.handleVideoPlay);
+    record.playerElement.removeAttribute("data-wideplayer-controls-visible");
+  }
+
   private scrollCandidateToViewportCenter(record: CandidateRecord): void {
     const expandedGeometry = this.resolveCandidateGeometry(record, 1);
 
@@ -372,10 +440,71 @@ class WidePlayerContentApp {
     const record: CandidateRecord = {
       ...elements,
       activePlacement: null,
+      controlsHideTimeoutId: null,
       handleToggleClick: (event) => {
         event.preventDefault();
         event.stopPropagation();
         this.toggleCandidate(record);
+      },
+      handlePlayerFocusIn: (event) => {
+        if (!record.toggleButton || event.target !== record.toggleButton) {
+          return;
+        }
+
+        if (!this.isToggleButtonFocusVisible(record)) {
+          return;
+        }
+
+        this.clearControlsHideTimeout(record);
+        this.setControlsVisibility(record, true);
+      },
+      handlePlayerFocusOut: () => {
+        window.requestAnimationFrame(() => {
+          if (this.isToggleButtonFocusVisible(record)) {
+            return;
+          }
+
+          if (record.video.paused) {
+            this.setControlsVisibility(record, true);
+            return;
+          }
+
+          if (record.playerElement.matches(":hover")) {
+            this.scheduleControlsHide(record);
+            return;
+          }
+
+          this.setControlsVisibility(record, false);
+        });
+      },
+      handlePlayerPointerEnter: (event) => {
+        this.handlePlayerPointerActivity(record, event);
+      },
+      handlePlayerPointerLeave: () => {
+        this.clearControlsHideTimeout(record);
+
+        if (!this.isToggleButtonFocusVisible(record) && !record.video.paused) {
+          this.setControlsVisibility(record, false);
+        }
+      },
+      handlePlayerPointerMove: (event) => {
+        this.handlePlayerPointerActivity(record, event);
+      },
+      handleVideoPause: () => {
+        this.clearControlsHideTimeout(record);
+
+        if (!this.settings.autoEnable) {
+          this.setControlsVisibility(record, true);
+        }
+      },
+      handleVideoPlay: () => {
+        this.clearControlsHideTimeout(record);
+
+        if (this.settings.autoEnable || this.isToggleButtonFocusVisible(record)) {
+          return;
+        }
+
+        this.setControlsVisibility(record, false);
       },
       animationFrameId: null,
       animationTimeoutId: null,
@@ -392,6 +521,7 @@ class WidePlayerContentApp {
     record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
     record.article.dataset.wideplayerState = "collapsed";
     record.playerElement.classList.add("wideplayer-player-root");
+    this.attachControlVisibilityListeners(record);
     this.intersectionObserver?.observe(record.article);
     this.candidates.set(record.article, record);
     this.syncToggleButton(record);
@@ -478,6 +608,7 @@ class WidePlayerContentApp {
   private destroyCandidate(record: CandidateRecord): void {
     this.deactivateCandidate(record);
     this.removeToggleButton(record);
+    this.detachControlVisibilityListeners(record);
     this.intersectionObserver?.unobserve(record.article);
     record.playerElement.classList.remove("wideplayer-player-root");
     delete record.playerElement.dataset.wideplayerExpanded;
@@ -626,6 +757,9 @@ class WidePlayerContentApp {
   }
 
   private removeToggleButton(record: CandidateRecord): void {
+    this.clearControlsHideTimeout(record);
+    this.setControlsVisibility(record, false);
+
     if (!record.toggleButton) {
       return;
     }
@@ -931,9 +1065,13 @@ class WidePlayerContentApp {
 
   private syncToggleButton(record: CandidateRecord): void {
     if (this.settings.autoEnable) {
+      this.clearControlsHideTimeout(record);
+      this.setControlsVisibility(record, false);
       this.removeToggleButton(record);
       return;
     }
+
+    const didCreateButton = !record.toggleButton;
 
     if (!record.toggleButton) {
       const button = document.createElement("button");
@@ -945,6 +1083,14 @@ class WidePlayerContentApp {
 
     if (record.toggleButton.parentElement !== record.playerElement) {
       record.playerElement.appendChild(record.toggleButton);
+    }
+
+    if (this.isToggleButtonFocusVisible(record)) {
+      this.clearControlsHideTimeout(record);
+      this.setControlsVisibility(record, true);
+    } else if (didCreateButton && record.playerElement.matches(":hover")) {
+      this.setControlsVisibility(record, true);
+      this.scheduleControlsHide(record);
     }
 
     this.updateToggleButtonState(record);
@@ -966,6 +1112,7 @@ class WidePlayerContentApp {
   private updateCandidate(record: CandidateRecord, elements: CandidateElements): void {
     const anchorChanged = record.anchorElement !== elements.anchorElement;
     const playerChanged = record.playerElement !== elements.playerElement;
+    const videoChanged = record.video !== elements.video;
 
     if (record.activePlacement && (anchorChanged || playerChanged)) {
       this.destroyCandidate(record);
@@ -975,14 +1122,24 @@ class WidePlayerContentApp {
 
     if (playerChanged) {
       this.removeToggleButton(record);
+      this.detachControlVisibilityListeners(record);
       record.playerElement.classList.remove("wideplayer-player-root");
       delete record.playerElement.dataset.wideplayerExpanded;
+    } else if (videoChanged) {
+      record.video.removeEventListener("pause", record.handleVideoPause);
+      record.video.removeEventListener("play", record.handleVideoPlay);
     }
 
     record.video = elements.video;
     record.anchorElement = elements.anchorElement;
     record.playerElement = elements.playerElement;
     record.playerElement.classList.add("wideplayer-player-root");
+    if (playerChanged) {
+      this.attachControlVisibilityListeners(record);
+    } else if (videoChanged) {
+      record.video.addEventListener("pause", record.handleVideoPause);
+      record.video.addEventListener("play", record.handleVideoPlay);
+    }
     record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
 
     if (!this.intersectionObserver) {
@@ -1019,6 +1176,7 @@ class WidePlayerContentApp {
     for (const record of this.candidates.values()) {
       this.cancelCandidateAnimation(record);
       this.removeToggleButton(record);
+      this.detachControlVisibilityListeners(record);
       record.playerElement.classList.remove("wideplayer-player-root");
       delete record.playerElement.dataset.wideplayerExpanded;
       record.article.removeAttribute("data-wideplayer-candidate");
