@@ -27,6 +27,7 @@ export const metadata: Metadata = {
     description:
       "Watch videos on X the way they deserve. Wider, without fullscreen, without breaking your feed.",
     type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 
