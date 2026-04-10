@@ -10,9 +10,19 @@
   --color-muted-text: #6B665F;
   --color-ui-bg: #FFFFFF;
 
-  /* Font families — CSS vars injected by next/font are referenced here */
-  --font-headline: var(--font-playfair), "Playfair Display", serif;
-  --font-body: var(--font-inter), "Inter", sans-serif;
+  /* Font families — static fallbacks only; real values set via direct rules below */
+  --font-headline: "Instrument Serif", serif;
+  --font-body: "Inter", sans-serif;
+}
+
+/* Font utilities — override @theme so var(--font-instrument/inter) from next/font resolves
+   correctly. These rules are unlayered (higher priority than @layer theme). */
+.font-headline {
+  font-family: var(--font-instrument), "Instrument Serif", "Instrument Serif Fallback", serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), "Inter", sans-serif;
 }
 
 /* Global base */

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "900"],
+  weight: ["400"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -18,13 +18,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WidePlayer — A theatre for your browser",
+  icons: { icon: "/logo.svg", shortcut: "/logo.svg" },
+  title: "WidePlayer: Bigger videos on X, no fullscreen",
   description:
-    "The browser extension that stretches your content, not your eyes. Simple, elegant, and completely essential.",
+    "The browser extension that enlarges in-feed videos on X without fullscreen. Auto mode, manual controls, and live width preview.",
   openGraph: {
-    title: "WidePlayer — A theatre for your browser",
+    title: "WidePlayer: Bigger videos on X, no fullscreen",
     description:
-      "Join 15,000+ creators and watchers who refuse to settle for tiny windows.",
+      "Watch videos on X the way they deserve. Wider, without fullscreen, without breaking your feed.",
     type: "website",
   },
 };
@@ -43,7 +44,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${inter.variable} font-body selection:bg-bright-green/20 selection:text-earth-green overflow-x-hidden`}
+        className={`${instrument.variable} ${inter.variable} font-body selection:bg-bright-green/20 selection:text-earth-green overflow-x-hidden`}
       >
         {children}
       </body>

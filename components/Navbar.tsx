@@ -4,11 +4,7 @@ export default function Navbar() {
       <div className="flex justify-between items-center px-6 md:px-12 py-5 max-w-7xl mx-auto">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-earth-green rounded-lg flex items-center justify-center">
-            <span className="material-symbols-outlined text-cream text-lg">
-              aspect_ratio
-            </span>
-          </div>
+          <img src="/logo.svg" alt="WidePlayer" className="w-8 h-8" />
           <span className="text-xl font-headline tracking-tight font-semibold italic">
             WidePlayer
           </span>

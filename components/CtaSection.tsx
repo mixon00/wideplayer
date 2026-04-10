@@ -1,3 +1,5 @@
+import { IconSquarePlus, IconUser } from "@tabler/icons-react";
+
 export default function CtaSection() {
   return (
     <section id="install" className="py-40 px-6">
@@ -17,42 +19,37 @@ export default function CtaSection() {
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-cream/70 mb-16 max-w-2xl mx-auto font-light leading-relaxed">
-            Join 15,000+ creators and watchers who refuse to settle for tiny
-            windows.
+            Watch videos on X the way they deserve. Wider, without fullscreen,
+            without breaking your feed.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
             {/* Primary button */}
             <button className="bg-cream text-earth-green px-12 py-5 rounded-full text-xl font-bold hover:bg-bright-green transition-all active:scale-95 shadow-2xl flex items-center space-x-3 cursor-pointer">
-              <span className="material-symbols-outlined">add_box</span>
+              <IconSquarePlus size={20} stroke={2} />
               <span>Add to Chrome</span>
             </button>
 
             {/* Avatar stack */}
             <div className="flex items-center -space-x-3">
               <div className="w-12 h-12 rounded-full border-4 border-earth-green bg-soft-bronze/60 flex items-center justify-center overflow-hidden">
-                <span className="material-symbols-outlined text-cream text-lg">
-                  person
-                </span>
+                <IconUser size={18} stroke={2} className="text-cream" />
               </div>
               <div className="w-12 h-12 rounded-full border-4 border-earth-green bg-muted-text/60 flex items-center justify-center overflow-hidden">
-                <span className="material-symbols-outlined text-cream text-lg">
-                  person
-                </span>
+                <IconUser size={18} stroke={2} className="text-cream" />
               </div>
               <div className="w-12 h-12 rounded-full border-4 border-earth-green bg-bright-green text-earth-green flex items-center justify-center text-[10px] font-bold">
-                15k+
+                free
               </div>
             </div>
           </div>
 
           {/* Browser support */}
           <div className="mt-12 flex flex-wrap justify-center gap-8 text-[10px] uppercase tracking-[0.3em] font-bold opacity-40">
-            <span>Safari</span>
+            <span>Chrome</span>
             <span>Firefox</span>
-            <span>Arc Browser</span>
-            <span>Edge</span>
+            <span>Safari</span>
           </div>
         </div>
       </div>
