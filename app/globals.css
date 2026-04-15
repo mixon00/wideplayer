@@ -25,6 +25,11 @@
   font-family: var(--font-inter), "Inter", sans-serif;
 }
 
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Global base */
 body {
   background-color: #FCF9F5;
