@@ -1,28 +1,24 @@
-import {
-  IconArrowsMaximize,
-  IconCircleCheck,
-  IconSparkles,
-  IconDeviceDesktop,
-  IconEye,
-} from "@tabler/icons-react";
+import { IconCircleCheck, IconSparkles } from "@tabler/icons-react";
 
 export default function BenefitsSection() {
   return (
-    <section id="benefits" className="py-40 bg-white">
+    <section id="benefits" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col space-y-32">
+        <div className="flex flex-col space-y-16">
 
-          {/* Row 1 — Expand card left, text right */}
+          {/* Row 1 — Video left, text right */}
           <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-32">
-            {/* Image column */}
+            {/* Video column */}
             <div className="lg:w-1/2 order-2 lg:order-1">
-              <div className="relative h-[400px] w-full bg-warm-neutral rounded-[3rem] overflow-hidden flex items-center justify-center border border-earth-green/5">
-                <div className="relative w-48 h-64 bg-cream border-4 border-earth-green rounded-xl flex items-center justify-center shadow-2xl transition-all duration-700 hover:w-[350px]">
-                  <IconArrowsMaximize size={40} stroke={1.5} className="text-soft-bronze" />
-                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-bright-green rounded-full flex items-center justify-center text-earth-green animate-bounce">
-                    <IconArrowsMaximize size={20} stroke={2} />
-                  </div>
-                </div>
+              <div className="w-full rounded-2xl overflow-hidden shadow-2xl">
+                <video
+                  src="/expand_demo.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ display: "block", width: "calc(100% + 2px)", marginLeft: "-1px" }}
+                />
               </div>
             </div>
 
@@ -53,7 +49,7 @@ export default function BenefitsSection() {
             </div>
           </div>
 
-          {/* Row 2 — Text left, image right */}
+          {/* Row 2 — Text left, video right */}
           <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-32">
             {/* Text column */}
             <div className="lg:w-1/2 space-y-6">
@@ -65,7 +61,6 @@ export default function BenefitsSection() {
                 Auto mode widens each video as it enters your viewport. Manual
                 mode puts an Expand button on every supported player.
               </p>
-              {/* Lives in your scroll info box */}
               <div className="bg-warm-neutral/40 p-8 rounded-3xl border border-earth-green/5 flex items-start space-x-6">
                 <div className="p-3 bg-white rounded-2xl shadow-sm flex-shrink-0">
                   <IconSparkles size={32} stroke={1.5} className="text-soft-bronze" />
@@ -83,27 +78,17 @@ export default function BenefitsSection() {
               </div>
             </div>
 
-            {/* Image column */}
-            <div className="lg:w-1/2 relative">
-              <div className="relative h-[450px] w-full">
-                {/* Desk image placeholder */}
-                <div className="absolute inset-0 w-full h-full rounded-[3rem] shadow-2xl border border-white/20 bg-gradient-to-br from-warm-neutral via-cream to-soft-bronze/20 overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center space-y-4 opacity-30">
-                      <IconDeviceDesktop size={80} stroke={1} className="text-earth-green" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Testimonial card */}
-                <div className="absolute -bottom-10 -left-10 bg-white p-6 rounded-3xl shadow-xl border border-earth-green/5 flex items-center space-x-4 max-w-xs">
-                  <div className="w-10 h-10 rounded-full bg-bright-green/20 flex items-center justify-center flex-shrink-0">
-                    <IconEye size={20} stroke={2} className="text-earth-green" />
-                  </div>
-                  <p className="text-xs font-semibold italic text-earth-green">
-                    &quot;Finally I can actually see what&apos;s happening in those clips.&quot;
-                  </p>
-                </div>
+            {/* Video column */}
+            <div className="lg:w-1/2">
+              <div className="w-full rounded-2xl overflow-hidden shadow-2xl">
+                <video
+                  src="/auto_expand_demo.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  style={{ display: "block", width: "calc(100% + 2px)", marginLeft: "-1px" }}
+                />
               </div>
             </div>
           </div>

@@ -76,8 +76,8 @@ export default function BrowserMockup() {
           style={{ background: "#FFFFFF", border: "1px solid #EFF3F4" }}
         >
 
-          {/* ── LEFT NAV COLUMN ── */}
-          <div className="w-1/3 flex flex-col px-5 py-5 gap-4" style={{ borderRight: "1px solid #EFF3F4" }}>
+          {/* ── LEFT NAV COLUMN ── hidden on mobile */}
+          <div className="hidden md:flex w-1/3 flex-col px-5 py-5 gap-4" style={{ borderRight: "1px solid #EFF3F4" }}>
             {/* X logo shape */}
             <div className="w-7 h-7 rounded mb-2" style={{ background: "#0F1419" }} />
             {/* Nav items: icon + label line */}
@@ -105,8 +105,8 @@ export default function BrowserMockup() {
             <div className="mt-3 h-9 w-full rounded-full" style={{ background: "#1D9BF0" }} />
           </div>
 
-          {/* ── CENTER FEED COLUMN ── */}
-          <div className="w-1/3 flex flex-col" style={{ borderRight: "1px solid #EFF3F4" }}>
+          {/* ── CENTER FEED COLUMN ── full width on mobile */}
+          <div className="flex-1 md:w-1/3 flex flex-col" style={{ borderRight: "1px solid #EFF3F4" }}>
             {/* Tab bar */}
             <div className="flex px-4 shrink-0" style={{ borderBottom: "1px solid #EFF3F4" }}>
               <div className="py-3 mr-5">
@@ -144,8 +144,8 @@ export default function BrowserMockup() {
             <TweetCard avatarColor="#EFF3F4" lines={[0.8, 1, 0.75]} />
           </div>
 
-          {/* ── RIGHT SIDEBAR COLUMN ── */}
-          <div className="w-1/3 flex flex-col px-4 py-4 gap-4" style={{ background: "#FFFFFF" }}>
+          {/* ── RIGHT SIDEBAR COLUMN ── hidden on mobile */}
+          <div className="hidden md:flex w-1/3 flex-col px-4 py-4 gap-4" style={{ background: "#FFFFFF" }}>
             {/* Search bar shape */}
             <div className="h-8 rounded-full shrink-0" style={{ background: "#EFF3F4" }} />
 
@@ -182,8 +182,8 @@ export default function BrowserMockup() {
             </div>
           </div>
 
-          {/* ── PLAYER OVERLAY ── */}
-          <div
+          {/* ── PLAYER OVERLAY ── rendered only after first measurement */}
+          {hasMeasured && <div
             className={`absolute z-20 rounded-xl overflow-hidden ${hasInteracted ? "transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
             style={{
               top: isWide ? wideTop : rect.top,
@@ -191,7 +191,6 @@ export default function BrowserMockup() {
               left: isWide ? wideLeft : rect.left,
               right: isWide ? wideRight : rect.right,
               background: "#0f0f0f",
-              visibility: hasMeasured ? "visible" : "hidden",
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-600/30 to-neutral-950" />
@@ -207,31 +206,31 @@ export default function BrowserMockup() {
             <div className="absolute bottom-2.5 left-3 right-3 h-1 rounded-full bg-white/20">
               <div className="h-full w-2/5 rounded-full bg-white/70" />
             </div>
-          </div>
+          </div>}
 
         </div>
       </div>
 
       {/* ── Toggle bar ── */}
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center bg-ui-bg p-4 rounded-2xl shadow-2xl border border-earth-green/10 space-x-6">
-        <span className="text-xs font-bold text-earth-green/40 uppercase tracking-widest whitespace-nowrap">
+      <div className="absolute -bottom-6 md:-bottom-10 left-1/2 -translate-x-1/2 flex items-center bg-ui-bg px-4 py-3 md:p-4 rounded-2xl shadow-2xl border border-earth-green/10 space-x-3 md:space-x-6">
+        <span className="text-[10px] md:text-xs font-bold text-earth-green/40 uppercase tracking-widest whitespace-nowrap">
           Normal View
         </span>
         <button
           onClick={() => { setHasInteracted(true); setIsWide((p) => !p); }}
-          className="group/t relative flex items-center w-24 h-10 bg-warm-neutral rounded-full p-1 cursor-pointer"
+          className="group/t relative flex items-center w-20 md:w-24 h-9 md:h-10 bg-warm-neutral rounded-full p-1 cursor-pointer"
           aria-label={isWide ? "Switch to normal view" : "Switch to wide player"}
         >
           <div className="absolute inset-0 bg-bright-green rounded-full opacity-0 group-hover/t:opacity-10 transition-opacity" />
           <div
-            className={`w-8 h-8 bg-earth-green rounded-full flex items-center justify-center text-cream shadow-md transition-all duration-500 ${
-              isWide ? "translate-x-14" : "translate-x-0"
+            className={`w-7 h-7 md:w-8 md:h-8 bg-earth-green rounded-full flex items-center justify-center text-cream shadow-md transition-all duration-500 ${
+              isWide ? "translate-x-[3.25rem] md:translate-x-14" : "translate-x-0"
             }`}
           >
             <span className="material-symbols-outlined text-sm">settings_ethernet</span>
           </div>
         </button>
-        <span className="text-xs font-bold text-earth-green uppercase tracking-widest whitespace-nowrap">
+        <span className="text-[10px] md:text-xs font-bold text-earth-green uppercase tracking-widest whitespace-nowrap">
           Wide Player
         </span>
       </div>
