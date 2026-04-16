@@ -12,6 +12,8 @@ interface PlayerRect {
 
 export default function BrowserMockup() {
   const [isWide, setIsWide] = useState(false);
+  const [hasMeasured, setHasMeasured] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const spacerRef = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState<PlayerRect>({ top: 0, height: 0, left: 0, right: 0, containerWidth: 0 });
@@ -27,6 +29,7 @@ export default function BrowserMockup() {
       right: c.right - s.right,
       containerWidth: c.width,
     });
+    setHasMeasured(true);
   }, []);
 
   useEffect(() => {
@@ -179,15 +182,16 @@ export default function BrowserMockup() {
             </div>
           </div>
 
-          {/* ── PLAYER OVERLAY ── always mounted so transition works */}
+          {/* ── PLAYER OVERLAY ── */}
           <div
-            className="absolute z-20 rounded-xl overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
+            className={`absolute z-20 rounded-xl overflow-hidden ${hasInteracted ? "transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
             style={{
               top: isWide ? wideTop : rect.top,
               height: isWide ? wideHeight : rect.height,
               left: isWide ? wideLeft : rect.left,
               right: isWide ? wideRight : rect.right,
               background: "#0f0f0f",
+              visibility: hasMeasured ? "visible" : "hidden",
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-600/30 to-neutral-950" />
@@ -214,7 +218,7 @@ export default function BrowserMockup() {
           Normal View
         </span>
         <button
-          onClick={() => setIsWide((p) => !p)}
+          onClick={() => { setHasInteracted(true); setIsWide((p) => !p); }}
           className="group/t relative flex items-center w-24 h-10 bg-warm-neutral rounded-full p-1 cursor-pointer"
           aria-label={isWide ? "Switch to normal view" : "Switch to wide player"}
         >
