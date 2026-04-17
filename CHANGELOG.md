@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.0.1 - 2026-04-17
+
+### Fixed
+
+- Firefox development builds now use `background.scripts`, so temporary installation works in Firefox without the `background.service_worker is currently disabled` error.
+- Project metadata now reflects `1.0.1` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 1.0.0 - 2026-04-09
 
 ### Improved
