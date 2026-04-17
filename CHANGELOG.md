@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 1.0.2 - 2026-04-17
+
+### Fixed
+
+- Firefox release manifests now declare no data collection and set a minimum Firefox version for the AMO data consent schema, which removes the missing `data_collection_permissions` validation error during submission.
+- Project metadata now reflects `1.0.2` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 1.0.1 - 2026-04-17
 
 ### Fixed
