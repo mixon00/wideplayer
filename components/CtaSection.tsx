@@ -26,8 +26,8 @@ const BROWSER_ICONS: Record<Browser, React.ComponentType<{ size?: number; stroke
 };
 
 const BROWSER_STORE_LINKS: Record<Browser, string> = {
-  Chrome: "#",
-  Firefox: "#",
+  Chrome: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
+  Firefox: "https://addons.mozilla.org/pl/firefox/addon/wideplayer/",
   Safari: "#",
   Edge: "#",
   Opera: "#",
@@ -95,12 +95,15 @@ export default function CtaSection() {
             {/* Split button: primary + dropdown */}
             <div className="relative flex items-stretch" ref={dropdownRef}>
               {/* Primary: Add to [Browser] */}
-              <button
+              <a
+                href={BROWSER_STORE_LINKS[browser]}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-cream text-earth-green pl-6 pr-5 py-4 md:pl-8 md:pr-6 md:py-5 rounded-l-full text-base md:text-xl font-bold hover:bg-bright-green transition-all active:scale-95 shadow-2xl flex items-center space-x-3 cursor-pointer whitespace-nowrap"
               >
                 {React.createElement(BROWSER_ICONS[browser], { size: 20, stroke: 1.5 })}
                 <span>Add to {browser}</span>
-              </button>
+              </a>
 
               {/* Divider */}
               <div className="w-px bg-earth-green/20 self-stretch" />
@@ -124,19 +127,29 @@ export default function CtaSection() {
                   <p className="px-4 pt-3 pb-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-muted-text">
                     Other browsers
                   </p>
-                  {otherBrowsers.map((b) => (
-                    <button
-                      key={b}
-                      onClick={() => {
-                        setBrowser(b);
-                        setDropdownOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-earth-green text-[15px] font-semibold hover:bg-warm-neutral transition-colors cursor-pointer"
-                    >
-                      {React.createElement(BROWSER_ICONS[b], { size: 18, stroke: 1.5 })}
-                      <span>{b}</span>
-                    </button>
-                  ))}
+                  {otherBrowsers.map((b) => {
+                    const hasLink = BROWSER_STORE_LINKS[b] !== "#";
+                    return (
+                      <button
+                        key={b}
+                        onClick={() => {
+                          if (!hasLink) return;
+                          setBrowser(b);
+                          setDropdownOpen(false);
+                        }}
+                        disabled={!hasLink}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] font-semibold transition-colors ${hasLink ? "text-earth-green hover:bg-warm-neutral cursor-pointer" : "text-earth-green/40 cursor-default"}`}
+                      >
+                        {React.createElement(BROWSER_ICONS[b], { size: 18, stroke: 1.5 })}
+                        <span className="flex-1 text-left">{b}</span>
+                        {!hasLink && (
+                          <span className="text-[9px] uppercase tracking-widest font-bold bg-earth-green/10 text-earth-green/50 px-2 py-0.5 rounded-full">
+                            Coming soon
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
