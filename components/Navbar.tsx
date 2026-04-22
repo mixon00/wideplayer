@@ -21,7 +21,7 @@ export default function Navbar() {
           href="/#install"
           className="bg-earth-green text-cream px-6 py-2.5 rounded-full text-[13px] font-semibold hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-earth-green/10 cursor-pointer"
         >
-          Get the Plugin
+          Get the Extension
         </a>
       </div>
     </nav>

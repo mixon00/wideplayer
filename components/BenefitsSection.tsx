@@ -54,7 +54,7 @@ export default function BenefitsSection() {
             {/* Text column */}
             <div className="lg:w-1/2 space-y-6">
               <h2 className="font-headline text-4xl md:text-6xl italic leading-tight">
-                Small plugin. <br />Big difference.
+                Small extension. <br />Big difference.
               </h2>
               <p className="text-xl text-muted-text font-light leading-relaxed">
                 WidePlayer moves the original video. No copies, no duplicates.

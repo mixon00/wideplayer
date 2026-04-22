@@ -1,28 +1,19 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import React from "react";
-import {
-  IconChevronDown,
-  IconBrandChrome,
-  IconBrandFirefox,
-  IconBrandSafari,
-  IconBrandEdge,
-  IconBrandOpera,
-  IconBrowser,
-} from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 type Browser = "Chrome" | "Firefox" | "Safari" | "Edge" | "Opera" | "Brave";
 
 const ALL_BROWSERS: Browser[] = ["Chrome", "Firefox", "Safari", "Edge", "Opera", "Brave"];
 
-const BROWSER_ICONS: Record<Browser, React.ComponentType<{ size?: number; stroke?: number }>> = {
-  Chrome: IconBrandChrome,
-  Firefox: IconBrandFirefox,
-  Safari: IconBrandSafari,
-  Edge: IconBrandEdge,
-  Opera: IconBrandOpera,
-  Brave: IconBrowser,
+const BROWSER_ICONS: Record<Browser, string> = {
+  Chrome: "https://svgl.app/library/chrome.svg",
+  Firefox: "https://svgl.app/library/firefox.svg",
+  Safari: "https://svgl.app/library/safari.svg",
+  Edge: "https://svgl.app/library/edge.svg",
+  Opera: "https://svgl.app/library/opera.svg",
+  Brave: "https://svgl.app/library/brave.svg",
 };
 
 const BROWSER_STORE_LINKS: Record<Browser, string> = {
@@ -31,7 +22,7 @@ const BROWSER_STORE_LINKS: Record<Browser, string> = {
   Safari: "#",
   Edge: "#",
   Opera: "#",
-  Brave: "#",
+  Brave: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
 };
 
 function detectBrowser(): Browser {
@@ -101,7 +92,7 @@ export default function CtaSection() {
                 rel="noopener noreferrer"
                 className="bg-cream text-earth-green pl-6 pr-5 py-4 md:pl-8 md:pr-6 md:py-5 rounded-l-full text-base md:text-xl font-bold hover:bg-bright-green transition-all active:scale-95 shadow-2xl flex items-center space-x-3 cursor-pointer whitespace-nowrap"
               >
-                {React.createElement(BROWSER_ICONS[browser], { size: 20, stroke: 1.5 })}
+                <img src={BROWSER_ICONS[browser]} alt={browser} width={20} height={20} />
                 <span>Add to {browser}</span>
               </a>
 
@@ -140,7 +131,7 @@ export default function CtaSection() {
                         disabled={!hasLink}
                         className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] font-semibold transition-colors ${hasLink ? "text-earth-green hover:bg-warm-neutral cursor-pointer" : "text-earth-green/40 cursor-default"}`}
                       >
-                        {React.createElement(BROWSER_ICONS[b], { size: 18, stroke: 1.5 })}
+                        <img src={BROWSER_ICONS[b]} alt={b} width={18} height={18} className={!hasLink ? "opacity-40" : ""} />
                         <span className="flex-1 text-left">{b}</span>
                         {!hasLink && (
                           <span className="text-[9px] uppercase tracking-widest font-bold bg-earth-green/10 text-earth-green/50 px-2 py-0.5 rounded-full">
