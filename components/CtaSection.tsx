@@ -20,7 +20,7 @@ const BROWSER_STORE_LINKS: Record<Browser, string> = {
   Chrome: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
   Firefox: "https://addons.mozilla.org/pl/firefox/addon/wideplayer/",
   Safari: "#",
-  Edge: "#",
+  Edge: "https://microsoftedge.microsoft.com/addons/detail/wideplayer-for-x/ejbhlmgehocbfnpolalkbgonfeggkohi",
   Opera: "#",
   Brave: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
 };
