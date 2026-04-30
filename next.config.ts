@@ -9,10 +9,6 @@ const nextConfig: NextConfig = {
         source: "/player.js",
         destination: "https://stats.mixon.dev/script.js",
       },
-      {
-        source: "/api/send",
-        destination: "https://stats.mixon.dev/api/send",
-      },
     ];
   },
 };
