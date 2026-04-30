@@ -2,12 +2,12 @@
 
 @theme {
   /* Colors */
-  --color-cream: #FCF9F5;
-  --color-warm-neutral: #F7F1EA;
-  --color-earth-green: #1E3A24;
+  --color-cream: #FBF7F1;
+  --color-warm-neutral: #F4EEE6;
+  --color-earth-green: #1B3B25;
   --color-bright-green: #4ADE80;
-  --color-soft-bronze: #C4A484;
-  --color-muted-text: #6B665F;
+  --color-soft-bronze: #C6A37F;
+  --color-muted-text: #837C74;
   --color-ui-bg: #FFFFFF;
 
   /* Font families — static fallbacks only; real values set via direct rules below */
@@ -32,9 +32,12 @@ html {
 
 /* Global base */
 body {
-  background-color: #FCF9F5;
-  color: #1E3A24;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.62), transparent 34rem),
+    #FBF7F1;
+  color: #1B3B25;
   -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 /* Frosted glass nav blur */
@@ -46,8 +49,18 @@ body {
 /* Browser mockup shadow */
 .browser-frame {
   box-shadow:
-    0 50px 100px -20px rgba(30, 58, 36, 0.15),
-    0 30px 60px -30px rgba(0, 0, 0, 0.2);
+    0 42px 90px -32px rgba(58, 43, 28, 0.28),
+    0 18px 48px -30px rgba(27, 59, 37, 0.28);
+}
+
+.video-card {
+  box-shadow:
+    0 30px 70px -42px rgba(58, 43, 28, 0.42),
+    0 14px 34px -24px rgba(27, 59, 37, 0.2);
+}
+
+.text-balance {
+  text-wrap: balance;
 }
 
 /* Material Symbols variable font settings */

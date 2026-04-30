@@ -50,18 +50,18 @@ export default function BrowserMockup() {
   const wideHeight = rect.height * 2.2;
 
   return (
-    <div className="relative max-w-5xl mx-auto mt-20">
+    <div className="relative mx-auto mt-2 w-full max-w-[820px] lg:mt-0 lg:w-[760px]">
       {/* ── Browser chrome shell ── */}
-      <div className="browser-frame rounded-2xl bg-white p-3 border border-earth-green/10">
+      <div className="browser-frame rounded-xl md:rounded-2xl bg-white p-2.5 md:p-3 border border-earth-green/10">
 
         {/* Traffic lights + URL */}
-        <div className="flex items-center justify-between mb-3 px-2">
+        <div className="flex items-center justify-between mb-2.5 px-2">
           <div className="flex space-x-2">
             <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
             <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
             <div className="w-3 h-3 rounded-full bg-[#28C840]" />
           </div>
-          <div className="px-6 py-1 rounded-md text-[10px] font-mono border" style={{ background: "#EFF3F4", borderColor: "#EFF3F4", color: "#536471" }}>
+          <div className="px-5 py-1 rounded-md text-[9px] font-mono border" style={{ background: "#EFF3F4", borderColor: "#EFF3F4", color: "#536471" }}>
             x.com/home
           </div>
           <div style={{ opacity: 0.4 }}>
@@ -72,12 +72,12 @@ export default function BrowserMockup() {
         {/* ── 3-column layout — relative container for the player overlay ── */}
         <div
           ref={containerRef}
-          className="relative flex rounded-lg overflow-hidden"
+          className="relative flex rounded-lg overflow-hidden min-h-[330px] md:min-h-0"
           style={{ background: "#FFFFFF", border: "1px solid #EFF3F4" }}
         >
 
           {/* ── LEFT NAV COLUMN ── hidden on mobile */}
-          <div className="hidden md:flex w-1/3 flex-col px-5 py-5 gap-4" style={{ borderRight: "1px solid #EFF3F4" }}>
+          <div className="hidden md:flex w-1/3 flex-col px-5 py-5 gap-3.5" style={{ borderRight: "1px solid #EFF3F4" }}>
             {/* X logo shape */}
             <div className="w-7 h-7 rounded mb-2" style={{ background: "#0F1419" }} />
             {/* Nav items: icon + label line */}
@@ -92,7 +92,7 @@ export default function BrowserMockup() {
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div
-                  className="w-6 h-6 rounded-lg shrink-0"
+                  className="w-5 h-5 rounded-md shrink-0"
                   style={{ background: item.active ? "#0F1419" : "#EFF3F4" }}
                 />
                 <div
@@ -102,18 +102,18 @@ export default function BrowserMockup() {
               </div>
             ))}
             {/* Post button */}
-            <div className="mt-3 h-9 w-full rounded-full" style={{ background: "#1D9BF0" }} />
+            <div className="mt-2 h-8 w-full rounded-full" style={{ background: "#1D9BF0" }} />
           </div>
 
           {/* ── CENTER FEED COLUMN ── full width on mobile */}
           <div className="flex-1 md:w-1/3 flex flex-col" style={{ borderRight: "1px solid #EFF3F4" }}>
             {/* Tab bar */}
             <div className="flex px-4 shrink-0" style={{ borderBottom: "1px solid #EFF3F4" }}>
-              <div className="py-3 mr-5">
+              <div className="py-2.5 mr-5">
                 <div className="h-2.5 w-10 rounded-full" style={{ background: "#0F1419" }} />
                 <div className="h-0.5 w-10 rounded-full mt-2" style={{ background: "#1D9BF0" }} />
               </div>
-              <div className="py-3">
+              <div className="py-2.5">
                 <div className="h-2.5 w-14 rounded-full" style={{ background: "#CFD9DE" }} />
               </div>
             </div>
@@ -212,19 +212,19 @@ export default function BrowserMockup() {
       </div>
 
       {/* ── Toggle bar ── */}
-      <div className="absolute -bottom-6 md:-bottom-10 left-1/2 -translate-x-1/2 flex items-center bg-ui-bg px-4 py-3 md:p-4 rounded-2xl shadow-2xl border border-earth-green/10 space-x-3 md:space-x-6">
+      <div className="absolute -bottom-7 md:-bottom-9 left-1/2 -translate-x-1/2 flex items-center bg-ui-bg px-3.5 py-3 md:px-4 md:py-3.5 rounded-xl md:rounded-2xl shadow-2xl border border-earth-green/10 space-x-3 md:space-x-5">
         <span className="text-[10px] md:text-xs font-bold text-earth-green/40 uppercase tracking-widest whitespace-nowrap">
           Normal View
         </span>
         <button
           onClick={() => { setHasInteracted(true); setIsWide((p) => !p); }}
-          className="group/t relative flex items-center w-20 md:w-24 h-9 md:h-10 bg-warm-neutral rounded-full p-1 cursor-pointer"
+          className="group/t relative flex items-center w-20 md:w-24 h-8 md:h-9 bg-warm-neutral rounded-full p-1 cursor-pointer"
           aria-label={isWide ? "Switch to normal view" : "Switch to wide player"}
         >
           <div className="absolute inset-0 bg-bright-green rounded-full opacity-0 group-hover/t:opacity-10 transition-opacity" />
           <div
-            className={`w-7 h-7 md:w-8 md:h-8 bg-earth-green rounded-full flex items-center justify-center text-cream shadow-md transition-all duration-500 ${
-              isWide ? "translate-x-[3.25rem] md:translate-x-14" : "translate-x-0"
+            className={`w-6 h-6 md:w-7 md:h-7 bg-earth-green rounded-full flex items-center justify-center text-cream shadow-md transition-all duration-500 ${
+              isWide ? "translate-x-12 md:translate-x-14" : "translate-x-0"
             }`}
           >
             <span className="material-symbols-outlined text-sm">settings_ethernet</span>
