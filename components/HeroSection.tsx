@@ -10,7 +10,7 @@ export default function HeroSection() {
       <div className="inline-flex items-center space-x-2 bg-warm-neutral/50 px-4 py-1.5 rounded-full mb-8 border border-earth-green/5">
         <span className="w-2 h-2 bg-bright-green rounded-full animate-pulse" />
         <span className="text-[11px] font-bold uppercase tracking-widest text-earth-green/60">
-          Now live on X · v1.0.0
+          Now live on X · v1.0.2
         </span>
       </div>
 
