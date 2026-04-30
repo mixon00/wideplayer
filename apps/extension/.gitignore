@@ -1,0 +1,12 @@
+.DS_Store
+node_modules/
+dist/
+release/
+build/
+coverage/
+web-ext-artifacts/
+.parcel-cache/
+.idea/
+.vscode/
+*.tsbuildinfo
+.wideplayer-build.json

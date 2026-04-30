@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WidePlayer for X</title>
+  </head>
+  <body>
+    <main class="popup-shell">
+      <header class="popup-header">
+        <p class="eyebrow">WidePlayer for X</p>
+        <h1>Quick settings</h1>
+      </header>
+
+      <section class="setting-card">
+        <label class="toggle-row" for="auto-enable">
+          <span class="setting-label">Auto enable</span>
+          <input id="auto-enable" type="checkbox" />
+        </label>
+      </section>
+
+      <section class="setting-card">
+        <div class="range-header">
+          <label for="width-range" class="setting-label">Width</label>
+          <output id="width-output" for="width-range">35%</output>
+        </div>
+        <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
+      </section>
+
+      <footer class="popup-footer">
+        <button id="open-options" class="secondary-button" type="button">Help</button>
+        <p id="status-text" class="status-text" role="status"></p>
+      </footer>
+      <p id="build-id" class="build-text">Build</p>
+    </main>
+
+    <script type="module" src="./popup/main.ts"></script>
+  </body>
+</html>
