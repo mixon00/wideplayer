@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-cream: #FBF7F1;
+  --color-warm-neutral: #F4EEE6;
+  --color-earth-green: #1B3B25;
+  --color-bright-green: #4ADE80;
+  --color-soft-bronze: #C6A37F;
+  --color-muted-text: #837C74;
+  --color-ui-bg: #FFFFFF;
+
+  /* Font families — static fallbacks only; real values set via direct rules below */
+  --font-headline: "Instrument Serif", serif;
+  --font-body: "Inter", sans-serif;
+}
+
+/* Font utilities — override @theme so var(--font-instrument/inter) from next/font resolves
+   correctly. These rules are unlayered (higher priority than @layer theme). */
+.font-headline {
+  font-family: var(--font-instrument), "Instrument Serif", "Instrument Serif Fallback", serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), "Inter", sans-serif;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global base */
+body {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.62), transparent 34rem),
+    #FBF7F1;
+  color: #1B3B25;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+/* Frosted glass nav blur */
+.apple-blur {
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+}
+
+/* Browser mockup shadow */
+.browser-frame {
+  box-shadow:
+    0 42px 90px -32px rgba(58, 43, 28, 0.28),
+    0 18px 48px -30px rgba(27, 59, 37, 0.28);
+}
+
+.video-card {
+  box-shadow:
+    0 30px 70px -42px rgba(58, 43, 28, 0.42),
+    0 14px 34px -24px rgba(27, 59, 37, 0.2);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Material Symbols variable font settings */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+}
