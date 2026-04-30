@@ -31,7 +31,7 @@ export default function CtaSection() {
 
           {/* CTAs */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <BrowserInstallButton variant="light" />
+            <BrowserInstallButton variant="light" location="cta" />
           </div>
 
           {/* Browser support */}

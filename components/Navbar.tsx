@@ -21,6 +21,8 @@ export default function Navbar() {
         {/* CTA button */}
         <a
           href="/#install"
+          data-umami-event="Nav CTA click"
+          data-umami-event-location="navbar"
           className="inline-flex items-center gap-2 bg-earth-green text-cream px-5 py-2.5 rounded-full text-[12px] font-semibold hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-earth-green/10 cursor-pointer"
         >
           <span>Get WidePlayer</span>

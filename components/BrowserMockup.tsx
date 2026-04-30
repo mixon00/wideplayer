@@ -220,6 +220,8 @@ export default function BrowserMockup() {
           onClick={() => { setHasInteracted(true); setIsWide((p) => !p); }}
           className="group/t relative flex items-center w-20 md:w-24 h-8 md:h-9 bg-warm-neutral rounded-full p-1 cursor-pointer"
           aria-label={isWide ? "Switch to normal view" : "Switch to wide player"}
+          data-umami-event="Hero mockup toggle"
+          data-umami-event-view={isWide ? "normal" : "wide"}
         >
           <div className="absolute inset-0 bg-bright-green rounded-full opacity-0 group-hover/t:opacity-10 transition-opacity" />
           <div

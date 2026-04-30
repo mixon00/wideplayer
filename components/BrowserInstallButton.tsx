@@ -71,7 +71,13 @@ const styles: Record<
   },
 };
 
-export default function BrowserInstallButton({ variant = "dark" }: { variant?: Variant }) {
+export default function BrowserInstallButton({
+  variant = "dark",
+  location,
+}: {
+  variant?: Variant;
+  location: "hero" | "cta";
+}) {
   const [browser, setBrowser] = useState<Browser>("Chrome");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -102,6 +108,9 @@ export default function BrowserInstallButton({ variant = "dark" }: { variant?: V
           href={currentLink}
           target="_blank"
           rel="noopener noreferrer"
+          data-umami-event="Install click"
+          data-umami-event-browser={browser}
+          data-umami-event-location={location}
           className={`${s.primary} inline-flex items-center gap-3 font-bold transition-all active:scale-95 whitespace-nowrap`}
         >
           <img src={BROWSER_ICONS[browser]} alt="" width={20} height={20} />
@@ -113,6 +122,8 @@ export default function BrowserInstallButton({ variant = "dark" }: { variant?: V
           type="button"
           disabled
           aria-disabled="true"
+          data-umami-event-browser={browser}
+          data-umami-event-location={location}
           className={`${s.disabledPrimary} inline-flex items-center gap-3 font-bold whitespace-nowrap`}
         >
           <img src={BROWSER_ICONS[browser]} alt="" width={20} height={20} className="opacity-55" />
@@ -127,6 +138,9 @@ export default function BrowserInstallButton({ variant = "dark" }: { variant?: V
         onClick={() => setDropdownOpen((v) => !v)}
         aria-label="Choose browser"
         aria-expanded={dropdownOpen}
+        data-umami-event="Browser menu toggle"
+        data-umami-event-browser={browser}
+        data-umami-event-location={location}
         className={`${s.trigger} inline-flex items-center font-bold transition-all active:scale-95`}
       >
         <IconChevronDown
@@ -156,6 +170,9 @@ export default function BrowserInstallButton({ variant = "dark" }: { variant?: V
                 }}
                 disabled={!hasLink}
                 aria-disabled={!hasLink}
+                data-umami-event={hasLink ? "Browser selected" : undefined}
+                data-umami-event-browser={b}
+                data-umami-event-location={location}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] font-semibold transition-colors ${
                   hasLink
                     ? "text-earth-green hover:bg-warm-neutral cursor-pointer"

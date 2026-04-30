@@ -34,7 +34,7 @@ export default function HeroSection() {
           </p>
 
           <div className="flex flex-col items-start gap-5">
-            <BrowserInstallButton variant="dark" />
+            <BrowserInstallButton variant="dark" location="hero" />
 
             <div className="flex items-center gap-2 text-sm text-muted-text">
               <IconShieldCheck size={17} stroke={1.9} className="text-earth-green/70" />

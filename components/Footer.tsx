@@ -35,6 +35,8 @@ export default function Footer() {
         </p>
         <a
           href="/faq"
+          data-umami-event="FAQ link click"
+          data-umami-event-location="footer"
           className="mt-4 md:mt-0 hover:text-earth-green/60 transition-colors"
         >
           FAQ
