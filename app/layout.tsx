@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const instrument = Instrument_Serif({
@@ -48,6 +49,11 @@ export default function RootLayout({
         className={`${instrument.variable} ${inter.variable} font-body selection:bg-bright-green/20 selection:text-earth-green overflow-x-hidden`}
       >
         {children}
+        <Script
+          src="/player.js"
+          strategy="afterInteractive"
+          data-website-id="39d96cb2-b9d4-4aa8-a362-720de21f7e67"
+        />
       </body>
     </html>
   );

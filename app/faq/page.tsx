@@ -20,7 +20,11 @@ const faqs = [
   },
   {
     q: "Does WidePlayer collect any data?",
-    a: "No. WidePlayer only stores your local extension settings, such as mode and preferred width.",
+    a: "No. The browser extension does not collect, transmit, or sell any user data. It only stores your local extension settings, such as mode and preferred width, on your device.",
+  },
+  {
+    q: "Do you use analytics on this website?",
+    a: "Only on this website. The site uses cookieless Umami analytics to understand anonymous page traffic. It does not use cookies, does not identify visitors, and is separate from the WidePlayer extension, which collects no data.",
   },
 ];
 
