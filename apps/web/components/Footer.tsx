@@ -33,14 +33,26 @@ export default function Footer() {
           </a>
           , for anyone tired of postage-stamp video.
         </p>
-        <a
-          href="/faq"
-          data-umami-event="FAQ link click"
-          data-umami-event-location="footer"
-          className="mt-4 md:mt-0 hover:text-earth-green/60 transition-colors"
-        >
-          FAQ
-        </a>
+        <div className="mt-4 flex items-center gap-5 md:mt-0">
+          <a
+            href="/faq"
+            data-umami-event="FAQ link click"
+            data-umami-event-location="footer"
+            className="hover:text-earth-green/60 transition-colors"
+          >
+            FAQ
+          </a>
+          <a
+            href="https://github.com/mixon00/wideplayer"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="GitHub link click"
+            data-umami-event-location="footer"
+            className="hover:text-earth-green/60 transition-colors"
+          >
+            GitHub
+          </a>
+        </div>
       </div>
     </footer>
   );
