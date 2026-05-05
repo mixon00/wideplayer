@@ -15,6 +15,7 @@ node_modules/
 
 # OpenNext / Cloudflare
 /.open-next/
+/.wrangler/
 
 # Env
 .env
