@@ -1,5 +1,5 @@
 import {
-  IconRefresh,
+  IconBrandGithub,
   IconShieldCheck,
   IconSparkles,
 } from "@tabler/icons-react";
@@ -45,8 +45,8 @@ export default function CtaSection() {
               Private
             </span>
             <span className="inline-flex items-center gap-2">
-              <IconRefresh size={15} stroke={1.8} />
-              Always improving
+              <IconBrandGithub size={15} stroke={1.8} />
+              Open source
             </span>
           </div>
         </div>
