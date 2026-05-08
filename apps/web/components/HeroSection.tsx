@@ -1,6 +1,5 @@
 import BrowserMockup from "./BrowserMockup";
 import BrowserInstallButton from "./BrowserInstallButton";
-import ProductHuntBadge from "./ProductHuntBadge";
 import { IconShieldCheck } from "@tabler/icons-react";
 
 export default function HeroSection() {
@@ -43,8 +42,6 @@ export default function HeroSection() {
               <span className="text-earth-green/25">·</span>
               <span>No data collected</span>
             </div>
-
-            <ProductHuntBadge />
           </div>
         </div>
 
