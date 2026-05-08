@@ -18,7 +18,11 @@ const inter = Inter({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wideplayer.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  alternates: { canonical: "/" },
   icons: { icon: "/logo.svg", shortcut: "/logo.svg" },
   title: "WidePlayer: Bigger videos on X, no fullscreen",
   description:
@@ -27,8 +31,24 @@ export const metadata: Metadata = {
     title: "WidePlayer: Bigger videos on X, no fullscreen",
     description:
       "Watch videos on X the way they deserve. Wider, without fullscreen, without breaking your feed.",
+    url: "/",
+    siteName: "WidePlayer",
     type: "website",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "WidePlayer browser extension preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WidePlayer: Bigger videos on X, no fullscreen",
+    description:
+      "Watch videos on X the way they deserve. Wider, without fullscreen, without breaking your feed.",
+    images: ["/og-image.png"],
   },
 };
 
