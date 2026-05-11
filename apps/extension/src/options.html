@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WidePlayer for X — About &amp; Help</title>
+    <title>WidePlayer — About &amp; Help</title>
   </head>
   <body>
     <main class="page-shell">
       <section class="page-header">
-        <p class="eyebrow">WidePlayer for X</p>
+        <p class="eyebrow">WidePlayer</p>
         <h1>About &amp; Help</h1>
-        <p class="lead">WidePlayer makes supported in-feed videos on X wider without fullscreen. Use the popup for quick settings.</p>
+        <p class="lead">WidePlayer makes supported in-feed videos wider without going fullscreen. Use the popup for quick settings.</p>
       </section>
 
       <section class="panel">
         <div class="panel-copy">
           <h2>About</h2>
-          <p>WidePlayer works on supported in-feed videos on <strong>x.com</strong>. It moves the original player into a wider overlay while keeping the feed layout stable.</p>
+          <p>WidePlayer expands supported in-feed videos into a wider overlay while keeping the feed layout stable. X.com is supported now, Mastodon is in progress, and Bluesky plus LinkedIn are planned.</p>
           <p>The popup is the main place for quick settings. You can switch between Auto and Manual mode there and adjust the preferred width at any time.</p>
         </div>
       </section>
@@ -28,23 +28,31 @@
         <div class="faq-list">
           <details class="faq-item">
             <summary>Where does WidePlayer work?</summary>
-            <p>On supported in-feed videos on x.com.</p>
+            <p>WidePlayer works on supported in-feed videos. X.com is supported now. Mastodon support is in progress. Bluesky and LinkedIn are planned.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Which platforms are supported right now?</summary>
+            <p>X.com is supported today. Mastodon is in progress. Bluesky and LinkedIn are on the roadmap, but work has not started yet.</p>
           </details>
           <details class="faq-item">
             <summary>Why doesn’t it appear on every video?</summary>
-            <p>Some X layouts are still unsupported. WidePlayer skips videos it cannot enhance safely instead of forcing the UI into a broken state.</p>
+            <p>Some layouts and embedded players are still unsupported. WidePlayer skips videos it cannot enhance safely instead of forcing a broken layout.</p>
           </details>
           <details class="faq-item">
             <summary>What’s the difference between Auto and Manual mode?</summary>
-            <p>Auto mode expands supported videos automatically. Manual mode leaves videos alone until you use the per-video control on the player.</p>
+            <p>Auto mode expands supported videos as you scroll. Manual mode leaves videos at their normal size until you use the player control.</p>
           </details>
           <details class="faq-item">
-            <summary>Do width changes apply immediately?</summary>
-            <p>Yes. While you drag the width slider in the popup, active players preview the change live before the final value is saved.</p>
+            <summary>Can I control how wide videos get?</summary>
+            <p>Yes. The popup includes a width slider. Active players preview the change while you drag, then save the final value when you release it.</p>
           </details>
           <details class="faq-item">
             <summary>Does WidePlayer collect any data?</summary>
-            <p>No. WidePlayer only stores your local extension settings, such as mode and preferred width.</p>
+            <p>No. The browser extension does not collect, transmit, or sell any user data. It only stores your local extension settings, such as mode and preferred width, on your device.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is WidePlayer open source?</summary>
+            <p>Yes. The project is open source and available on GitHub. The extension is built in public so the code can be reviewed.</p>
           </details>
         </div>
       </section>
@@ -62,7 +70,7 @@
       </section>
 
       <section class="page-footer">
-        <p class="footer-copy">If WidePlayer does not appear right away after installing or updating, reload X and try again.</p>
+        <p class="footer-copy">If WidePlayer does not appear right away after installing or updating, reload the supported platform and try again.</p>
         <p id="build-id" class="build-text">Build</p>
       </section>
     </main>

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 1.0.3 - 2026-05-11
+
+### Improved
+
+- Extension name, description, options copy, FAQ, colors, and generated icons now match the current WidePlayer product state.
+- Build metadata is tracked again after the monorepo move.
+- Project metadata now reflects `1.0.3` across `package.json`, `package-lock.json`, and all browser manifests.
+
 ## 1.0.2 - 2026-04-17
 
 ### Fixed

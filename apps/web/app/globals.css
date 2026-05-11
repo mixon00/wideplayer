@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-cream: #FBF7F1;
-  --color-warm-neutral: #F4EEE6;
-  --color-earth-green: #1B3B25;
-  --color-bright-green: #4ADE80;
-  --color-soft-bronze: #C6A37F;
-  --color-muted-text: #837C74;
+  --color-paper: #fffdfb;
+  --color-soft: #f7f8ff;
+  --color-ink: #07084a;
+  --color-ink-muted: #51537f;
+  --color-primary: #2839ff;
+  --color-violet: #704cff;
+  --color-lilac: #efe9ff;
+  --color-orange: #ff5a14;
+  --color-mint: #2fc980;
+  --color-sky: #1d9bf0;
   --color-ui-bg: #FFFFFF;
 
-  /* Font families — static fallbacks only; real values set via direct rules below */
   --font-headline: "Instrument Serif", serif;
   --font-body: "Inter", sans-serif;
 }
 
-/* Font utilities — override @theme so var(--font-instrument/inter) from next/font resolves
-   correctly. These rules are unlayered (higher priority than @layer theme). */
 .font-headline {
   font-family: var(--font-instrument), "Instrument Serif", "Instrument Serif Fallback", serif;
 }
@@ -33,9 +33,9 @@ html {
 /* Global base */
 body {
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.62), transparent 34rem),
-    #FBF7F1;
-  color: #1B3B25;
+    linear-gradient(180deg, rgba(247, 248, 255, 0.72) 0%, rgba(255, 253, 251, 0) 28rem),
+    #fffdfb;
+  color: #07084a;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
 }
@@ -49,14 +49,14 @@ body {
 /* Browser mockup shadow */
 .browser-frame {
   box-shadow:
-    0 42px 90px -32px rgba(58, 43, 28, 0.28),
-    0 18px 48px -30px rgba(27, 59, 37, 0.28);
+    0 34px 90px -46px rgba(7, 8, 74, 0.52),
+    0 16px 44px -30px rgba(40, 57, 255, 0.22);
 }
 
 .video-card {
   box-shadow:
-    0 30px 70px -42px rgba(58, 43, 28, 0.42),
-    0 14px 34px -24px rgba(27, 59, 37, 0.2);
+    0 24px 70px -46px rgba(7, 8, 74, 0.42),
+    0 12px 34px -24px rgba(40, 57, 255, 0.18);
 }
 
 .text-balance {
@@ -66,4 +66,18 @@ body {
 /* Material Symbols variable font settings */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+}
+
+.dot-field {
+  background-image: radial-gradient(circle, rgba(255, 90, 20, 0.24) 1.35px, transparent 1.35px);
+  background-size: 18px 18px;
+}
+
+.button-gradient {
+  background: linear-gradient(135deg, #064bff 0%, #6d43ff 100%);
+}
+
+.brand-sweep {
+  background:
+    linear-gradient(135deg, rgba(255, 90, 20, 0.96), rgba(255, 148, 28, 0.92) 24%, rgba(111, 76, 255, 0.96) 58%, rgba(40, 57, 255, 0.95) 100%);
 }

@@ -1,58 +1,65 @@
+import { IconBrandGithub, IconBrandX, IconHeart } from "@tabler/icons-react";
+
+const footerLinks = [
+  { href: "/#how", label: "How it works" },
+  { href: "/#platforms", label: "Platforms" },
+  { href: "/#open-source", label: "Open source" },
+  { href: "/changelog", label: "Changelog" },
+  { href: "/faq", label: "FAQ" },
+];
 
 export default function Footer() {
   return (
-    <footer className="py-20 md:py-24 px-5 md:px-6 border-t border-earth-green/5">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
-        {/* Brand column — spans 2 cols on desktop */}
-        <div className="md:col-span-2">
-          <div className="flex items-center space-x-2 mb-5">
-            <img src="/logo.svg" alt="WidePlayer" className="w-6 h-6" />
-            <span className="text-xl font-headline italic font-bold">
+    <footer id="faq" className="bg-paper px-5 pb-8 pt-3">
+      <div className="mx-auto grid max-w-6xl gap-8 border-t border-ink/8 pt-6 md:grid-cols-[1fr_auto_auto] md:items-start">
+        <div>
+          <div className="mb-3 flex items-center space-x-2">
+            <img src="/logo.svg" alt="WidePlayer" className="h-7 w-7" />
+            <span className="font-headline text-2xl font-semibold italic text-ink">
               WidePlayer
             </span>
           </div>
-          <p className="text-sm text-muted-text font-light max-w-sm mb-8 leading-relaxed">
-            A focused tool for X power users. WidePlayer brings wider, immersive
-            video to your feed, without ever leaving it. Built with love and
-            coffee.
+          <p className="max-w-sm text-sm font-medium leading-relaxed text-ink-muted">
+            Wider in-feed video across platforms you use. Open source. Privacy
+            first. Always free.
           </p>
         </div>
-      </div>
 
-      {/* Copyright bar */}
-      <div className="max-w-6xl mx-auto pt-14 flex flex-col md:flex-row justify-between items-center text-[9px] font-bold uppercase tracking-[0.18em] text-earth-green/30">
-        <p>
-          © 2026 WidePlayer · Made by{" "}
-          <a
-            href="https://x.com/mat_misztoft"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-earth-green hover:text-earth-green/60 transition-colors"
-          >
-            @mat_misztoft
-          </a>
-          , for anyone tired of postage-stamp video.
-        </p>
-        <div className="mt-4 flex items-center gap-5 md:mt-0">
-          <a
-            href="/faq"
-            data-umami-event="FAQ link click"
-            data-umami-event-location="footer"
-            className="hover:text-earth-green/60 transition-colors"
-          >
-            FAQ
-          </a>
+        <nav className="flex flex-wrap gap-x-8 gap-y-3 text-[12px] font-bold text-ink md:flex-nowrap">
+          {footerLinks.map((link) => (
+            <a key={link.href} href={link.href} className="whitespace-nowrap hover:text-primary">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex gap-5 md:justify-end">
           <a
             href="https://github.com/mixon00/wideplayer"
             target="_blank"
             rel="noopener noreferrer"
-            data-umami-event="GitHub link click"
-            data-umami-event-location="footer"
-            className="hover:text-earth-green/60 transition-colors"
+            aria-label="WidePlayer on GitHub"
+            className="text-ink transition-colors hover:text-primary"
           >
-            GitHub
+            <IconBrandGithub size={24} />
+          </a>
+          <a
+            href="https://x.com/mat_misztoft"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WidePlayer author on X"
+            className="text-ink transition-colors hover:text-primary"
+          >
+            <IconBrandX size={24} />
           </a>
         </div>
+      </div>
+
+      <div className="mx-auto mt-8 flex max-w-6xl flex-col gap-3 text-[11px] font-medium text-ink-muted md:flex-row md:items-center md:justify-end">
+        <p>© 2026 WidePlayer</p>
+        <p className="inline-flex items-center gap-1">
+          Made with <IconHeart size={13} className="fill-orange text-orange" /> and open source.
+        </p>
       </div>
     </footer>
   );

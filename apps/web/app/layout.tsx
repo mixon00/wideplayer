@@ -67,7 +67,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${instrument.variable} ${inter.variable} font-body selection:bg-bright-green/20 selection:text-earth-green overflow-x-hidden`}
+        className={`${instrument.variable} ${inter.variable} font-body selection:bg-violet/18 selection:text-ink overflow-x-hidden`}
       >
         {children}
         <Script

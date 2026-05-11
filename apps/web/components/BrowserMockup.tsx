@@ -1,276 +1,255 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
+import {
+  IconBell,
+  IconBookmark,
+  IconBrandBluesky,
+  IconBrandLinkedin,
+  IconBrandMastodon,
+  IconBrandX,
+  IconChartBar,
+  IconHeart,
+  IconHome,
+  IconMail,
+  IconMaximize,
+  IconMessageCircle,
+  IconPlayerPlayFilled,
+  IconRepeat,
+  IconSearch,
+  IconShare3,
+  IconUserCircle,
+  IconUsers,
+  IconVolume,
+} from "@tabler/icons-react";
 
-interface PlayerRect {
-  top: number;
-  height: number;
-  left: number;
-  right: number;
-  containerWidth: number;
-}
+const navIcons = [IconBrandX, IconHome, IconSearch, IconBell, IconMail, IconBookmark, IconUsers, IconUserCircle];
+
+const platformBadges = [
+  { name: "X.com", status: "Available now", icon: IconBrandX, className: "bg-black text-white" },
+  { name: "Mastodon", status: "Coming soon", icon: IconBrandMastodon, className: "bg-violet text-white" },
+  { name: "Bluesky", status: "Coming soon", icon: IconBrandBluesky, className: "bg-sky text-white" },
+  { name: "LinkedIn", status: "Coming soon", icon: IconBrandLinkedin, className: "bg-[#0a66c2] text-white" },
+];
 
 export default function BrowserMockup() {
-  const [isWide, setIsWide] = useState(false);
-  const [hasMeasured, setHasMeasured] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
-  const [rect, setRect] = useState<PlayerRect>({ top: 0, height: 0, left: 0, right: 0, containerWidth: 0 });
-
-  const measure = useCallback(() => {
-    if (!spacerRef.current || !containerRef.current) return;
-    const s = spacerRef.current.getBoundingClientRect();
-    const c = containerRef.current.getBoundingClientRect();
-    setRect({
-      top: s.top - c.top,
-      height: s.height,
-      left: s.left - c.left,
-      right: c.right - s.right,
-      containerWidth: c.width,
-    });
-    setHasMeasured(true);
-  }, []);
-
-  useEffect(() => {
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (spacerRef.current) ro.observe(spacerRef.current);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [measure]);
-
-  // Expand player by 90% in both dimensions (proportional), centered
-  const baseWidth = rect.containerWidth - rect.left - rect.right;
-  const wDelta = (baseWidth * 1.2) / 2;
-  const hDelta = (rect.height * 1.2) / 2;
-  const wideLeft = Math.max(0, rect.left - wDelta);
-  const wideRight = Math.max(0, rect.right - wDelta);
-  const wideTop = Math.max(0, rect.top - hDelta);
-  const wideHeight = rect.height * 2.2;
+  const [isEnabled, setIsEnabled] = useState(true);
 
   return (
-    <div className="relative mx-auto mt-2 w-full max-w-[820px] lg:mt-0 lg:w-[760px]">
-      {/* ── Browser chrome shell ── */}
-      <div className="browser-frame rounded-xl md:rounded-2xl bg-white p-2.5 md:p-3 border border-earth-green/10">
-
-        {/* Traffic lights + URL */}
-        <div className="flex items-center justify-between mb-2.5 px-2">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-            <div className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-            <div className="w-3 h-3 rounded-full bg-[#28C840]" />
-          </div>
-          <div className="px-5 py-1 rounded-md text-[9px] font-mono border" style={{ background: "#EFF3F4", borderColor: "#EFF3F4", color: "#536471" }}>
-            x.com/home
-          </div>
-          <div style={{ opacity: 0.4 }}>
-            <span className="material-symbols-outlined text-sm">more_horiz</span>
-          </div>
-        </div>
-
-        {/* ── 3-column layout — relative container for the player overlay ── */}
-        <div
-          ref={containerRef}
-          className="relative flex rounded-lg overflow-hidden min-h-[330px] md:min-h-0"
-          style={{ background: "#FFFFFF", border: "1px solid #EFF3F4" }}
-        >
-
-          {/* ── LEFT NAV COLUMN ── hidden on mobile */}
-          <div className="hidden md:flex w-1/3 flex-col px-5 py-5 gap-3.5" style={{ borderRight: "1px solid #EFF3F4" }}>
-            {/* X logo shape */}
-            <div className="w-7 h-7 rounded mb-2" style={{ background: "#0F1419" }} />
-            {/* Nav items: icon + label line */}
-            {[
-              { w: "58%", active: true },
-              { w: "68%" },
-              { w: "74%" },
-              { w: "52%" },
-              { w: "63%" },
-              { w: "70%" },
-              { w: "45%" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div
-                  className="w-5 h-5 rounded-md shrink-0"
-                  style={{ background: item.active ? "#0F1419" : "#EFF3F4" }}
-                />
-                <div
-                  className="h-2.5 rounded"
-                  style={{ width: item.w, background: item.active ? "#0F1419" : "#CFD9DE" }}
-                />
-              </div>
+    <div className="relative mx-auto w-full max-w-[680px] lg:w-[660px]">
+      <div className="browser-frame overflow-hidden rounded-[1.4rem] border border-ink/10 bg-white">
+        <div className="relative grid min-h-[570px] grid-cols-[3.4rem_minmax(0,1fr)] md:grid-cols-[3.4rem_minmax(0,1fr)_9.2rem]">
+          <aside className="flex flex-col items-center gap-6 bg-ink px-3 py-6 text-white">
+            {navIcons.map((Icon, index) => (
+              <Icon
+                key={index}
+                size={22}
+                stroke={index === 0 ? 1.5 : 2}
+                className={index === 0 ? "mb-2" : "opacity-95"}
+              />
             ))}
-            {/* Post button */}
-            <div className="mt-2 h-8 w-full rounded-full" style={{ background: "#1D9BF0" }} />
-          </div>
+          </aside>
 
-          {/* ── CENTER FEED COLUMN ── full width on mobile */}
-          <div className="flex-1 md:w-1/3 flex flex-col" style={{ borderRight: "1px solid #EFF3F4" }}>
-            {/* Tab bar */}
-            <div className="flex px-4 shrink-0" style={{ borderBottom: "1px solid #EFF3F4" }}>
-              <div className="py-2.5 mr-5">
-                <div className="h-2.5 w-10 rounded-full" style={{ background: "#0F1419" }} />
-                <div className="h-0.5 w-10 rounded-full mt-2" style={{ background: "#1D9BF0" }} />
+          <section className="min-w-0 border-r border-ink/8 bg-white">
+            <div className="grid grid-cols-2 border-b border-ink/8 text-center text-[11px] font-bold text-ink">
+              <div className="relative py-5">
+                For you
+                <span className="absolute bottom-0 left-1/2 h-0.5 w-16 -translate-x-1/2 rounded-full bg-primary" />
               </div>
-              <div className="py-2.5">
-                <div className="h-2.5 w-14 rounded-full" style={{ background: "#CFD9DE" }} />
-              </div>
+              <div className="py-5 text-ink-muted">Following</div>
             </div>
 
-            {/* Tweet card 1 */}
-            <TweetCard avatarColor="#CFD9DE" lines={[0.75, 1, 0.82]} />
+            <Post
+              author="National Parks"
+              handle="@nationalparks"
+              copy="Morning light in the mountains."
+              avatar="bg-[linear-gradient(135deg,#ca7839,#195d3d)]"
+              primary
+              expanded={isEnabled}
+            />
+            <Post
+              author="Tech Explorers"
+              handle="@TechExplorers"
+              copy="Tiny details, big impact."
+              avatar="bg-[linear-gradient(135deg,#111827,#ff7a18)]"
+            />
+          </section>
 
-            {/* Tweet card 2 — holds the invisible player spacer */}
-            <div className="mx-3 my-2 p-3 flex gap-2 shrink-0" style={{ borderRadius: "16px", border: "1px solid #EFF3F4" }}>
-              <div className="w-7 h-7 rounded-full shrink-0 mt-0.5" style={{ background: "#CFD9DE" }} />
-              <div className="flex-1 space-y-1.5 min-w-0">
-                <div className="h-2 rounded" style={{ width: "65%", background: "#0F1419", opacity: 0.15 }} />
-                <div className="h-1.5 rounded" style={{ width: "85%", background: "#EFF3F4" }} />
-                {/* invisible spacer that the player overlay matches */}
-                <div ref={spacerRef} className="w-full" style={{ aspectRatio: "16/9" }} />
-                <div className="flex gap-3 pt-1">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="h-1.5 w-4 rounded" style={{ background: "#EFF3F4" }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Tweet card 3 */}
-            <TweetCard avatarColor="#CFD9DE" lines={[0.7, 1, 0.6, 0.8]} />
-
-            {/* Tweet card 4 */}
-            <TweetCard avatarColor="#EFF3F4" lines={[0.8, 1, 0.75]} />
-          </div>
-
-          {/* ── RIGHT SIDEBAR COLUMN ── hidden on mobile */}
-          <div className="hidden md:flex w-1/3 flex-col px-4 py-4 gap-4" style={{ background: "#FFFFFF" }}>
-            {/* Search bar shape */}
-            <div className="h-8 rounded-full shrink-0" style={{ background: "#EFF3F4" }} />
-
-            {/* Trends card */}
-            <div className="p-4 space-y-3.5 shrink-0" style={{ background: "#F7F9F9", borderRadius: "16px" }}>
-              <div className="h-3 w-16 rounded" style={{ background: "#0F1419", opacity: 0.8 }} />
+          <aside className="hidden bg-white px-5 py-9 md:block">
+            <h3 className="mb-5 text-sm font-black text-ink">What&apos;s happening</h3>
+            <div className="grid gap-5 text-[11px]">
               {[
-                { cat: "55%", label: "70%", count: "35%" },
-                { cat: "50%", label: "60%", count: "30%" },
-                { cat: "60%", label: "75%", count: "40%" },
-                { cat: "48%", label: "65%", count: "28%" },
-              ].map((t, i) => (
-                <div key={i} className="space-y-1">
-                  <div className="h-1.5 rounded" style={{ width: t.cat, background: "#CFD9DE" }} />
-                  <div className="h-2 rounded" style={{ width: t.label, background: "#0F1419", opacity: 0.7 }} />
-                  <div className="h-1.5 rounded" style={{ width: t.count, background: "#CFD9DE" }} />
+                ["Trending", "AI at Work", "15.2K posts"],
+                ["Trending", "Design Inspo", "8,908 posts"],
+                ["Trending", "Built in Public", "2,341 posts"],
+              ].map(([label, title, count]) => (
+                <div key={title}>
+                  <p className="text-ink-muted">{label}</p>
+                  <p className="mt-1 font-black text-ink">{title}</p>
+                  <p className="mt-1 text-ink-muted">{count}</p>
                 </div>
               ))}
+              <a href="#platforms" className="font-bold text-primary">
+                Show more
+              </a>
             </div>
-
-            {/* Who to follow card */}
-            <div className="p-4 space-y-3 shrink-0" style={{ background: "#F7F9F9", borderRadius: "16px" }}>
-              <div className="h-3 w-20 rounded" style={{ background: "#0F1419", opacity: 0.8 }} />
-              {["#CFD9DE", "#B9C9D4", "#CFD9DE"].map((color, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full shrink-0" style={{ background: color }} />
-                  <div className="flex-1 space-y-1 min-w-0">
-                    <div className="h-2 rounded" style={{ width: "70%", background: "#0F1419", opacity: 0.6 }} />
-                    <div className="h-1.5 rounded" style={{ width: "50%", background: "#CFD9DE" }} />
-                  </div>
-                  <div className="h-6 w-12 rounded-full shrink-0" style={{ background: "#0F1419" }} />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── PLAYER OVERLAY ── rendered only after first measurement */}
-          {hasMeasured && <div
-            className={`absolute z-20 rounded-xl overflow-hidden ${hasInteracted ? "transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]" : ""}`}
-            style={{
-              top: isWide ? wideTop : rect.top,
-              height: isWide ? wideHeight : rect.height,
-              left: isWide ? wideLeft : rect.left,
-              right: isWide ? wideRight : rect.right,
-              background: "#0f0f0f",
-            }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-neutral-600/30 to-neutral-950" />
-
-            {/* Play button */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/20 shadow-lg">
-                <span className="material-symbols-outlined text-white text-xl">play_arrow</span>
-              </div>
-            </div>
-
-            {/* Progress bar */}
-            <div className="absolute bottom-2.5 left-3 right-3 h-1 rounded-full bg-white/20">
-              <div className="h-full w-2/5 rounded-full bg-white/70" />
-            </div>
-          </div>}
+          </aside>
 
         </div>
       </div>
 
-      {/* ── Toggle bar ── */}
-      <div className="absolute -bottom-7 md:-bottom-9 left-1/2 -translate-x-1/2 flex items-center bg-ui-bg px-3.5 py-3 md:px-4 md:py-3.5 rounded-xl md:rounded-2xl shadow-2xl border border-earth-green/10 space-x-3 md:space-x-5">
-        <span className="text-[10px] md:text-xs font-bold text-earth-green/40 uppercase tracking-widest whitespace-nowrap">
-          Normal View
-        </span>
-        <button
-          onClick={() => { setHasInteracted(true); setIsWide((p) => !p); }}
-          className="group/t relative flex items-center w-20 md:w-24 h-8 md:h-9 bg-warm-neutral rounded-full p-1 cursor-pointer"
-          aria-label={isWide ? "Switch to normal view" : "Switch to wide player"}
-          data-umami-event="Hero mockup toggle"
-          data-umami-event-view={isWide ? "normal" : "wide"}
+      <div className="relative z-20 mx-auto -mt-12 grid w-[min(92%,31rem)] grid-cols-4 overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-[0_24px_70px_-34px_rgba(7,8,74,0.45)]">
+        {platformBadges.map(({ name, status, icon: Icon, className }) => (
+          <div key={name} className="grid gap-2 border-r border-ink/8 px-3 py-4 text-center last:border-r-0">
+            <span className={`mx-auto flex h-8 w-8 items-center justify-center rounded-lg ${className}`}>
+              <Icon size={19} />
+            </span>
+            <span className="text-[11px] font-black text-ink">{name}</span>
+            <span className="text-[10px] font-medium text-ink-muted">{status}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <label
+          className="group inline-flex cursor-pointer items-center gap-4 rounded-2xl border border-ink/10 bg-white px-4 py-3 shadow-[0_18px_48px_-34px_rgba(7,8,74,0.42)] transition-all hover:border-primary/25"
         >
-          <div className="absolute inset-0 bg-bright-green rounded-full opacity-0 group-hover/t:opacity-10 transition-opacity" />
-          <div
-            className={`w-6 h-6 md:w-7 md:h-7 bg-earth-green rounded-full flex items-center justify-center text-cream shadow-md transition-all duration-500 ${
-              isWide ? "translate-x-12 md:translate-x-14" : "translate-x-0"
+          <input
+            type="checkbox"
+            checked={isEnabled}
+            onChange={(event) => setIsEnabled(event.currentTarget.checked)}
+            className="pointer-events-none absolute h-0 w-0 opacity-0"
+          />
+          <span className="grid text-left">
+            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+              WidePlayer
+            </span>
+            <span className="text-sm font-black text-ink">
+              {isEnabled ? "Extension enabled" : "Extension disabled"}
+            </span>
+          </span>
+          <span
+            className={`relative h-8 w-16 rounded-full p-1 transition-colors ${
+              isEnabled ? "button-gradient" : "bg-ink/12"
             }`}
           >
-            <span className="material-symbols-outlined text-sm">settings_ethernet</span>
-          </div>
-        </button>
-        <span className="text-[10px] md:text-xs font-bold text-earth-green uppercase tracking-widest whitespace-nowrap">
-          Wide Player
-        </span>
+            <span
+              className={`block h-6 w-6 rounded-full bg-white shadow-md transition-transform duration-300 ${
+                isEnabled ? "translate-x-8" : "translate-x-0"
+              }`}
+            />
+          </span>
+        </label>
       </div>
     </div>
   );
 }
 
-/* ── Reusable tweet card skeleton ── */
-function TweetCard({
-  avatarColor,
-  lines,
+function Post({
+  author,
+  handle,
+  copy,
+  avatar,
+  primary = false,
+  expanded = false,
 }: {
-  avatarColor: string;
-  lines: number[];
+  author: string;
+  handle: string;
+  copy: string;
+  avatar: string;
+  primary?: boolean;
+  expanded?: boolean;
 }) {
   return (
-    <div
-      className="mx-3 my-2 p-3 flex gap-2 shrink-0"
-      style={{ borderRadius: "16px", border: "1px solid #EFF3F4" }}
-    >
-      <div
-        className="w-7 h-7 rounded-full shrink-0 mt-0.5"
-        style={{ background: avatarColor }}
-      />
-      <div className="flex-1 space-y-1.5 min-w-0">
-        <div className="h-2 rounded" style={{ width: "70%", background: "#0F1419", opacity: 0.15 }} />
-        {lines.map((w, i) => (
-          <div
-            key={i}
-            className="h-1.5 rounded"
-            style={{ width: `${w * 100}%`, background: "#EFF3F4" }}
-          />
-        ))}
-        <div className="flex gap-3 pt-1">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-1.5 w-4 rounded" style={{ background: "#EFF3F4" }} />
-          ))}
+    <article className="border-b border-ink/8 p-5">
+      <div className="mb-3 flex items-start gap-3">
+        <div className={`h-9 w-9 shrink-0 rounded-full ${avatar}`} />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1 text-[12px]">
+            <strong className="text-ink">{author}</strong>
+            <span className="truncate text-ink-muted">{handle} · 3h</span>
+          </div>
+          <p className="mt-0.5 text-[12px] font-medium text-ink">{copy}</p>
         </div>
+        <span className="text-ink-muted">...</span>
+      </div>
+
+      {primary ? (
+        <HeroPlayerSlot expanded={expanded} />
+      ) : (
+        <div className="ml-12">
+          <InlinePlayer />
+        </div>
+      )}
+
+      <div className="mt-4 flex items-center justify-between text-[11px] font-medium text-ink-muted">
+        <span className="inline-flex items-center gap-1.5">
+          <IconMessageCircle size={15} /> 24
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <IconRepeat size={15} /> 17
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <IconHeart size={15} /> 1.2K
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <IconChartBar size={15} /> 48K
+        </span>
+        <IconShare3 size={15} />
+      </div>
+    </article>
+  );
+}
+
+function InlinePlayer() {
+  return (
+    <div className="relative overflow-hidden rounded-xl bg-ink">
+      <div className="aspect-video bg-[linear-gradient(145deg,#071228_0%,#0d2744_40%,#1b6b8d_41%,#06101f_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 text-white">
+        <div className="mb-3 h-0.5 rounded-full bg-white/25">
+          <div className="h-full w-[64%] rounded-full bg-white" />
+        </div>
+        <div className="flex items-center gap-3 text-[11px] font-semibold">
+          <IconPlayerPlayFilled size={15} />
+          <IconVolume size={15} />
+          <span className="ml-auto">0:00 / 0:15</span>
+          <IconMaximize size={15} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroPlayerSlot({ expanded }: { expanded: boolean }) {
+  return (
+    <div className="relative h-[16.75rem]">
+      <div
+        className={`pointer-events-none absolute top-1 z-20 overflow-hidden rounded-xl bg-ink transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          expanded
+            ? "left-[-1.35rem] right-[-9.7rem] h-[16.5rem] shadow-[0_26px_70px_-36px_rgba(7,8,74,0.58)]"
+            : "left-12 right-0 h-[13.35rem] shadow-none"
+        }`}
+      >
+        <div
+          className="h-full bg-[linear-gradient(145deg,#0e162f_0%,#152d4f_26%,#f3a23b_27%,#1d3557_38%,#ef7d22_39%,#56330f_56%,#12162f_100%)]"
+        />
+        <PlayerControls />
+      </div>
+    </div>
+  );
+}
+
+function PlayerControls() {
+  return (
+    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/38 to-transparent p-4 text-white">
+      <div className="mb-3 h-0.5 rounded-full bg-white/25">
+        <div className="h-full w-[64%] rounded-full bg-white" />
+      </div>
+      <div className="flex items-center gap-3 text-[11px] font-semibold">
+        <IconPlayerPlayFilled size={15} />
+        <IconVolume size={15} />
+        <span className="ml-auto">0:00 / 0:15</span>
+        <IconMaximize size={15} />
       </div>
     </div>
   );

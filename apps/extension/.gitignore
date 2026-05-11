@@ -9,4 +9,3 @@ web-ext-artifacts/
 .idea/
 .vscode/
 *.tsbuildinfo
-.wideplayer-build.json

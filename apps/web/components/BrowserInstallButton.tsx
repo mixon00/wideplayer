@@ -51,23 +51,23 @@ const styles: Record<
 > = {
   dark: {
     primary:
-      "bg-earth-green text-cream rounded-l-md px-6 py-4 text-base shadow-xl shadow-earth-green/15 hover:opacity-95",
+      "button-gradient text-white rounded-l-lg px-5 py-4 text-sm shadow-xl shadow-primary/18 hover:brightness-105 md:px-6 md:text-base",
     disabledPrimary:
-      "bg-earth-green/70 text-cream/70 rounded-l-md px-6 py-4 text-base shadow-xl shadow-earth-green/10 cursor-not-allowed",
-    divider: "bg-cream/18",
+      "bg-ink/70 text-white/70 rounded-l-lg px-5 py-4 text-sm shadow-xl shadow-primary/10 cursor-not-allowed md:px-6 md:text-base",
+    divider: "bg-white/18",
     trigger:
-      "bg-earth-green text-cream rounded-r-md px-4 py-4 shadow-xl shadow-earth-green/15 hover:opacity-95",
-    menu: "left-0 bg-cream text-earth-green",
+      "button-gradient text-white rounded-r-lg px-4 py-4 shadow-xl shadow-primary/18 hover:brightness-105",
+    menu: "left-0 bg-white text-ink",
   },
   light: {
     primary:
-      "bg-cream text-earth-green rounded-l-full pl-6 pr-5 py-4 md:pl-7 md:pr-6 text-sm md:text-base shadow-2xl hover:bg-bright-green",
+      "button-gradient text-white rounded-l-lg pl-5 pr-4 py-4 md:pl-6 md:pr-5 text-sm md:text-base shadow-2xl shadow-primary/18 hover:brightness-105",
     disabledPrimary:
-      "bg-cream/75 text-earth-green/45 rounded-l-full pl-6 pr-5 py-4 md:pl-7 md:pr-6 text-sm md:text-base shadow-2xl cursor-not-allowed",
-    divider: "bg-earth-green/20",
+      "bg-white/75 text-ink/45 rounded-l-lg pl-5 pr-4 py-4 md:pl-6 md:pr-5 text-sm md:text-base shadow-2xl cursor-not-allowed",
+    divider: "bg-white/25",
     trigger:
-      "bg-cream text-earth-green rounded-r-full px-4 py-4 shadow-2xl hover:bg-bright-green",
-    menu: "left-0 bg-cream text-earth-green",
+      "button-gradient text-white rounded-r-lg px-4 py-4 shadow-2xl shadow-primary/18 hover:brightness-105",
+    menu: "left-0 bg-white text-ink",
   },
 };
 
@@ -102,7 +102,7 @@ export default function BrowserInstallButton({
   const s = styles[variant];
 
   return (
-    <div className="relative inline-flex items-stretch" ref={dropdownRef}>
+    <div className="relative z-50 inline-flex items-stretch" ref={dropdownRef}>
       {currentLink ? (
         <a
           href={currentLink}
@@ -152,9 +152,9 @@ export default function BrowserInstallButton({
 
       {dropdownOpen && (
         <div
-          className={`absolute top-full ${s.menu} mt-3 w-full min-w-[240px] rounded-2xl border border-earth-green/10 shadow-2xl overflow-hidden z-50`}
+          className={`absolute top-full ${s.menu} z-[200] mt-3 w-full min-w-[240px] rounded-2xl border border-ink/10 shadow-2xl overflow-hidden`}
         >
-          <p className="px-4 pt-3 pb-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-muted-text">
+          <p className="px-4 pt-3 pb-1.5 text-[10px] uppercase tracking-[0.2em] font-bold text-ink-muted">
             Choose browser
           </p>
           {otherBrowsers.map((b) => {
@@ -175,8 +175,8 @@ export default function BrowserInstallButton({
                 data-umami-event-location={location}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] font-semibold transition-colors ${
                   hasLink
-                    ? "text-earth-green hover:bg-warm-neutral cursor-pointer"
-                    : "text-earth-green/40 cursor-not-allowed"
+                    ? "text-ink hover:bg-soft cursor-pointer"
+                    : "text-ink/40 cursor-not-allowed"
                 }`}
               >
                 <img
@@ -188,7 +188,7 @@ export default function BrowserInstallButton({
                 />
                 <span className="flex-1 text-left">{b}</span>
                 {!hasLink && (
-                  <span className="text-[9px] uppercase tracking-widest font-bold bg-earth-green/10 text-earth-green/50 px-2 py-0.5 rounded-full">
+                  <span className="text-[9px] uppercase tracking-widest font-bold bg-ink/10 text-ink/50 px-2 py-0.5 rounded-full">
                     Coming soon
                   </span>
                 )}
