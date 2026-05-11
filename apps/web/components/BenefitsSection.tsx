@@ -1,100 +1,59 @@
-import { IconCircleCheck, IconSparkles } from "@tabler/icons-react";
+import {
+  IconAdjustmentsHorizontal,
+  IconArrowsMaximize,
+  IconListDetails,
+} from "@tabler/icons-react";
+
+const benefits = [
+  {
+    icon: IconArrowsMaximize,
+    title: "Wider without distraction",
+    copy: "Videos expand inside the feed so you never lose your place or context.",
+    iconClass: "bg-lilac text-primary",
+  },
+  {
+    icon: IconListDetails,
+    title: "Auto mode",
+    copy: "Auto-detects in-feed videos and widens them as you scroll.",
+    iconClass: "bg-orange/14 text-orange",
+  },
+  {
+    icon: IconAdjustmentsHorizontal,
+    title: "Control when you want",
+    copy: "Prefer manual control? Use the Expand button on any supported player.",
+    iconClass: "bg-mint/18 text-[#0c9f60]",
+  },
+];
 
 export default function BenefitsSection() {
   return (
-    <section id="benefits" className="py-24 md:py-28 bg-white border-y border-earth-green/5">
-      <div className="max-w-5xl mx-auto px-5 md:px-6">
-        <div className="grid gap-20 md:gap-24">
+    <section className="relative bg-paper px-5 pb-12 pt-20 md:pt-24">
+      <div className="dot-field absolute left-12 top-28 h-36 w-36 opacity-80" />
+      <div className="dot-field absolute bottom-8 right-20 h-28 w-32 opacity-50" />
 
-          {/* Row 1 — Video left, text right */}
-          <div className="grid lg:grid-cols-2 items-center gap-12 lg:gap-24">
-            {/* Video column */}
-            <div className="order-2 lg:order-1">
-              <div className="video-card w-full rounded-xl overflow-hidden border border-earth-green/10 bg-white p-2">
-                <video
-                  src="/expand_demo.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="rounded-lg"
-                  style={{ display: "block", width: "calc(100% + 2px)", marginLeft: "-1px" }}
-                />
+      <div className="relative mx-auto max-w-6xl">
+        <div className="mb-10 text-center">
+          <p className="mb-3 text-[11px] font-black uppercase tracking-[0.28em] text-primary">
+            Keep the feed. Enjoy more.
+          </p>
+          <h2 className="font-headline text-4xl font-semibold leading-tight text-ink md:text-5xl">
+            Feed stays intact. <span className="italic">Video gets wider.</span>
+          </h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {benefits.map(({ icon: Icon, title, copy, iconClass }) => (
+            <article
+              key={title}
+              className="rounded-2xl border border-ink/10 bg-white p-7 shadow-[0_24px_72px_-54px_rgba(7,8,74,0.42)]"
+            >
+              <div className={`mb-8 flex h-14 w-14 items-center justify-center rounded-2xl ${iconClass}`}>
+                <Icon size={31} stroke={1.8} />
               </div>
-            </div>
-
-            {/* Text column */}
-            <div className="order-1 lg:order-2 space-y-6">
-              <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl italic leading-[1.03] text-balance">
-                Feed stays intact. <br />Video gets wider.
-              </h2>
-              <p className="text-base md:text-lg text-muted-text font-light leading-relaxed max-w-md">
-                Videos in your feed are trapped in narrow columns. WidePlayer
-                moves the player into a wider overlay, centered in your
-                viewport, while the tweet layout stays exactly as it was.
-              </p>
-              <ul className="space-y-3 pt-2">
-                <li className="flex items-center space-x-3">
-                  <IconCircleCheck size={17} stroke={2} className="text-bright-green" />
-                  <span className="text-sm text-earth-green font-semibold">
-                    Feed layout preserved while watching
-                  </span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <IconCircleCheck size={17} stroke={2} className="text-bright-green" />
-                  <span className="text-sm text-earth-green font-semibold">
-                    Auto mode, activates as you scroll
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Row 2 — Text left, video right */}
-          <div className="grid lg:grid-cols-2 items-center gap-12 lg:gap-24">
-            {/* Text column */}
-            <div className="space-y-6">
-              <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl italic leading-[1.03] text-balance">
-                Small extension. <br />Big difference.
-              </h2>
-              <p className="text-base md:text-lg text-muted-text font-light leading-relaxed max-w-md">
-                WidePlayer moves the original video. No copies, no duplicates.
-                Auto mode widens each video as it enters your viewport. Manual
-                mode puts an Expand button on every supported player.
-              </p>
-              <div className="bg-cream/70 p-6 rounded-2xl border border-earth-green/5 flex items-start space-x-5 max-w-md">
-                <div className="p-3 bg-white rounded-xl shadow-sm flex-shrink-0">
-                  <IconSparkles size={24} stroke={1.5} className="text-soft-bronze" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-earth-green mb-1">
-                    Lives in your scroll
-                  </h4>
-                  <p className="text-xs md:text-sm text-muted-text leading-relaxed">
-                    Enabled by default. Supported videos widen as you scroll
-                    into view and restore cleanly as you move on. Zero clicks
-                    needed.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Video column */}
-            <div>
-              <div className="video-card w-full rounded-xl overflow-hidden border border-earth-green/10 bg-white p-2">
-                <video
-                  src="/auto_expand_demo.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="rounded-lg"
-                  style={{ display: "block", width: "calc(100% + 2px)", marginLeft: "-1px" }}
-                />
-              </div>
-            </div>
-          </div>
-
+              <h3 className="mb-3 text-lg font-black text-ink">{title}</h3>
+              <p className="text-sm font-medium leading-relaxed text-ink-muted">{copy}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>

@@ -1,20 +1,23 @@
 :root {
   color-scheme: light;
-  --wp-color-cream: #fcf9f5;
-  --wp-color-warm-neutral: #f7f1ea;
-  --wp-color-earth-green: #1e3a24;
-  --wp-color-bright-green: #4ade80;
-  --wp-color-soft-bronze: #c4a484;
-  --wp-color-muted-text: #6b665f;
+  --wp-color-paper: #fffdfb;
+  --wp-color-soft: #f7f8ff;
+  --wp-color-ink: #07084a;
+  --wp-color-ink-muted: #51537f;
+  --wp-color-primary: #2839ff;
+  --wp-color-violet: #704cff;
+  --wp-color-lilac: #efe9ff;
+  --wp-color-orange: #ff5a14;
+  --wp-color-mint: #2fc980;
   --wp-color-ui-bg: #ffffff;
-  --wp-border-subtle: rgba(30, 58, 36, 0.05);
-  --wp-border-regular: rgba(30, 58, 36, 0.1);
-  --wp-border-strong: rgba(30, 58, 36, 0.16);
+  --wp-border-subtle: rgba(7, 8, 74, 0.06);
+  --wp-border-regular: rgba(7, 8, 74, 0.11);
+  --wp-border-strong: rgba(7, 8, 74, 0.18);
   --wp-shadow-card:
-    0 50px 100px -20px rgba(30, 58, 36, 0.15),
-    0 30px 60px -30px rgba(0, 0, 0, 0.2);
-  --wp-shadow-button: 0 10px 15px -3px rgba(30, 58, 36, 0.1);
-  --wp-shadow-floating: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    0 42px 90px -42px rgba(7, 8, 74, 0.28),
+    0 22px 54px -38px rgba(40, 57, 255, 0.22);
+  --wp-shadow-button: 0 12px 22px -14px rgba(40, 57, 255, 0.35);
+  --wp-shadow-floating: 0 25px 50px -24px rgba(7, 8, 74, 0.28);
   --wp-font-headline: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", serif;
   --wp-font-body: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --wp-ease-emphasized: cubic-bezier(0.23, 1, 0.32, 1);
@@ -27,12 +30,16 @@
 }
 
 html {
-  background: var(--wp-color-cream);
+  background:
+    linear-gradient(180deg, rgba(247, 248, 255, 0.9) 0%, rgba(255, 253, 251, 0) 240px),
+    var(--wp-color-paper);
 }
 
 body {
-  background: var(--wp-color-cream);
-  color: var(--wp-color-earth-green);
+  background:
+    linear-gradient(180deg, rgba(247, 248, 255, 0.9) 0%, rgba(255, 253, 251, 0) 240px),
+    var(--wp-color-paper);
+  color: var(--wp-color-ink);
   font-family: var(--wp-font-body);
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -40,8 +47,8 @@ body {
 }
 
 ::selection {
-  background: rgba(74, 222, 128, 0.2);
-  color: var(--wp-color-earth-green);
+  background: rgba(112, 76, 255, 0.18);
+  color: var(--wp-color-ink);
 }
 
 button,
@@ -53,7 +60,7 @@ output {
 h1,
 h2,
 h3 {
-  color: var(--wp-color-earth-green);
+  color: var(--wp-color-ink);
   font-family: var(--wp-font-headline);
   font-weight: 600;
   letter-spacing: -0.03em;
@@ -68,9 +75,9 @@ input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
   background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(30, 58, 36, 0.18);
+  border: 1px solid rgba(7, 8, 74, 0.16);
   border-radius: 999px;
-  box-shadow: inset 0 1px 1px rgba(30, 58, 36, 0.04);
+  box-shadow: inset 0 1px 1px rgba(7, 8, 74, 0.04);
   cursor: pointer;
   flex-shrink: 0;
   height: 28px;
@@ -85,9 +92,9 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]::before {
-  background: var(--wp-color-earth-green);
+  background: var(--wp-color-ink);
   border-radius: 50%;
-  box-shadow: 0 6px 12px -8px rgba(30, 58, 36, 0.4);
+  box-shadow: 0 6px 12px -8px rgba(7, 8, 74, 0.4);
   content: "";
   height: 20px;
   left: 3px;
@@ -100,8 +107,8 @@ input[type="checkbox"]::before {
 }
 
 input[type="checkbox"]:checked {
-  background: var(--wp-color-earth-green);
-  border-color: rgba(30, 58, 36, 0.75);
+  background: linear-gradient(135deg, var(--wp-color-primary), var(--wp-color-violet));
+  border-color: rgba(40, 57, 255, 0.75);
 }
 
 input[type="checkbox"]:checked::before {
@@ -117,20 +124,20 @@ button:focus-visible {
 
 input[type="checkbox"]:focus-visible,
 button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(30, 58, 36, 0.16);
+  box-shadow: 0 0 0 3px rgba(40, 57, 255, 0.16);
 }
 
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  accent-color: var(--wp-color-earth-green);
+  accent-color: var(--wp-color-primary);
   background: transparent;
   margin: 0;
   width: 100%;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-  background: rgba(30, 58, 36, 0.12);
+  background: rgba(7, 8, 74, 0.12);
   border: 0;
   border-radius: 999px;
   height: 5px;
@@ -139,10 +146,10 @@ input[type="range"]::-webkit-slider-runnable-track {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  background: var(--wp-color-earth-green);
+  background: var(--wp-color-primary);
   border: 2px solid rgba(255, 255, 255, 0.96);
   border-radius: 50%;
-  box-shadow: 0 6px 12px -8px rgba(30, 58, 36, 0.34);
+  box-shadow: 0 6px 12px -8px rgba(40, 57, 255, 0.34);
   height: 14px;
   margin-top: -4.5px;
   transition:
@@ -152,17 +159,17 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 input[type="range"]::-moz-range-track {
-  background: rgba(30, 58, 36, 0.12);
+  background: rgba(7, 8, 74, 0.12);
   border: 0;
   border-radius: 999px;
   height: 5px;
 }
 
 input[type="range"]::-moz-range-thumb {
-  background: var(--wp-color-earth-green);
+  background: var(--wp-color-primary);
   border: 2px solid rgba(255, 255, 255, 0.96);
   border-radius: 50%;
-  box-shadow: 0 6px 12px -8px rgba(30, 58, 36, 0.34);
+  box-shadow: 0 6px 12px -8px rgba(40, 57, 255, 0.34);
   height: 14px;
   transition:
     box-shadow 220ms ease,
@@ -178,6 +185,6 @@ input[type="range"]:active::-moz-range-thumb {
 input[type="range"]:focus-visible::-webkit-slider-thumb,
 input[type="range"]:focus-visible::-moz-range-thumb {
   box-shadow:
-    0 0 0 3px rgba(30, 58, 36, 0.12),
+    0 0 0 3px rgba(40, 57, 255, 0.14),
     var(--wp-shadow-button);
 }

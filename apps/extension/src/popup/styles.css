@@ -7,7 +7,7 @@ body {
 .popup-shell {
   display: grid;
   gap: 10px;
-  padding: 12px;
+  padding: 14px;
 }
 
 .popup-header {
@@ -27,7 +27,7 @@ body {
 }
 
 .eyebrow {
-  color: rgba(30, 58, 36, 0.6);
+  color: var(--wp-color-primary);
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -36,7 +36,7 @@ body {
 
 .status-text,
 .build-text {
-  color: var(--wp-color-muted-text);
+  color: var(--wp-color-ink-muted);
   font-size: 0.74rem;
   font-weight: 400;
   line-height: 1.35;
@@ -53,7 +53,7 @@ body {
   background: rgba(255, 255, 255, 0.76);
   border: 1px solid var(--wp-border-regular);
   border-radius: 1rem;
-  box-shadow: 0 10px 20px -22px rgba(30, 58, 36, 0.18);
+  box-shadow: 0 12px 28px -24px rgba(7, 8, 74, 0.2);
   display: grid;
   gap: 10px;
   padding: 12px;
@@ -67,7 +67,7 @@ body {
 }
 
 .setting-label {
-  color: var(--wp-color-earth-green);
+  color: var(--wp-color-ink);
   display: block;
   font-size: 0.84rem;
   font-weight: 600;
@@ -82,7 +82,7 @@ body {
 }
 
 output {
-  color: var(--wp-color-earth-green);
+  color: var(--wp-color-ink);
   font-size: 0.78rem;
   font-weight: 700;
   line-height: 1;
@@ -103,8 +103,8 @@ output {
   background: rgba(255, 255, 255, 0.76);
   border: 1px solid var(--wp-border-regular);
   border-radius: 999px;
-  box-shadow: 0 8px 16px -16px rgba(30, 58, 36, 0.16);
-  color: var(--wp-color-earth-green);
+  box-shadow: 0 8px 16px -16px rgba(40, 57, 255, 0.22);
+  color: var(--wp-color-ink);
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 600;
@@ -118,8 +118,8 @@ output {
 }
 
 .secondary-button:hover {
-  background: var(--wp-color-warm-neutral);
-  color: var(--wp-color-earth-green);
+  background: var(--wp-color-soft);
+  color: var(--wp-color-primary);
 }
 
 .secondary-button:active {
@@ -127,7 +127,7 @@ output {
 }
 
 .status-text {
-  color: rgba(30, 58, 36, 0.72);
+  color: rgba(7, 8, 74, 0.72);
   display: block;
   font-size: 0.72rem;
   font-weight: 500;

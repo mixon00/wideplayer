@@ -10,9 +10,9 @@ export const contentStyles = `
   --wideplayer-overlay-radius: 16px;
   --wideplayer-manual-transition-duration: 180ms;
   --wideplayer-manual-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
-  --wideplayer-overlay-shadow: 0 10px 28px rgba(15, 20, 25, 0.18),
-    0 0 0 1px rgba(15, 20, 25, 0.08);
-  --wideplayer-toggle-background-hover: rgba(255, 255, 255, 0.14);
+  --wideplayer-overlay-shadow: 0 16px 42px rgba(7, 8, 74, 0.2),
+    0 0 0 1px rgba(7, 8, 74, 0.08);
+  --wideplayer-toggle-background-hover: rgba(112, 76, 255, 0.22);
   --wideplayer-toggle-color: #ffffff;
   --wideplayer-toggle-top-fade: linear-gradient(
     180deg,
@@ -72,8 +72,8 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root[data-wideplayer-cont
   box-shadow:
     0 calc(8px + var(--wideplayer-scroll-progress) * 4px)
     calc(20px + var(--wideplayer-scroll-progress) * 8px)
-    rgba(15, 20, 25, calc(0.12 + var(--wideplayer-scroll-progress) * 0.06)),
-    0 0 0 1px rgba(15, 20, 25, calc(0.04 + var(--wideplayer-scroll-progress) * 0.04));
+    rgba(7, 8, 74, calc(0.12 + var(--wideplayer-scroll-progress) * 0.06)),
+    0 0 0 1px rgba(7, 8, 74, calc(0.04 + var(--wideplayer-scroll-progress) * 0.04));
   overflow: hidden;
   pointer-events: auto;
   position: absolute;
@@ -186,7 +186,7 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root[data-wideplayer-cont
 
 .wideplayer-toggle-button:focus-visible {
   background: var(--wideplayer-toggle-background-hover);
-  outline: 2px solid #1d9bf0;
+  outline: 2px solid #704cff;
   outline-offset: 2px;
 }
 `;

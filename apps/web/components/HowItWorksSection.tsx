@@ -1,54 +1,87 @@
 import {
-  IconArrowsMaximize,
-  IconEye,
-  IconFocus2,
+  IconBrandBluesky,
+  IconBrandLinkedin,
+  IconBrandMastodon,
+  IconBrandX,
+  IconCircleCheck,
+  IconCircleDashed,
 } from "@tabler/icons-react";
 
-const steps = [
+const platforms = [
   {
-    icon: IconFocus2,
-    title: "Detects videos",
-    copy: "When an in-feed video appears on X, WidePlayer prepares a wider view.",
+    name: "X.com",
+    copy: "Widen in-feed video on X. Enjoy a better view today.",
+    status: "Supported",
+    available: true,
+    icon: IconBrandX,
+    iconClass: "bg-black text-white",
   },
   {
-    icon: IconArrowsMaximize,
-    title: "Expands smartly",
-    copy: "Click to expand, or let Auto mode do it for you as you scroll.",
+    name: "Mastodon",
+    copy: "Creating wider in your favorite fediverse.",
+    status: "In progress",
+    available: false,
+    icon: IconBrandMastodon,
+    iconClass: "bg-violet text-white",
   },
   {
-    icon: IconEye,
-    title: "Watch without disruption",
-    copy: "Enjoy a wider player while the rest of your feed stays right where it is.",
+    name: "Bluesky",
+    copy: "Bluesky support is on the roadmap.",
+    status: "Planned",
+    available: false,
+    icon: IconBrandBluesky,
+    iconClass: "bg-sky text-white",
+  },
+  {
+    name: "LinkedIn",
+    copy: "LinkedIn support is on the roadmap.",
+    status: "Planned",
+    available: false,
+    icon: IconBrandLinkedin,
+    iconClass: "bg-[#0a66c2] text-white",
   },
 ];
 
 export default function HowItWorksSection() {
   return (
-    <section className="bg-white px-5 pb-24 md:pb-28">
+    <section id="platforms" className="bg-paper px-5 pb-6 pt-4">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-center">
-          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.26em] text-earth-green/70">
-            How it works
+        <div className="mb-9 text-center">
+          <p className="mb-3 text-[11px] font-black uppercase tracking-[0.28em] text-primary">
+            Platforms
           </p>
-          <h2 className="font-headline text-4xl leading-none text-earth-green md:text-5xl">
-            Simple by design.
+          <h2 className="font-headline text-4xl font-semibold leading-tight text-ink md:text-5xl">
+            More platforms. Same experience.
           </h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {steps.map(({ icon: Icon, title, copy }) => (
+        <div className="relative grid gap-5 md:grid-cols-4">
+          <div className="absolute left-[14%] right-[14%] top-1/2 hidden border-t border-dashed border-ink/22 md:block" />
+
+          {platforms.map(({ name, copy, status, available, icon: Icon, iconClass }) => (
             <article
-              key={title}
-              className="rounded-xl border border-earth-green/10 bg-cream/45 p-8 shadow-[0_24px_70px_-50px_rgba(27,59,37,0.35)]"
+              key={name}
+              className={`relative rounded-xl border bg-white p-6 shadow-[0_18px_54px_-44px_rgba(7,8,74,0.4)] ${
+                available ? "border-mint" : "border-ink/10"
+              }`}
             >
-              <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-full bg-warm-neutral text-earth-green">
-                <Icon size={34} stroke={1.65} />
-              </div>
-              <h3 className="mb-5 text-lg font-semibold text-earth-green">
-                {title}
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-text">
-                {copy}
+              {available && (
+                <span className="mb-4 inline-flex rounded-full bg-mint/12 px-3 py-1 text-[9px] font-black uppercase tracking-wide text-[#0c9f60]">
+                  Available now
+                </span>
+              )}
+              <span className={`mb-4 flex h-9 w-9 items-center justify-center rounded-lg ${iconClass}`}>
+                <Icon size={22} />
+              </span>
+              <h3 className="mb-2 text-base font-black text-ink">{name}</h3>
+              <p className="mb-7 text-sm font-medium leading-relaxed text-ink-muted">{copy}</p>
+              <p className="flex items-center gap-2 text-[12px] font-bold text-ink-muted">
+                {available ? (
+                  <IconCircleCheck size={15} className="text-[#0c9f60]" />
+                ) : (
+                  <IconCircleDashed size={15} />
+                )}
+                {status}
               </p>
             </article>
           ))}

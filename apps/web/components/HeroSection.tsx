@@ -1,52 +1,91 @@
 import BrowserMockup from "./BrowserMockup";
 import BrowserInstallButton from "./BrowserInstallButton";
-import { IconShieldCheck } from "@tabler/icons-react";
+import {
+  IconBrandGithub,
+  IconBrandMastodon,
+  IconBrandX,
+  IconChevronRight,
+  IconCode,
+  IconLock,
+  IconShieldCheck,
+} from "@tabler/icons-react";
 
 export default function HeroSection() {
   return (
     <header
       id="how"
-      className="relative pt-28 md:pt-36 pb-20 md:pb-24 px-5"
+      className="relative overflow-visible px-5 pb-16 pt-28 md:pb-20 md:pt-36"
     >
-      <div className="absolute right-[-16rem] top-12 h-[720px] w-[720px] rounded-full bg-earth-green/10 blur-2xl" />
-      <div className="absolute right-[10%] bottom-[-18rem] h-[520px] w-[520px] rounded-full bg-soft-bronze/10 blur-2xl" />
+      <div className="brand-sweep absolute -right-56 top-72 h-[520px] w-[520px] rotate-[-36deg] rounded-[7rem] opacity-95" />
+      <div className="absolute -right-40 top-[21rem] h-[420px] w-[520px] rotate-[-36deg] rounded-[6rem] bg-paper" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.88fr_1.12fr]">
-        <div className="max-w-xl text-left">
-          {/* Animated badge */}
-          <div className="inline-flex items-center space-x-2 bg-white/65 px-4 py-1.5 rounded-full mb-9 border border-earth-green/10 shadow-sm shadow-earth-green/5">
-            <span className="w-1.5 h-1.5 bg-bright-green rounded-full animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-earth-green/55">
-              New on X · Version 1.0.2
+      <div className="relative mx-auto grid max-w-7xl items-start gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="max-w-xl pt-16 text-left lg:pt-20">
+          <div className="mb-9 inline-flex items-center rounded-full border border-violet/30 bg-white px-4 py-1.5 shadow-sm shadow-primary/5">
+            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-primary">
+              New: wider video, same feed.
             </span>
           </div>
 
-          {/* Main headline */}
-          <h1 className="font-headline text-[3.45rem] md:text-[5.6rem] lg:text-[5.9rem] leading-[0.96] text-earth-green mb-7 tracking-tight text-balance">
-            Finally, your feed without the{" "}
-            <span className="italic text-soft-bronze">squeeze.</span>
+          <h1 className="mb-7 text-[3.15rem] font-black leading-[0.95] tracking-[-0.045em] text-ink text-balance md:text-[4.35rem] lg:text-[4.55rem]">
+            Wider in-feed video across the platforms{" "}
+            <span className="font-headline italic font-semibold tracking-normal text-orange">
+              you use.
+            </span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-base md:text-lg text-muted-text max-w-lg font-light leading-relaxed mb-8">
-            WidePlayer enlarges in-feed videos on X. No fullscreen, no layout
-            break. Just scroll and watch wider.
+          <p className="mb-7 max-w-lg text-base font-medium leading-relaxed text-ink md:text-lg">
+            WidePlayer makes in-feed videos wider without going fullscreen. Keep
+            your place in the feed while your videos get the space they deserve.
           </p>
 
-          <div className="flex flex-col items-start gap-5">
-            <BrowserInstallButton variant="dark" location="hero" />
+          <div className="mb-9 grid gap-3 text-sm font-bold text-ink">
+            <span className="inline-flex items-center gap-3">
+              <IconBrandX size={20} className="rounded bg-black p-0.5 text-white" />
+              Available now for X.com
+            </span>
+            <span className="inline-flex items-center gap-3">
+              <IconBrandMastodon size={20} className="rounded bg-violet p-0.5 text-white" />
+              Mastodon, Bluesky, LinkedIn coming soon
+            </span>
+            <span className="inline-flex items-center gap-3">
+              <IconShieldCheck size={20} className="rounded bg-mint p-0.5 text-white" />
+              Privacy first. No data collected.
+            </span>
+          </div>
 
-            <div className="flex items-center gap-2 text-sm text-muted-text">
-              <IconShieldCheck size={17} stroke={1.9} className="text-earth-green/70" />
-              <span>Private by design</span>
-              <span className="text-earth-green/25">·</span>
-              <span>No data collected</span>
-            </div>
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <BrowserInstallButton variant="dark" location="hero" />
+            <a
+              href="https://github.com/mixon00/wideplayer"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-umami-event="GitHub link click"
+              data-umami-event-location="hero"
+              className="inline-flex items-center gap-3 rounded-xl border border-ink/12 bg-white px-6 py-4 text-sm font-black text-ink shadow-sm transition-all hover:border-primary/30 hover:text-primary active:scale-95 md:text-base"
+            >
+              <IconBrandGithub size={22} />
+              View on GitHub
+            </a>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3 text-[12px] font-medium text-ink">
+            <span className="inline-flex items-center gap-2">
+              <IconCode size={16} className="text-primary" />
+              Open source
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <IconLock size={16} className="text-primary" />
+              No data collection
+            </span>
+            <a href="#open-source" className="inline-flex items-center gap-2 hover:text-primary">
+              Privacy first
+              <IconChevronRight size={14} />
+            </a>
           </div>
         </div>
 
-        {/* Interactive browser mockup */}
-        <div className="relative lg:-mr-36">
+        <div className="relative lg:-mr-10">
           <BrowserMockup />
         </div>
       </div>

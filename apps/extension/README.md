@@ -6,7 +6,7 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `1.0.2`, the project ships a functional extension MVP with these behaviors:
+As of version `1.0.3`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com`
 - moves the original player into a fixed overlay instead of duplicating the video element
