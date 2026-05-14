@@ -2,11 +2,13 @@
 
 ## Project Summary
 
-WidePlayer for X is a Vite + TypeScript browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
+WidePlayer is a Vite + TypeScript browser extension that makes supported in-feed videos on X and Mastodon appear wider without entering fullscreen.
 
 The repository currently contains a working MVP, not just a scaffold. As of version `1.0.3`, the extension:
 
 - supports `x.com`
+- supports Mastodon instances
+- supports Mastodon YouTube embeds
 - detects supported in-feed video candidates
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed layout with a placeholder while the player is expanded
@@ -38,7 +40,7 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 
 ## Repository Layout
 
-- `src/content` contains the content script entrypoint, detection logic, overlay positioning, and player-move behavior for X/Twitter pages
+- `src/content` contains the content script entrypoint, detection logic, overlay positioning, and player-move behavior for X/Twitter and Mastodon pages
 - `src/background` contains the background service worker entrypoint that ensures default settings exist
 - `src/shared` contains browser API access, storage, settings normalization, live preview state, constants, build info, and shared UI logic
 - `src/popup` and `src/options` contain the two settings surfaces

@@ -1,8 +1,13 @@
+export type CandidateMediaElement = HTMLElement | HTMLIFrameElement | HTMLVideoElement;
+export type CandidateMediaKind = "native-video" | "youtube";
+
 export interface CandidateElements {
   article: HTMLElement;
   anchorElement: HTMLElement;
+  mediaKind: CandidateMediaKind;
+  mediaElement: CandidateMediaElement;
   playerElement: HTMLElement;
-  video: HTMLVideoElement;
+  video: HTMLVideoElement | null;
 }
 
 export interface OverlayFrameElements {

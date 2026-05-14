@@ -8,13 +8,12 @@ import {
 
 interface SettingsScreenElements {
   autoEnableInput: HTMLInputElement;
+  autoEnableMastodonInput: HTMLInputElement;
+  autoEnableXInput: HTMLInputElement;
   widthRangeInput: HTMLInputElement;
   widthOutput: HTMLOutputElement;
   widthNumberInput?: HTMLInputElement | null;
-  modeCopy?: HTMLElement | null;
   statusText: HTMLElement;
-  autoModeDescription: string;
-  manualModeDescription: string;
   initialStatusText?: string;
   clearSavedStatusAfterMs?: number;
   openOptionsButton?: HTMLButtonElement | null;
@@ -23,19 +22,31 @@ interface SettingsScreenElements {
 export function mountSettingsScreen(elements: SettingsScreenElements): void {
   const {
     autoEnableInput,
+    autoEnableMastodonInput,
+    autoEnableXInput,
     widthRangeInput,
     widthOutput,
     widthNumberInput,
-    modeCopy,
     statusText,
-    autoModeDescription,
-    manualModeDescription,
     initialStatusText,
     clearSavedStatusAfterMs,
     openOptionsButton,
   } = elements;
 
   let statusResetTimeoutId = 0;
+
+  function syncMasterAutoToggle(): void {
+    const allEnabled = autoEnableMastodonInput.checked && autoEnableXInput.checked;
+    const allDisabled = !autoEnableMastodonInput.checked && !autoEnableXInput.checked;
+
+    autoEnableInput.checked = allEnabled;
+    autoEnableInput.indeterminate = !allEnabled && !allDisabled;
+    autoEnableInput.dataset.toggleState = autoEnableInput.indeterminate
+      ? "mixed"
+      : allEnabled
+        ? "on"
+        : "off";
+  }
 
   function setStatus(message: string): void {
     if (statusResetTimeoutId) {
@@ -51,14 +62,6 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
         statusText.textContent = "";
       }, clearSavedStatusAfterMs);
     }
-  }
-
-  function updateModeCopy(autoEnable: boolean): void {
-    if (!modeCopy) {
-      return;
-    }
-
-    modeCopy.textContent = autoEnable ? autoModeDescription : manualModeDescription;
   }
 
   function syncWidthControls(widthPercent: unknown): void {
@@ -93,13 +96,15 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
       setStatus("Saving...");
 
       const savedSettings = await saveSettings({
-        autoEnable: autoEnableInput.checked,
+        autoEnableMastodon: autoEnableMastodonInput.checked,
+        autoEnableX: autoEnableXInput.checked,
         widthPercent: Number(widthRangeInput.value),
       });
 
-      autoEnableInput.checked = savedSettings.autoEnable;
+      autoEnableMastodonInput.checked = savedSettings.autoEnableMastodon;
+      autoEnableXInput.checked = savedSettings.autoEnableX;
+      syncMasterAutoToggle();
       syncWidthControls(savedSettings.widthPercent);
-      updateModeCopy(savedSettings.autoEnable);
       await saveLiveWidthPreview(null);
       setStatus("Saved");
     } catch (error) {
@@ -111,9 +116,10 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
   async function loadInitialState(): Promise<void> {
     try {
       const settings = await loadSettings();
-      autoEnableInput.checked = settings.autoEnable;
+      autoEnableMastodonInput.checked = settings.autoEnableMastodon;
+      autoEnableXInput.checked = settings.autoEnableX;
+      syncMasterAutoToggle();
       syncWidthControls(settings.widthPercent);
-      updateModeCopy(settings.autoEnable);
       setStatus(initialStatusText ?? "Ready");
     } catch (error) {
       console.error("Unable to load settings.", error);
@@ -122,6 +128,23 @@ export function mountSettingsScreen(elements: SettingsScreenElements): void {
   }
 
   autoEnableInput.addEventListener("change", () => {
+    const shouldEnableAll = autoEnableInput.indeterminate || autoEnableInput.checked;
+
+    autoEnableInput.indeterminate = false;
+    autoEnableInput.dataset.toggleState = shouldEnableAll ? "on" : "off";
+    autoEnableInput.checked = shouldEnableAll;
+    autoEnableMastodonInput.checked = shouldEnableAll;
+    autoEnableXInput.checked = shouldEnableAll;
+    void persistSettings();
+  });
+
+  autoEnableMastodonInput.addEventListener("change", () => {
+    syncMasterAutoToggle();
+    void persistSettings();
+  });
+
+  autoEnableXInput.addEventListener("change", () => {
+    syncMasterAutoToggle();
     void persistSettings();
   });
 

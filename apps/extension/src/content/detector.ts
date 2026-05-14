@@ -1,32 +1,127 @@
-import type { CandidateElements } from "./types";
+import type { CandidateElements, CandidateMediaElement } from "./types";
 
-const MEDIA_ROOT_SELECTOR = "[data-testid='tweetPhoto']";
-const PLAYER_SELECTORS = ["[data-testid='videoPlayer']", "[data-testid='videoComponent']"];
+const FEED_ITEM_SELECTORS = ["article", ".status"];
+const FEED_ITEM_SELECTOR = FEED_ITEM_SELECTORS.join(",");
+const MEDIA_ROOT_SELECTORS = [
+  "[data-testid='tweetPhoto']",
+  ".media-gallery",
+  ".media-gallery__item",
+  ".status-card",
+  ".status-card__image",
+  ".video-player",
+];
+const PLAYER_SELECTORS = [
+  "[data-testid='videoPlayer']",
+  "[data-testid='videoComponent']",
+  ".status-card",
+  ".status-card__image",
+  ".video-player",
+];
+const YOUTUBE_IFRAME_SELECTOR = [
+  "iframe[src*='youtube.com/embed/']",
+  "iframe[src*='youtube-nocookie.com/embed/']",
+].join(",");
+const YOUTUBE_CARD_SELECTOR = [
+  ".status-card",
+].join(",");
 
-function getRootArticles(root: ParentNode): HTMLElement[] {
-  if (root instanceof HTMLElement && root.matches("article")) {
+function getClosestFeedItem(element: Element): HTMLElement | null {
+  return element.closest<HTMLElement>(FEED_ITEM_SELECTOR);
+}
+
+function getRootFeedItems(root: ParentNode): HTMLElement[] {
+  if (root instanceof HTMLElement && root.matches(FEED_ITEM_SELECTOR)) {
     return [root];
   }
 
-  return Array.from(root.querySelectorAll<HTMLElement>("article"));
-}
-
-function getDirectArticleVideos(article: HTMLElement): HTMLVideoElement[] {
-  return Array.from(article.querySelectorAll<HTMLVideoElement>("video")).filter(
-    (video) => video.closest("article") === article
+  return Array.from(root.querySelectorAll<HTMLElement>(FEED_ITEM_SELECTOR)).filter(
+    (feedItem) => getClosestFeedItem(feedItem) === feedItem
   );
 }
 
-function findAnchorElement(video: HTMLVideoElement): HTMLElement | null {
-  return video.closest<HTMLElement>(MEDIA_ROOT_SELECTOR) ?? findPlayerElement(video);
+function getDirectFeedItemMediaElements(feedItem: HTMLElement): CandidateMediaElement[] {
+  const playableMediaElements = Array.from(
+    feedItem.querySelectorAll<CandidateMediaElement>(`video, ${YOUTUBE_IFRAME_SELECTOR}`)
+  ).filter(
+    (mediaElement) => getClosestFeedItem(mediaElement) === feedItem
+  );
+
+  if (playableMediaElements.length > 0) {
+    return playableMediaElements;
+  }
+
+  return Array.from(feedItem.querySelectorAll<HTMLElement>(YOUTUBE_CARD_SELECTOR)).filter((cardElement) => {
+    if (getClosestFeedItem(cardElement) !== feedItem) {
+      return false;
+    }
+
+    if (!cardElement.querySelector(".status-card__image")) {
+      return false;
+    }
+
+    return Boolean(
+      cardElement.querySelector(
+        [
+          "a[href*='youtube.com/']",
+          "a[href*='youtube-nocookie.com/']",
+          "a[href*='youtu.be/']",
+        ].join(",")
+      )
+    );
+  });
 }
 
-function findPlayerElement(video: HTMLVideoElement): HTMLElement | null {
-  let current: HTMLElement | null = video.parentElement;
+function findClosestInFeedItem(
+  element: HTMLElement,
+  feedItem: HTMLElement,
+  selectors: string[]
+): HTMLElement | null {
+  for (const selector of selectors) {
+    const candidate = element.closest<HTMLElement>(selector);
+
+    if (candidate && getClosestFeedItem(candidate) === feedItem) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+function findAnchorElement(
+  mediaElement: CandidateMediaElement,
+  feedItem: HTMLElement
+): HTMLElement | null {
+  if (mediaElement instanceof HTMLVideoElement) {
+    return (
+      findClosestInFeedItem(mediaElement, feedItem, PLAYER_SELECTORS) ??
+      findClosestInFeedItem(mediaElement, feedItem, MEDIA_ROOT_SELECTORS) ??
+      findPlayerElement(mediaElement)
+    );
+  }
+
+  if (!(mediaElement instanceof HTMLIFrameElement)) {
+    return findClosestInFeedItem(mediaElement, feedItem, [".status-card__image"]) ?? mediaElement;
+  }
+
+  return (
+    findClosestInFeedItem(mediaElement, feedItem, MEDIA_ROOT_SELECTORS) ??
+    findPlayerElement(mediaElement)
+  );
+}
+
+function findPlayerElement(mediaElement: CandidateMediaElement): HTMLElement | null {
+  if (
+    !(mediaElement instanceof HTMLVideoElement) &&
+    !(mediaElement instanceof HTMLIFrameElement)
+  ) {
+    return mediaElement.querySelector<HTMLElement>(".status-card__image") ?? mediaElement;
+  }
+
+  let current: HTMLElement | null = mediaElement.parentElement;
   let outermostMatch: HTMLElement | null = null;
 
   while (current) {
-    if (current.matches("article")) {
+    if (current.matches(FEED_ITEM_SELECTOR)) {
       break;
     }
 
@@ -37,36 +132,38 @@ function findPlayerElement(video: HTMLVideoElement): HTMLElement | null {
     current = current.parentElement;
   }
 
-  return outermostMatch ?? video.parentElement;
+  return outermostMatch ?? mediaElement.parentElement;
 }
 
 export function detectFeedVideoCandidates(root: ParentNode = document): CandidateElements[] {
   const candidates: CandidateElements[] = [];
 
-  for (const article of getRootArticles(root)) {
-    const videos = getDirectArticleVideos(article);
+  for (const feedItem of getRootFeedItems(root)) {
+    const mediaElements = getDirectFeedItemMediaElements(feedItem);
 
-    if (videos.length !== 1) {
+    if (mediaElements.length !== 1) {
       continue;
     }
 
-    const video = videos[0];
-    const anchorElement = findAnchorElement(video);
-    const playerElement = findPlayerElement(video);
+    const mediaElement = mediaElements[0];
+    const anchorElement = findAnchorElement(mediaElement, feedItem);
+    const playerElement = findPlayerElement(mediaElement);
 
     if (!anchorElement || !playerElement) {
       continue;
     }
 
-    if (anchorElement.closest("article") !== article || playerElement.closest("article") !== article) {
+    if (getClosestFeedItem(anchorElement) !== feedItem || getClosestFeedItem(playerElement) !== feedItem) {
       continue;
     }
 
     candidates.push({
-      article,
+      article: feedItem,
       anchorElement,
+      mediaKind: mediaElement instanceof HTMLVideoElement ? "native-video" : "youtube",
+      mediaElement,
       playerElement,
-      video,
+      video: mediaElement instanceof HTMLVideoElement ? mediaElement : null,
     });
   }
 

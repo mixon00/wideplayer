@@ -1,8 +1,8 @@
 # WidePlayer
 
-WidePlayer is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen. This repository also contains the public landing site for the project.
+WidePlayer is a browser extension that makes supported in-feed videos on X and Mastodon appear wider without entering fullscreen. This repository also contains the public landing site for the project.
 
-The extension is built for people who watch video-heavy X feeds and want a larger player while keeping the feed context, scrolling behavior, and native video controls intact.
+The extension is built for people who watch video-heavy feeds and want a larger player while keeping the feed context, scrolling behavior, and native video controls intact.
 
 ## What Is In This Repository
 
@@ -18,7 +18,7 @@ This is an npm workspaces monorepo. The root package is private and only coordin
 
 WidePlayer for X currently:
 
-- widens supported in-feed videos on `x.com`
+- widens supported in-feed videos on `x.com`, Mastodon instances, and Mastodon YouTube embeds
 - moves the original player into a wider overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic widening and manual per-video expand/collapse controls
@@ -28,7 +28,7 @@ WidePlayer for X currently:
 
 Current limitations:
 
-- detection targets tweet articles with one direct video candidate
+- detection targets X tweet articles and Mastodon statuses with one direct video or supported YouTube embed
 - media galleries, unusual nested layouts, and unsupported embeds may be skipped
 - Safari output can be generated here, but final Safari packaging still depends on Safari Web Extension tooling on macOS
 - there is no dedicated automated test suite yet

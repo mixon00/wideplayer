@@ -4,6 +4,8 @@ import { readStorage, writeStorage } from "./storage";
 
 interface StoredSettingsInput {
   autoEnable?: unknown;
+  autoEnableMastodon?: unknown;
+  autoEnableX?: unknown;
   widthPercent?: unknown;
   expansionPercent?: unknown;
 }
@@ -19,7 +21,9 @@ export interface LiveWidthPreview {
 }
 
 const STORAGE_DEFAULTS: StoredSettingsInput = {
-  autoEnable: DEFAULT_SETTINGS.autoEnable,
+  autoEnable: undefined,
+  autoEnableMastodon: DEFAULT_SETTINGS.autoEnableMastodon,
+  autoEnableX: DEFAULT_SETTINGS.autoEnableX,
   widthPercent: DEFAULT_SETTINGS.widthPercent,
   expansionPercent: undefined,
 };
@@ -67,9 +71,18 @@ export function clampWidthPercent(value: unknown): number {
 }
 
 export function normalizeSettings(input?: StoredSettingsInput): Settings {
+  const legacyAutoEnable =
+    typeof input?.autoEnable === "boolean" ? input.autoEnable : undefined;
+
   return {
-    autoEnable:
-      typeof input?.autoEnable === "boolean" ? input.autoEnable : DEFAULT_SETTINGS.autoEnable,
+    autoEnableMastodon:
+      typeof input?.autoEnableMastodon === "boolean"
+        ? input.autoEnableMastodon
+        : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableMastodon,
+    autoEnableX:
+      typeof input?.autoEnableX === "boolean"
+        ? input.autoEnableX
+        : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableX,
     widthPercent: normalizeStoredWidthPercent(input),
   };
 }
@@ -99,9 +112,18 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function saveSettings(nextSettings: Partial<Settings>): Promise<Settings> {
   const currentSettings = await loadSettings();
-  const normalizedSettings = normalizeSettings({
+  const nextSettingsInput: StoredSettingsInput = {
     ...currentSettings,
     ...nextSettings,
+  };
+
+  if ("autoEnable" in nextSettings && typeof nextSettings.autoEnable === "boolean") {
+    nextSettingsInput.autoEnableMastodon = nextSettings.autoEnable;
+    nextSettingsInput.autoEnableX = nextSettings.autoEnable;
+  }
+
+  const normalizedSettings = normalizeSettings({
+    ...nextSettingsInput,
   });
 
   await writeStorage(normalizedSettings);
@@ -145,6 +167,8 @@ export function subscribeToSettings(listener: (settings: Settings) => void): () 
 
     if (
       !("autoEnable" in changes) &&
+      !("autoEnableMastodon" in changes) &&
+      !("autoEnableX" in changes) &&
       !("widthPercent" in changes) &&
       !("expansionPercent" in changes)
     ) {

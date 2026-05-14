@@ -1,6 +1,6 @@
-# WidePlayer for X
+# WidePlayer for X and Mastodon
 
-WidePlayer for X is a browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
+WidePlayer is a browser extension that makes supported in-feed videos on X and Mastodon appear wider without entering fullscreen.
 
 The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, a popup-first settings flow, realtime width preview from the popup, an About & Help options page, a shared cream-and-green visual system aligned with the landing page, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
 
@@ -8,7 +8,7 @@ The project is no longer just a scaffold. The current repository contains a work
 
 As of version `1.0.3`, the project ships a functional extension MVP with these behaviors:
 
-- detects supported in-feed videos on `x.com`
+- detects supported in-feed videos on `x.com`, Mastodon instances, and Mastodon YouTube embeds
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic mode and manual per-video expand/collapse controls
@@ -36,14 +36,17 @@ As of version `1.0.3`, the project ships a functional extension MVP with these b
 
 ### Settings
 
-The extension currently exposes two settings in the popup:
+The extension currently exposes these settings in the popup:
 
-- `autoEnable`
+- `autoEnable` master toggle, with a read-only indeterminate state when platform toggles differ. Clicking it still only chooses all on or all off.
+- `autoEnableX`
+- `autoEnableMastodon`
 - `widthPercent`
 
 Current defaults:
 
-- `autoEnable: true`
+- `autoEnableX: true`
+- `autoEnableMastodon: true`
 - `widthPercent: 35`
 
 The popup is now the primary settings surface. The options page is used for About, FAQ, and recent update notes instead of duplicating the same controls.
@@ -58,14 +61,14 @@ Width changes now behave in two phases:
 ### Stability and cleanup
 
 - candidate detection re-runs on feed mutations
-- active overlays are restored back into the tweet when the player is collapsed
+- active overlays are restored back into the feed item when the player is collapsed
 - cleanup paths handle disconnects, navigation changes, and removed nodes
 - the widened overlay stays under X's sticky top bar while still rendering above the side columns
 - if the enhancement cannot be applied, the original in-feed player remains usable
 
 ## Current Limitations
 
-- detection currently targets tweet articles that contain exactly one direct video candidate
+- detection currently targets X tweet articles and Mastodon statuses that contain exactly one direct video or supported YouTube embed
 - media galleries, unusual nested layouts, or unsupported embed structures may be ignored
 - Safari output is generated, but final Safari packaging still depends on Safari Web Extension tooling on macOS
 - there is no dedicated automated test suite yet; validation is currently done through `npm run typecheck` and `npm run build`

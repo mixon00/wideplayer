@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added
+
+- Auto mode can now be toggled separately for X and Mastodon from the popup. The existing Auto mode toggle works as a master control: it shows an indeterminate state when platform settings differ, but clicking it only sets all platforms on or off.
+- Supported in-feed videos on Mastodon instances are now detected and can use the same widened player behavior as X videos.
+- Mastodon YouTube cards are now detected before playback starts, including the pre-iframe click overlay.
+
+### Fixed
+
+- The manual expand/collapse icon keeps the original position for Mastodon YouTube cards and sits slightly lower only on native Mastodon videos.
+- The manual expand/collapse hover background is neutral again instead of purple.
+- Native Mastodon video controls remain clickable after the player is expanded by keeping the overlay inside the Mastodon app root.
+
 ## 1.0.3 - 2026-05-11
 
 ### Improved
