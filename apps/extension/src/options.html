@@ -3,74 +3,213 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WidePlayer — About &amp; Help</title>
+    <title>WidePlayer Settings</title>
   </head>
   <body>
     <main class="page-shell">
       <section class="page-header">
         <p class="eyebrow">WidePlayer</p>
-        <h1>About &amp; Help</h1>
-        <p class="lead">WidePlayer makes supported in-feed videos wider without going fullscreen. Use the popup for quick settings.</p>
+        <h1>Settings</h1>
+        <p class="lead">Control where WidePlayer runs and how wide videos get.</p>
       </section>
 
-      <section class="panel">
+      <nav class="tabs" aria-label="Options sections">
+        <button class="tab-button" type="button" id="tab-settings" data-tab-target="settings">Settings</button>
+        <button class="tab-button" type="button" id="tab-about" data-tab-target="about">About</button>
+        <button class="tab-button" type="button" id="tab-help" data-tab-target="help">Help</button>
+        <button class="tab-button" type="button" id="tab-news" data-tab-target="news">What’s new</button>
+      </nav>
+
+      <section class="tab-panel" id="panel-settings" data-tab-panel="settings" aria-labelledby="tab-settings">
+        <div class="section-heading">
+          <h2>Platforms</h2>
+          <p id="settings-status" class="status-text" role="status">Loading settings...</p>
+        </div>
+        <div id="platform-settings" class="platform-grid"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-about" data-tab-panel="about" aria-labelledby="tab-about">
         <div class="panel-copy">
           <h2>About</h2>
-          <p>WidePlayer expands supported in-feed videos into a wider overlay while keeping the feed layout stable. X.com and Mastodon are supported now. Bluesky and LinkedIn are planned.</p>
-          <p>The popup is the main place for quick settings. You can switch Auto mode for all platforms at once, override X and Mastodon separately, and adjust the preferred width at any time.</p>
+          <p>WidePlayer expands supported in-feed videos into a wider overlay while keeping the feed layout stable.</p>
+          <p>X and Mastodon are supported now. Bluesky and LinkedIn are planned.</p>
         </div>
       </section>
 
-      <section class="panel">
+      <section class="tab-panel" id="panel-help" data-tab-panel="help" aria-labelledby="tab-help">
         <div class="panel-copy">
-          <h2>FAQ</h2>
+          <h2>Help</h2>
         </div>
         <div class="faq-list">
           <details class="faq-item">
             <summary>Where does WidePlayer work?</summary>
-            <p>WidePlayer works on supported in-feed videos. X.com and Mastodon are supported now. Bluesky and LinkedIn are planned.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Which platforms are supported right now?</summary>
-            <p>X.com and Mastodon are supported today. Bluesky and LinkedIn are on the roadmap, but work has not started yet.</p>
+            <p>WidePlayer works on supported in-feed videos on X and Mastodon.</p>
           </details>
           <details class="faq-item">
             <summary>Why doesn’t it appear on every video?</summary>
-            <p>Some layouts and embedded players are still unsupported. WidePlayer skips videos it cannot enhance safely instead of forcing a broken layout.</p>
+            <p>Some layouts and embedded players are still unsupported. WidePlayer skips videos it cannot enhance safely.</p>
           </details>
           <details class="faq-item">
             <summary>What’s the difference between Auto and Manual mode?</summary>
-            <p>Auto mode expands supported videos as you scroll. Manual mode leaves videos at their normal size until you use the player control. X and Mastodon have separate Auto mode toggles.</p>
+            <p>Auto mode expands supported videos as you scroll. Manual mode leaves videos normal until you use the player control.</p>
           </details>
           <details class="faq-item">
-            <summary>Can I control how wide videos get?</summary>
-            <p>Yes. The popup includes a width slider. Active players preview the change while you drag, then save the final value when you release it.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Does WidePlayer collect any data?</summary>
-            <p>No. The browser extension does not collect, transmit, or sell any user data. It only stores your local extension settings, such as mode and preferred width, on your device.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Is WidePlayer open source?</summary>
-            <p>Yes. The project is open source and available on GitHub. The extension is built in public so the code can be reviewed.</p>
+            <summary>Does WidePlayer collect data?</summary>
+            <p>No. The extension stores local settings on your device and does not collect or sell user data.</p>
           </details>
         </div>
       </section>
 
-      <section class="panel">
+      <section class="tab-panel" id="panel-news" data-tab-panel="news" aria-labelledby="tab-news">
         <div class="panel-copy">
           <h2>What’s new</h2>
-          <p>Recent improvements in the current MVP.</p>
+          <p>Changelog by version.</p>
         </div>
-        <ul class="update-list">
-          <li>The popup is now the main place for quick settings.</li>
-          <li>Width changes preview live on active players while you drag the slider.</li>
-          <li>Manual mode supports per-video controls, outside-click collapse, and centered opening scroll.</li>
-        </ul>
+        <section class="changelog-entry" aria-labelledby="changelog-unreleased">
+          <p class="changelog-version">Unreleased</p>
+          <h3 id="changelog-unreleased">Settings moved into options</h3>
+          <ul class="changelog-list">
+            <li>The popup is now a small status view with an Open settings button.</li>
+            <li>Settings are split into tabs: Settings, About, Help, and What’s new.</li>
+            <li>X and Mastodon now have separate width and Auto mode settings.</li>
+            <li>Bluesky and LinkedIn are shown as coming soon, without fake controls.</li>
+            <li>Mastodon videos and Mastodon YouTube cards are now supported.</li>
+            <li>Expanded videos keep their spacing better on X.</li>
+            <li>Mastodon video controls stay clickable after widening.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-3">
+          <p class="changelog-version">1.0.3</p>
+          <h3 id="changelog-1-0-3">Product copy and build info cleanup</h3>
+          <ul class="changelog-list">
+            <li>The extension name, description, FAQ, colors, and icons were updated.</li>
+            <li>Build information is tracked again after the monorepo move.</li>
+            <li>Version metadata was aligned across the extension files.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-2">
+          <p class="changelog-version">1.0.2</p>
+          <h3 id="changelog-1-0-2">Firefox release fix</h3>
+          <ul class="changelog-list">
+            <li>Firefox release metadata now says the extension collects no data.</li>
+            <li>The Firefox version requirement was updated for store submission.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-1">
+          <p class="changelog-version">1.0.1</p>
+          <h3 id="changelog-1-0-1">Firefox development fix</h3>
+          <ul class="changelog-list">
+            <li>Temporary Firefox installs now use the right background script setup.</li>
+            <li>Version metadata was aligned across the extension files.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-0">
+          <p class="changelog-version">1.0.0</p>
+          <h3 id="changelog-1-0-0">Cleaner manual controls</h3>
+          <ul class="changelog-list">
+            <li>Manual controls hide when you are not using them.</li>
+            <li>The controls stay visible while the video is paused.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-12">
+          <p class="changelog-version">0.3.12</p>
+          <h3 id="changelog-0-3-12">Better expanded video position</h3>
+          <ul class="changelog-list">
+            <li>Expanded videos now move closer to the center of the screen.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-11">
+          <p class="changelog-version">0.3.11</p>
+          <h3 id="changelog-0-3-11">Updated extension UI</h3>
+          <ul class="changelog-list">
+            <li>The popup and options page got the newer WidePlayer visual style.</li>
+            <li>The extension copy now refers to x.com.</li>
+            <li>Extension icons were refreshed.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-10">
+          <p class="changelog-version">0.3.10</p>
+          <h3 id="changelog-0-3-10">Popup and help refresh</h3>
+          <ul class="changelog-list">
+            <li>The popup and help page were restyled.</li>
+            <li>The options page started showing FAQ and recent updates.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-9">
+          <p class="changelog-version">0.3.9</p>
+          <h3 id="changelog-0-3-9">Cleaner manual button</h3>
+          <ul class="changelog-list">
+            <li>Manual controls got a top fade for better contrast.</li>
+            <li>The button background is now subtle and only appears on hover.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-8">
+          <p class="changelog-version">0.3.8</p>
+          <h3 id="changelog-0-3-8">Release package fix</h3>
+          <ul class="changelog-list">
+            <li>Release ZIP files now keep the right folder structure.</li>
+            <li>Source maps and source-only icon files are no longer included in releases.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-7">
+          <p class="changelog-version">0.3.7</p>
+          <h3 id="changelog-0-3-7">Centered opening</h3>
+          <ul class="changelog-list">
+            <li>Manually expanded videos now scroll toward the center of the screen while opening.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-6">
+          <p class="changelog-version">0.3.6</p>
+          <h3 id="changelog-0-3-6">Smoother manual mode</h3>
+          <ul class="changelog-list">
+            <li>Clicking outside an expanded video now collapses it.</li>
+            <li>Expand and collapse now animate instead of jumping.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-5">
+          <p class="changelog-version">0.3.5</p>
+          <h3 id="changelog-0-3-5">Icon controls</h3>
+          <ul class="changelog-list">
+            <li>Manual controls now use icons instead of text labels.</li>
+            <li>Controls stay hidden until you hover over the player.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-4">
+          <p class="changelog-version">0.3.4</p>
+          <h3 id="changelog-0-3-4">Overlay fixes on X</h3>
+          <ul class="changelog-list">
+            <li>Expanded videos stay below the sticky top bar.</li>
+            <li>Expanded videos can still appear above the side columns.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-3">
+          <p class="changelog-version">0.3.3</p>
+          <h3 id="changelog-0-3-3">Live width preview</h3>
+          <ul class="changelog-list">
+            <li>Width changes preview while you drag the slider.</li>
+            <li>The final width is saved after you finish changing it.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-2">
+          <p class="changelog-version">0.3.2</p>
+          <h3 id="changelog-0-3-2">Working MVP</h3>
+          <ul class="changelog-list">
+            <li>Videos expand more gradually while moving through the screen.</li>
+            <li>Expanded videos keep their place while scrolling and resizing.</li>
+            <li>Project docs were updated to match the working extension.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-earlier">
+          <p class="changelog-version">Earlier work</p>
+          <h3 id="changelog-earlier">Initial extension setup</h3>
+          <ul class="changelog-list">
+            <li>Earlier versions set up the extension, saved settings, popup/options pages, and the first widened-player behavior.</li>
+          </ul>
+        </section>
       </section>
 
       <section class="page-footer">
-        <p class="footer-copy">If WidePlayer does not appear right away after installing or updating, reload the supported platform and try again.</p>
+        <p class="footer-copy">Reload a supported platform after installing or updating if WidePlayer does not appear right away.</p>
         <p id="build-id" class="build-text">Build</p>
       </section>
     </main>

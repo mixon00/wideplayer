@@ -2,7 +2,7 @@
 
 WidePlayer is a browser extension that makes supported in-feed videos on X and Mastodon appear wider without entering fullscreen.
 
-The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, a popup-first settings flow, realtime width preview from the popup, an About & Help options page, a shared cream-and-green visual system aligned with the landing page, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
+The project is no longer just a scaffold. The current repository contains a working MVP with automatic and manual widening, an options-first settings flow, per-platform width controls, a small popup shortcut, browser-specific build outputs for Chrome, Firefox, and Safari, and release ZIP packaging for the generated builds.
 
 ## Current Status
 
@@ -14,8 +14,8 @@ As of version `1.0.3`, the project ships a functional extension MVP with these b
 - supports automatic mode and manual per-video expand/collapse controls
 - uses icon-based manual controls with a top fade that appear on hover or focus, fade back out after about 2 seconds of pointer inactivity, and stay visible while the video is paused
 - horizontally centers expanded videos in the viewport instead of keeping them anchored to the original in-feed box
-- styles the popup and About & Help page with the shared cream, earth-green, bright-green, and bronze design palette used by the landing page
-- uses the popup as the primary place for quick settings and the options page for About, FAQ, and release-note style help content
+- uses a small popup shortcut for page status and access to full settings
+- uses a tabbed options page for Settings, About, Help, and release-note style content
 - previews width changes live while the slider is being dragged and saves the final value on release
 - keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
 - builds separate distributions for Chrome, Firefox, and Safari
@@ -36,20 +36,20 @@ As of version `1.0.3`, the project ships a functional extension MVP with these b
 
 ### Settings
 
-The extension currently exposes these settings in the popup:
+The extension exposes these settings in the options page:
 
-- `autoEnable` master toggle, with a read-only indeterminate state when platform toggles differ. Clicking it still only chooses all on or all off.
 - `autoEnableX`
 - `autoEnableMastodon`
-- `widthPercent`
+- `widthPercentX`
+- `widthPercentMastodon`
 
 Current defaults:
 
 - `autoEnableX: true`
 - `autoEnableMastodon: true`
-- `widthPercent: 35`
+- supported platform width values default to `35`
 
-The popup is now the primary settings surface. The options page is used for About, FAQ, and recent update notes instead of duplicating the same controls.
+The options page is the primary settings surface. The popup only shows page status, an `Open settings` button, and the build version.
 
 The extension UI shares the same visual design tokens, rounded card treatment, and light color palette so it feels consistent with the marketing site.
 
@@ -173,7 +173,7 @@ Release packaging generates:
 - `release/wideplayer-for-x-<version>-firefox.zip`
 - `release/wideplayer-for-x-<version>-safari.zip`
 
-Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and About & Help UI.
+Each build also receives a generated build id stored in `.wideplayer-build.json` and shown in the popup and options UI.
 Release ZIPs preserve the built directory layout and omit sourcemaps and source artwork that are not needed for distribution.
 
 ## Loading The Extension

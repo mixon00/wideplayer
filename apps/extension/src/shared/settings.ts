@@ -1,31 +1,52 @@
 import { getExtensionApi, type StorageChangeListener } from "./browser-api";
-import { DEFAULT_SETTINGS, type Settings, WIDTH_PERCENT_LIMITS } from "./constants";
+import {
+  DEFAULT_SETTINGS,
+  PLATFORMS,
+  type Platform,
+  type Settings,
+  type SupportedPlatform,
+  WIDTH_PERCENT_LIMITS,
+} from "./constants";
 import { readStorage, writeStorage } from "./storage";
 
 interface StoredSettingsInput {
   autoEnable?: unknown;
+  autoEnableBluesky?: unknown;
+  autoEnableLinkedIn?: unknown;
   autoEnableMastodon?: unknown;
   autoEnableX?: unknown;
+  widthPercentBluesky?: unknown;
+  widthPercentLinkedIn?: unknown;
+  widthPercentMastodon?: unknown;
+  widthPercentX?: unknown;
   widthPercent?: unknown;
   expansionPercent?: unknown;
 }
 
 interface LiveWidthPreviewInput {
+  platform?: unknown;
   updatedAt?: unknown;
   widthPercent?: unknown;
 }
 
 export interface LiveWidthPreview {
+  platform: SupportedPlatform;
   updatedAt: number;
   widthPercent: number;
 }
 
 const STORAGE_DEFAULTS: StoredSettingsInput = {
   autoEnable: undefined,
+  autoEnableBluesky: DEFAULT_SETTINGS.autoEnableBluesky,
+  autoEnableLinkedIn: DEFAULT_SETTINGS.autoEnableLinkedIn,
   autoEnableMastodon: DEFAULT_SETTINGS.autoEnableMastodon,
   autoEnableX: DEFAULT_SETTINGS.autoEnableX,
-  widthPercent: DEFAULT_SETTINGS.widthPercent,
   expansionPercent: undefined,
+  widthPercent: undefined,
+  widthPercentBluesky: DEFAULT_SETTINGS.widthPercentBluesky,
+  widthPercentLinkedIn: DEFAULT_SETTINGS.widthPercentLinkedIn,
+  widthPercentMastodon: DEFAULT_SETTINGS.widthPercentMastodon,
+  widthPercentX: DEFAULT_SETTINGS.widthPercentX,
 };
 
 const LIVE_WIDTH_PREVIEW_KEY = "liveWidthPreview";
@@ -33,7 +54,41 @@ const LIVE_WIDTH_PREVIEW_DEFAULTS: Record<typeof LIVE_WIDTH_PREVIEW_KEY, LiveWid
   liveWidthPreview: null,
 };
 
-function normalizeStoredWidthPercent(input?: StoredSettingsInput): number {
+function getAutoEnableKey(platform: Platform): keyof Settings {
+  switch (platform) {
+    case "bluesky":
+      return "autoEnableBluesky";
+    case "linkedin":
+      return "autoEnableLinkedIn";
+    case "mastodon":
+      return "autoEnableMastodon";
+    case "x":
+      return "autoEnableX";
+  }
+}
+
+function getWidthPercentKey(platform: Platform): keyof Settings {
+  switch (platform) {
+    case "bluesky":
+      return "widthPercentBluesky";
+    case "linkedin":
+      return "widthPercentLinkedIn";
+    case "mastodon":
+      return "widthPercentMastodon";
+    case "x":
+      return "widthPercentX";
+  }
+}
+
+export function getPlatformAutoEnable(settings: Settings, platform: Platform): boolean {
+  return Boolean(settings[getAutoEnableKey(platform)]);
+}
+
+export function getPlatformWidthPercent(settings: Settings, platform: Platform): number {
+  return Number(settings[getWidthPercentKey(platform)]);
+}
+
+function normalizeLegacyWidthPercent(input?: StoredSettingsInput): number {
   const widthPercentValue = Number(input?.widthPercent);
   const hasWidthPercent = Number.isFinite(widthPercentValue);
 
@@ -49,7 +104,7 @@ function normalizeStoredWidthPercent(input?: StoredSettingsInput): number {
     return mapLegacyWidthPercentToSliderPercent(widthPercentValue);
   }
 
-  return DEFAULT_SETTINGS.widthPercent;
+  return DEFAULT_SETTINGS.widthPercentX;
 }
 
 function mapLegacyWidthPercentToSliderPercent(value: number): number {
@@ -62,7 +117,7 @@ export function clampWidthPercent(value: unknown): number {
   const numericValue = Number(value);
   const normalizedValue = Number.isFinite(numericValue)
     ? numericValue
-    : DEFAULT_SETTINGS.widthPercent;
+    : DEFAULT_SETTINGS.widthPercentX;
 
   return Math.min(
     WIDTH_PERCENT_LIMITS.max,
@@ -73,8 +128,17 @@ export function clampWidthPercent(value: unknown): number {
 export function normalizeSettings(input?: StoredSettingsInput): Settings {
   const legacyAutoEnable =
     typeof input?.autoEnable === "boolean" ? input.autoEnable : undefined;
+  const legacyWidthPercent = normalizeLegacyWidthPercent(input);
 
   return {
+    autoEnableBluesky:
+      typeof input?.autoEnableBluesky === "boolean"
+        ? input.autoEnableBluesky
+        : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableBluesky,
+    autoEnableLinkedIn:
+      typeof input?.autoEnableLinkedIn === "boolean"
+        ? input.autoEnableLinkedIn
+        : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableLinkedIn,
     autoEnableMastodon:
       typeof input?.autoEnableMastodon === "boolean"
         ? input.autoEnableMastodon
@@ -83,7 +147,20 @@ export function normalizeSettings(input?: StoredSettingsInput): Settings {
       typeof input?.autoEnableX === "boolean"
         ? input.autoEnableX
         : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableX,
-    widthPercent: normalizeStoredWidthPercent(input),
+    widthPercentBluesky:
+      input?.widthPercentBluesky !== undefined
+        ? clampWidthPercent(input.widthPercentBluesky)
+        : DEFAULT_SETTINGS.widthPercentBluesky,
+    widthPercentLinkedIn:
+      input?.widthPercentLinkedIn !== undefined
+        ? clampWidthPercent(input.widthPercentLinkedIn)
+        : DEFAULT_SETTINGS.widthPercentLinkedIn,
+    widthPercentMastodon:
+      input?.widthPercentMastodon !== undefined
+        ? clampWidthPercent(input.widthPercentMastodon)
+        : legacyWidthPercent,
+    widthPercentX:
+      input?.widthPercentX !== undefined ? clampWidthPercent(input.widthPercentX) : legacyWidthPercent,
   };
 }
 
@@ -94,12 +171,14 @@ function normalizeLiveWidthPreview(input?: LiveWidthPreviewInput | null): LiveWi
 
   const widthPercent = clampWidthPercent(input.widthPercent);
   const updatedAt = Number(input.updatedAt);
+  const platform = input.platform;
 
-  if (!Number.isFinite(updatedAt) || updatedAt <= 0) {
+  if (!Number.isFinite(updatedAt) || updatedAt <= 0 || (platform !== "x" && platform !== "mastodon")) {
     return null;
   }
 
   return {
+    platform,
     updatedAt,
     widthPercent,
   };
@@ -118,6 +197,8 @@ export async function saveSettings(nextSettings: Partial<Settings>): Promise<Set
   };
 
   if ("autoEnable" in nextSettings && typeof nextSettings.autoEnable === "boolean") {
+    nextSettingsInput.autoEnableBluesky = nextSettings.autoEnable;
+    nextSettingsInput.autoEnableLinkedIn = nextSettings.autoEnable;
     nextSettingsInput.autoEnableMastodon = nextSettings.autoEnable;
     nextSettingsInput.autoEnableX = nextSettings.autoEnable;
   }
@@ -131,13 +212,16 @@ export async function saveSettings(nextSettings: Partial<Settings>): Promise<Set
   return normalizedSettings;
 }
 
-export async function saveLiveWidthPreview(widthPercent: unknown | null): Promise<void> {
+export async function saveLiveWidthPreview(
+  preview: { platform: SupportedPlatform; widthPercent: unknown } | null
+): Promise<void> {
   const nextPreview =
-    widthPercent === null
+    preview === null
       ? null
       : {
+          platform: preview.platform,
           updatedAt: Date.now(),
-          widthPercent: clampWidthPercent(widthPercent),
+          widthPercent: clampWidthPercent(preview.widthPercent),
         };
 
   await writeStorage(
@@ -167,10 +251,13 @@ export function subscribeToSettings(listener: (settings: Settings) => void): () 
 
     if (
       !("autoEnable" in changes) &&
-      !("autoEnableMastodon" in changes) &&
-      !("autoEnableX" in changes) &&
       !("widthPercent" in changes) &&
-      !("expansionPercent" in changes)
+      !("expansionPercent" in changes) &&
+      !PLATFORMS.some((platform) => {
+        const autoEnableKey = getAutoEnableKey(platform);
+        const widthPercentKey = getWidthPercentKey(platform);
+        return autoEnableKey in changes || widthPercentKey in changes;
+      })
     ) {
       return;
     }

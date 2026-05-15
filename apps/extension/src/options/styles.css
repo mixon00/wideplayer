@@ -8,16 +8,17 @@ body {
   display: grid;
   gap: 14px;
   margin: 0 auto;
-  max-width: 760px;
+  max-width: 900px;
   padding: 28px 20px 56px;
 }
 
 .page-header,
-.panel,
+.tabs,
+.tab-panel,
 .page-footer {
   background: rgba(255, 255, 255, 0.76);
   border: 1px solid var(--wp-border-regular);
-  border-radius: 1.25rem;
+  border-radius: 1rem;
   box-shadow: 0 12px 32px -26px rgba(7, 8, 74, 0.22);
 }
 
@@ -36,21 +37,28 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   font-family: var(--wp-font-body);
   font-style: normal;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 h1 {
   font-size: clamp(1.4rem, 3vw, 1.8rem);
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1.05;
 }
 
 h2 {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 750;
   line-height: 1.2;
 }
 
@@ -58,7 +66,8 @@ h2 {
 .panel-copy p,
 .faq-item p,
 .footer-copy,
-.build-text {
+.build-text,
+.platform-title-group p {
   color: var(--wp-color-ink-muted);
   font-size: 0.9rem;
   font-weight: 400;
@@ -69,15 +78,147 @@ h2 {
   max-width: 56ch;
 }
 
-.panel {
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px;
+}
+
+.tab-button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--wp-color-ink-muted);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  padding: 9px 13px;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.tab-button[data-active="true"] {
+  background: var(--wp-color-ink);
+  border-color: var(--wp-color-ink);
+  color: var(--wp-color-ui-bg);
+}
+
+.tab-button:hover:not([data-active="true"]) {
+  background: var(--wp-color-soft);
+  color: var(--wp-color-primary);
+}
+
+.tab-panel {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   padding: 18px 20px;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+.section-heading,
+.platform-card-header,
+.range-header,
+.setting-row,
+.page-footer {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.status-text {
+  color: var(--wp-color-ink-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-height: 1.2em;
+  text-align: right;
+}
+
+.platform-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.platform-card {
+  background: rgba(247, 248, 255, 0.72);
+  border: 1px solid var(--wp-border-subtle);
+  border-radius: 0.9rem;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.platform-card[data-platform-status="coming-soon"] {
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.platform-title-group {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.platform-badge {
+  background: rgba(47, 201, 128, 0.14);
+  border: 1px solid rgba(47, 201, 128, 0.28);
+  border-radius: 999px;
+  color: #17633f;
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  font-weight: 750;
+  padding: 5px 9px;
+}
+
+.platform-card[data-platform-status="coming-soon"] .platform-badge {
+  background: rgba(7, 8, 74, 0.06);
+  border-color: rgba(7, 8, 74, 0.12);
+  color: var(--wp-color-ink-muted);
+}
+
+.platform-note {
+  color: var(--wp-color-ink-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.setting-row {
+  min-height: 32px;
+}
+
+.setting-label {
+  color: var(--wp-color-ink);
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.range-group {
+  display: grid;
+  gap: 10px;
+}
+
+output {
+  color: var(--wp-color-ink);
+  font-size: 0.8rem;
+  font-weight: 750;
+  line-height: 1;
 }
 
 .panel-copy {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  max-width: 68ch;
 }
 
 .faq-list {
@@ -88,7 +229,7 @@ h2 {
 .faq-item {
   background: rgba(247, 248, 255, 0.72);
   border: 1px solid var(--wp-border-subtle);
-  border-radius: 1rem;
+  border-radius: 0.85rem;
   padding: 0;
 }
 
@@ -96,9 +237,9 @@ h2 {
   color: var(--wp-color-ink);
   cursor: pointer;
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 700;
   list-style: none;
-  padding: 14px 16px;
+  padding: 14px 42px 14px 16px;
   position: relative;
 }
 
@@ -118,31 +259,49 @@ h2 {
 }
 
 .faq-item[open] summary::after {
-  content: "–";
+  content: "-";
 }
 
 .faq-item p {
   padding: 0 16px 14px;
 }
 
-.update-list {
+.changelog-list {
   display: grid;
   gap: 8px;
   margin: 0;
   padding: 0 0 0 18px;
 }
 
-.update-list li {
+.changelog-entry {
+  border-top: 1px solid var(--wp-border-subtle);
+  display: grid;
+  gap: 8px;
+  max-width: 68ch;
+  padding-top: 14px;
+}
+
+.changelog-entry:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.changelog-version {
+  color: var(--wp-color-primary);
+  font-size: 0.74rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.changelog-list li {
   color: var(--wp-color-ink);
   font-size: 0.92rem;
   line-height: 1.5;
 }
 
 .page-footer {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
   padding: 14px 18px;
 }
 
@@ -156,11 +315,18 @@ h2 {
   letter-spacing: 0.04em;
 }
 
+@media (max-width: 760px) {
+  .platform-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .page-shell {
     padding: 20px 14px 40px;
   }
 
+  .section-heading,
   .page-footer {
     align-items: flex-start;
     flex-direction: column;

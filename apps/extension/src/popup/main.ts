@@ -1,17 +1,17 @@
 import "./styles.css";
 import { BUILD_ID } from "../shared/build-info";
-import { mountSettingsScreen } from "../shared/ui/settings-screen";
+import { getExtensionApi } from "../shared/browser-api";
+import { getCurrentPageStatusText } from "./page-status";
 
 document.querySelector<HTMLElement>("#build-id")!.textContent = `v${BUILD_ID}`;
 
-mountSettingsScreen({
-  autoEnableInput: document.querySelector<HTMLInputElement>("#auto-enable")!,
-  autoEnableMastodonInput: document.querySelector<HTMLInputElement>("#auto-enable-mastodon")!,
-  autoEnableXInput: document.querySelector<HTMLInputElement>("#auto-enable-x")!,
-  widthRangeInput: document.querySelector<HTMLInputElement>("#width-range")!,
-  widthOutput: document.querySelector<HTMLOutputElement>("#width-output")!,
-  statusText: document.querySelector<HTMLElement>("#status-text")!,
-  initialStatusText: "",
-  clearSavedStatusAfterMs: 1200,
-  openOptionsButton: document.querySelector<HTMLButtonElement>("#open-options"),
+const pageStatus = document.querySelector<HTMLElement>("#page-status")!;
+const openOptionsButton = document.querySelector<HTMLButtonElement>("#open-options")!;
+
+openOptionsButton.addEventListener("click", () => {
+  void getExtensionApi()?.runtime?.openOptionsPage?.();
+});
+
+void getCurrentPageStatusText().then((statusText) => {
+  pageStatus.textContent = statusText;
 });

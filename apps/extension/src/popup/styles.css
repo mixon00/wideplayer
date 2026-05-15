@@ -1,18 +1,18 @@
 @import "../shared/ui/theme.css";
 
 body {
-  min-width: 300px;
+  min-width: 286px;
 }
 
 .popup-shell {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   padding: 14px;
 }
 
 .popup-header {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   padding: 2px 2px 0;
 }
 
@@ -20,10 +20,9 @@ body {
   font-family: var(--wp-font-body);
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  letter-spacing: 0;
+  line-height: 1.1;
   margin: 0;
-  max-width: none;
 }
 
 .eyebrow {
@@ -34,107 +33,54 @@ body {
   text-transform: uppercase;
 }
 
-.status-text,
-.build-text {
-  color: var(--wp-color-ink-muted);
-  font-size: 0.74rem;
-  font-weight: 400;
-  line-height: 1.35;
-}
-
-.build-text {
-  font-size: 0.62rem;
-  letter-spacing: 0.04em;
-  padding-inline: 2px;
-  text-align: right;
-}
-
-.setting-card {
-  background: rgba(255, 255, 255, 0.76);
+.status-card {
+  background: rgba(255, 255, 255, 0.78);
   border: 1px solid var(--wp-border-regular);
-  border-radius: 1rem;
+  border-radius: 0.9rem;
   box-shadow: 0 12px 28px -24px rgba(7, 8, 74, 0.2);
-  display: grid;
-  gap: 10px;
   padding: 12px;
 }
 
-.toggle-row {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-}
-
-.setting-label {
-  color: var(--wp-color-ink);
-  display: block;
+.page-status {
+  color: var(--wp-color-ink-muted);
   font-size: 0.84rem;
-  font-weight: 600;
-  margin-bottom: 0;
-}
-
-.range-header {
-  align-items: center;
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-}
-
-output {
-  color: var(--wp-color-ink);
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-#width-range {
-  margin-top: 0;
-}
-
-.popup-footer {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-}
-
-.secondary-button {
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid var(--wp-border-regular);
-  border-radius: 999px;
-  box-shadow: 0 8px 16px -16px rgba(40, 57, 255, 0.22);
-  color: var(--wp-color-ink);
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 8px 12px;
-  transition:
-    background-color 220ms ease,
-    color 220ms ease,
-    opacity 220ms ease,
-    transform 220ms var(--wp-ease-emphasized);
-}
-
-.secondary-button:hover {
-  background: var(--wp-color-soft);
-  color: var(--wp-color-primary);
-}
-
-.secondary-button:active {
-  transform: scale(0.95);
-}
-
-.status-text {
-  color: rgba(7, 8, 74, 0.72);
-  display: block;
-  font-size: 0.72rem;
   font-weight: 500;
-  min-height: 1em;
-  text-align: right;
+  line-height: 1.45;
 }
 
-.status-text:empty {
-  visibility: hidden;
+.primary-button {
+  background: var(--wp-color-ink);
+  border: 1px solid var(--wp-color-ink);
+  border-radius: 999px;
+  box-shadow: 0 12px 22px -14px rgba(7, 8, 74, 0.45);
+  color: var(--wp-color-ui-bg);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  min-height: 42px;
+  padding: 10px 14px;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms var(--wp-ease-emphasized);
+}
+
+.primary-button:hover {
+  background: var(--wp-color-primary);
+  border-color: var(--wp-color-primary);
+}
+
+.primary-button:active {
+  transform: scale(0.98);
+}
+
+.build-text {
+  color: var(--wp-color-ink-muted);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  padding-inline: 2px;
+  text-align: right;
 }

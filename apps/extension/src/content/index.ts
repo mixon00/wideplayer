@@ -1,5 +1,8 @@
 import { DEFAULT_SETTINGS, STYLE_ELEMENT_ID, X_HOSTS, type Settings } from "../shared/constants";
+import { getExtensionApi, type MessageListener } from "../shared/browser-api";
 import {
+  getPlatformAutoEnable,
+  getPlatformWidthPercent,
   loadLiveWidthPreview,
   loadSettings,
   subscribeToLiveWidthPreview,
@@ -206,7 +209,7 @@ class WidePlayerContentApp {
   private unsubscribe: (() => void) | null = null;
 
   private isAutoModeEnabled(settings: Settings = this.settings): boolean {
-    return this.platform === "mastodon" ? settings.autoEnableMastodon : settings.autoEnableX;
+    return this.platform ? getPlatformAutoEnable(settings, this.platform) : false;
   }
 
   async init(): Promise<void> {
@@ -700,13 +703,21 @@ class WidePlayerContentApp {
   }
 
   private getEffectiveWidthPercent(): number {
+    const savedWidthPercent = this.platform
+      ? getPlatformWidthPercent(this.settings, this.platform)
+      : DEFAULT_SETTINGS.widthPercentX;
+
     if (!this.liveWidthPreview) {
-      return this.settings.widthPercent;
+      return savedWidthPercent;
+    }
+
+    if (this.liveWidthPreview.platform !== this.platform) {
+      return savedWidthPercent;
     }
 
     if (Date.now() - this.liveWidthPreview.updatedAt > LIVE_WIDTH_PREVIEW_TTL_MS) {
       this.clearLiveWidthPreview();
-      return this.settings.widthPercent;
+      return savedWidthPercent;
     }
 
     return this.liveWidthPreview.widthPercent;
@@ -1260,6 +1271,22 @@ class WidePlayerContentApp {
     document.documentElement.removeAttribute("data-wideplayer-platform");
   }
 }
+
+const pageStatusMessageListener: MessageListener = (message, _sender, sendResponse) => {
+  if (
+    typeof message !== "object" ||
+    message === null ||
+    (message as { type?: unknown }).type !== "wideplayer:get-page-status"
+  ) {
+    return;
+  }
+
+  sendResponse({
+    platform: getSupportedPlatform(),
+  });
+};
+
+getExtensionApi()?.runtime?.onMessage?.addListener(pageStatusMessageListener);
 
 const app = new WidePlayerContentApp();
 void app.init();

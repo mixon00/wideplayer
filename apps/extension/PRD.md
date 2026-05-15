@@ -37,9 +37,9 @@ The current project already implements:
 - automatic enlargement mode enabled by default
 - manual mode with per-video icon-based `Expand` / `Collapse` controls
 - manual controls with a top fade overlay that appear on hover or focus, fade away again after about 2 seconds of pointer inactivity, and stay visible while the video is paused
-- storage-backed settings managed from the popup
-- an options page that now acts as About & Help content instead of duplicating popup controls
-- the popup and About & Help surfaces styled with the same cream, earth-green, bright-green, and bronze visual language used by the landing page
+- storage-backed settings managed from the options page
+- a small popup shortcut that shows page status and opens full settings
+- a tabbed options page for Settings, About, Help, and recent changes
 - realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
 - placeholder-based layout preservation while a player is widened
@@ -120,18 +120,18 @@ When a candidate activates, the extension must:
 
 ### 5.3 Settings
 
-The extension must keep these values aligned across the popup, storage, and runtime behavior:
+The extension must keep these values aligned across options, storage, and runtime behavior:
 
 - `autoEnableX`
 - `autoEnableMastodon`
-- `autoEnable` as a popup master toggle that updates all platform toggles and shows an indeterminate state when platform settings differ. The user can only click it into all-on or all-off.
-- `widthPercent`
+- `widthPercentX`
+- `widthPercentMastodon`
 
 Current defaults:
 
 - `autoEnableX: true`
 - `autoEnableMastodon: true`
-- `widthPercent: 35`
+- supported platform width values default to `35`
 
 Settings behavior requirements:
 
@@ -139,13 +139,16 @@ Settings behavior requirements:
 - final width should persist only after the user commits the slider change
 - realtime preview should not require a page reload
 
-### 5.4 About & Help page
+### 5.4 Options page
 
 The extension should provide an options page that:
 
+- uses tabs for Settings, About, Help, and What's new
+- lets each supported platform have its own Auto mode and width setting
+- shows planned platforms as Coming soon cards without active controls
 - explains what WidePlayer does in a short About section
 - answers the core usage and limitation questions in a concise FAQ
-- highlights recent product changes without requiring the full changelog inside the popup
+- highlights recent product changes without putting them in the popup
 
 ### 5.5 Fail-safe behavior
 
@@ -215,6 +218,7 @@ The current MVP should be considered healthy when:
 - `npm run typecheck` passes after TypeScript or UI wiring changes
 - `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
 - `npm run package:release` produces ZIP archives in `release` for the built browser targets
-- popup controls platform-specific auto mode and `widthPercent` without requiring a duplicate settings page
+- popup shows page status and opens options without duplicating settings
+- options controls platform-specific auto mode and width settings
 - width changes preview live without reloading the page
 - supported videos can widen and restore without breaking the surrounding feed

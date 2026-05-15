@@ -4,7 +4,11 @@
 
 ### Added
 
-- Auto mode can now be toggled separately for X and Mastodon from the popup. The existing Auto mode toggle works as a master control: it shows an indeterminate state when platform settings differ, but clicking it only sets all platforms on or off.
+- The popup is now a small shortcut with page status, build version, and an `Open settings` button.
+- The options page now uses tabs for Settings, About, Help, and What's new.
+- Width can now be configured separately for each supported platform.
+- Auto mode can now be toggled separately for X and Mastodon from options.
+- Bluesky and LinkedIn now appear as Coming soon cards without active controls.
 - Supported in-feed videos on Mastodon instances are now detected and can use the same widened player behavior as X videos.
 - Mastodon YouTube cards are now detected before playback starts, including the pre-iframe click overlay.
 

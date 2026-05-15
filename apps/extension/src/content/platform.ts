@@ -1,1 +1,1 @@
-export type SupportedPlatform = "mastodon" | "x";
+export type { SupportedPlatform } from "../shared/constants";

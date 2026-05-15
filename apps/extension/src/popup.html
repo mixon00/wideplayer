@@ -9,36 +9,14 @@
     <main class="popup-shell">
       <header class="popup-header">
         <p class="eyebrow">WidePlayer</p>
-        <h1>Quick settings</h1>
+        <h1>Settings live in options</h1>
       </header>
 
-      <section class="setting-card">
-        <label class="toggle-row" for="auto-enable">
-          <span class="setting-label">Auto mode</span>
-          <input id="auto-enable" type="checkbox" />
-        </label>
-        <label class="toggle-row" for="auto-enable-x">
-          <span class="setting-label">Auto mode on X</span>
-          <input id="auto-enable-x" type="checkbox" />
-        </label>
-        <label class="toggle-row" for="auto-enable-mastodon">
-          <span class="setting-label">Auto mode on Mastodon</span>
-          <input id="auto-enable-mastodon" type="checkbox" />
-        </label>
+      <section class="status-card">
+        <p id="page-status" class="page-status" role="status">Checking this page...</p>
       </section>
 
-      <section class="setting-card">
-        <div class="range-header">
-          <label for="width-range" class="setting-label">Width</label>
-          <output id="width-output" for="width-range">35%</output>
-        </div>
-        <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
-      </section>
-
-      <footer class="popup-footer">
-        <button id="open-options" class="secondary-button" type="button">Help</button>
-        <p id="status-text" class="status-text" role="status"></p>
-      </footer>
+      <button id="open-options" class="primary-button" type="button">Open settings</button>
       <p id="build-id" class="build-text">Build</p>
     </main>
 
