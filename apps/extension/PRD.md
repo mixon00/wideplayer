@@ -148,7 +148,8 @@ The extension should provide an options page that:
 - shows planned platforms as Coming soon cards without active controls
 - explains what WidePlayer does in a short About section
 - answers the core usage and limitation questions in a concise FAQ
-- highlights recent product changes without putting them in the popup
+- shows a plain-language changelog in the What’s new tab, grouped by the same versions as `CHANGELOG.md`
+- stays aligned with `CHANGELOG.md` whenever release notes change
 
 ### 5.5 Fail-safe behavior
 

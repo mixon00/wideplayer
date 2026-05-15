@@ -24,7 +24,7 @@ The repository currently contains a working MVP, not just a scaffold. As of vers
 - builds separate distributions for Chrome, Firefox, and Safari
 - can package browser-specific release ZIPs from built output
 
-Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, and `AGENTS.md` aligned with the actual repository state.
+Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, `AGENTS.md`, and the options page `What’s new` tab aligned with the actual repository state.
 
 ## Stack And Commands
 
@@ -76,15 +76,17 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 
 ## Documentation Rules
 
-- Keep `README.md`, `CHANGELOG.md`, `PRD.md`, and `AGENTS.md` aligned with the current project state
+- Keep `README.md`, `CHANGELOG.md`, `PRD.md`, `AGENTS.md`, and the options page `What’s new` tab aligned with the current project state
+- When updating `CHANGELOG.md`, also update the options page `What’s new` tab in `src/options.html` so users see the same version history in the extension
 - When behavior changes materially, update the relevant documentation in the same task unless the user says otherwise
 - On every version bump, also update:
   - `README.md`
   - `CHANGELOG.md`
   - `PRD.md`
+  - the options page `What’s new` tab in `src/options.html`
 - After a version bump and the required documentation updates, propose a commit message for the current set of changes without mentioning the version bump itself unless the user explicitly asks for that
 - Proposed commit messages must use the repository's existing prefix style such as `fix:`, `feat:`, `feat(ui):`, or `release:`, chosen to match the dominant change
-- If a version bump changes shipped behavior, make sure the changelog entry is user-facing and the README/PRD describe the new current state accurately
+- If a version bump changes shipped behavior, make sure the changelog entry is user-facing, the options page `What’s new` tab mirrors it in plain language, and the README/PRD describe the new current state accurately
 
 ## Validation Expectations
 

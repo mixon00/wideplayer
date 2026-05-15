@@ -200,6 +200,7 @@ Release ZIPs preserve the built directory layout and omit sourcemaps and source 
 
 - product requirements and current MVP scope: `PRD.md`
 - release notes: `CHANGELOG.md`
+- in-extension release notes: `src/options.html` `What’s new` tab
 
 ## License
 

@@ -41,18 +41,33 @@ function createPlatformCard(config: PlatformSettingsConfig): PlatformControls {
   const titleGroup = document.createElement("div");
   titleGroup.className = "platform-title-group";
 
+  const titleRow = document.createElement("div");
+  titleRow.className = "platform-title-row";
+
+  const icon = document.createElement("img");
+  icon.className = "platform-icon";
+  icon.src = config.iconSrc;
+  icon.width = 24;
+  icon.height = 24;
+  icon.alt = "";
+  icon.setAttribute("aria-hidden", "true");
+
   const title = document.createElement("h3");
   title.textContent = config.label;
 
   const description = document.createElement("p");
   description.textContent = config.description;
 
-  const badge = document.createElement("span");
-  badge.className = "platform-badge";
-  badge.textContent = config.status;
+  titleRow.append(icon, title);
+  titleGroup.append(titleRow, description);
+  header.append(titleGroup);
 
-  titleGroup.append(title, description);
-  header.append(titleGroup, badge);
+  if (config.status !== "Supported") {
+    const badge = document.createElement("span");
+    badge.className = "platform-badge";
+    badge.textContent = config.status;
+    header.append(badge);
+  }
 
   const autoEnableInput = document.createElement("input");
   autoEnableInput.type = "checkbox";

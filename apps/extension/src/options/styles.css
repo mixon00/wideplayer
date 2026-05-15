@@ -23,9 +23,22 @@ body {
 }
 
 .page-header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.app-logo {
+  flex: 0 0 auto;
+  height: 48px;
+  width: 48px;
+}
+
+.page-title {
   display: grid;
   gap: 6px;
-  padding: 18px 20px;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -145,7 +158,8 @@ h3 {
 .platform-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 760px;
 }
 
 .platform-card {
@@ -168,21 +182,28 @@ h3 {
   min-width: 0;
 }
 
+.platform-title-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+
+.platform-icon {
+  flex: 0 0 auto;
+  height: 24px;
+  width: 24px;
+}
+
 .platform-badge {
-  background: rgba(47, 201, 128, 0.14);
-  border: 1px solid rgba(47, 201, 128, 0.28);
+  background: rgba(7, 8, 74, 0.06);
+  border: 1px solid rgba(7, 8, 74, 0.12);
   border-radius: 999px;
-  color: #17633f;
+  color: var(--wp-color-ink-muted);
   flex: 0 0 auto;
   font-size: 0.72rem;
   font-weight: 750;
   padding: 5px 9px;
-}
-
-.platform-card[data-platform-status="coming-soon"] .platform-badge {
-  background: rgba(7, 8, 74, 0.06);
-  border-color: rgba(7, 8, 74, 0.12);
-  color: var(--wp-color-ink-muted);
 }
 
 .platform-note {
@@ -315,15 +336,13 @@ output {
   letter-spacing: 0.04em;
 }
 
-@media (max-width: 760px) {
-  .platform-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 640px) {
   .page-shell {
     padding: 20px 14px 40px;
+  }
+
+  .page-header {
+    align-items: flex-start;
   }
 
   .section-heading,
