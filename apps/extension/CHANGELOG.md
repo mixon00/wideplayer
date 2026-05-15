@@ -10,6 +10,7 @@
 
 ### Fixed
 
+- X videos once again use the full tweet media container as the layout anchor, so expanded players preserve feed spacing correctly.
 - The manual expand/collapse icon keeps the original position for Mastodon YouTube cards and sits slightly lower only on native Mastodon videos.
 - The manual expand/collapse hover background is neutral again instead of purple.
 - Native Mastodon video controls remain clickable after the player is expanded by keeping the overlay inside the Mastodon app root.

@@ -8,6 +8,7 @@ import {
 } from "../shared/settings";
 import { detectFeedVideoCandidates } from "./detector";
 import { OverlayRootManager } from "./overlay-root";
+import type { SupportedPlatform } from "./platform";
 import {
   activatePlayerPlacement,
   restorePlayerPlacement,
@@ -118,7 +119,7 @@ function isMastodonPage(): boolean {
   return Boolean(document.querySelector("body#mastodon, #mastodon"));
 }
 
-function getSupportedPlatform(): "mastodon" | "x" | null {
+function getSupportedPlatform(): SupportedPlatform | null {
   // The manifest matches HTTPS pages so federated Mastodon instances can work.
   if (X_HOSTS.has(window.location.hostname)) {
     return "x";
@@ -195,7 +196,7 @@ class WidePlayerContentApp {
   private intersectionObserver: IntersectionObserver | null = null;
   private mutationObserver: MutationObserver | null = null;
   private overlayRootManager: OverlayRootManager | null = null;
-  private platform: "mastodon" | "x" | null = null;
+  private platform: SupportedPlatform | null = null;
   private liveWidthPreview: LiveWidthPreview | null = null;
   private liveWidthPreviewTimeoutId: number | null = null;
   private scanQueued = false;
@@ -871,7 +872,9 @@ class WidePlayerContentApp {
   }
 
   private scanForCandidates(): void {
-    const detectedCandidates = detectFeedVideoCandidates(document);
+    const detectedCandidates = this.platform
+      ? detectFeedVideoCandidates(this.platform, document)
+      : [];
     const seenArticles = new Set<HTMLElement>();
 
     for (const elements of detectedCandidates) {
