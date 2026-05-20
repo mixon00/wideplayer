@@ -4,11 +4,11 @@ import Footer from "@/components/Footer";
 const faqs = [
   {
     q: "Where does WidePlayer work?",
-    a: "WidePlayer works on supported in-feed videos on X.com. Mastodon support is in progress. Bluesky and LinkedIn are planned.",
+    a: "WidePlayer works on supported in-feed videos on X.com and Mastodon. Bluesky support is in progress. LinkedIn is planned.",
   },
   {
     q: "Which platforms are supported right now?",
-    a: "X.com is supported today. Mastodon is next. Bluesky and LinkedIn are on the roadmap, but work has not started yet.",
+    a: "X.com and Mastodon are supported today. Bluesky is the next platform in progress. LinkedIn is still on the roadmap.",
   },
   {
     q: "Why doesn't it appear on every video?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "Can I control how wide videos get?",
-    a: "Yes. The popup includes a width slider. Active players preview the change while you drag, then save the final value when you release it.",
+    a: "Yes. Open options to set the preferred width separately for each supported platform. Active players preview the change while you drag, then save the final value when you release it.",
   },
   {
     q: "Does WidePlayer collect any data?",

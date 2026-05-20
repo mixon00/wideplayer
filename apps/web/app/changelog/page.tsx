@@ -9,6 +9,34 @@ export const metadata: Metadata = {
 
 const releases = [
   {
+    version: "1.1.0",
+    date: "May 20, 2026",
+    groups: [
+      {
+        title: "New",
+        items: [
+          "WidePlayer now supports Mastodon native videos and supported YouTube cards.",
+          "The popup now includes quick on/off toggles for supported platforms.",
+          "X.com and Mastodon each have their own width and Auto mode settings.",
+        ],
+      },
+      {
+        title: "Improved",
+        items: [
+          "The options page now has dedicated tabs for Settings, About, Help, and What's new.",
+          "Bluesky is now marked as in progress. LinkedIn stays planned.",
+        ],
+      },
+      {
+        title: "Fixed",
+        items: [
+          "Expanded Mastodon videos keep native controls clickable.",
+          "Expanded X videos preserve feed spacing more reliably.",
+        ],
+      },
+    ],
+  },
+  {
     version: "1.0.2",
     date: "April 17, 2026",
     groups: [

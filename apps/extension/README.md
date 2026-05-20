@@ -6,7 +6,7 @@ The project is no longer just a scaffold. The current repository contains a work
 
 ## Current Status
 
-As of version `1.0.3`, the project ships a functional extension MVP with these behaviors:
+As of version `1.1.0`, the project ships a functional extension MVP with these behaviors:
 
 - detects supported in-feed videos on `x.com`, Mastodon instances, and Mastodon YouTube embeds
 - moves the original player into a fixed overlay instead of duplicating the video element
@@ -14,7 +14,7 @@ As of version `1.0.3`, the project ships a functional extension MVP with these b
 - supports automatic mode and manual per-video expand/collapse controls
 - uses icon-based manual controls with a top fade that appear on hover or focus, fade back out after about 2 seconds of pointer inactivity, and stay visible while the video is paused
 - horizontally centers expanded videos in the viewport instead of keeping them anchored to the original in-feed box
-- uses a small popup shortcut for page status and access to full settings
+- uses a popup with quick on/off toggles for supported platforms, page status, build version, and access to full settings
 - uses a tabbed options page for Settings, About, Help, and release-note style content
 - previews width changes live while the slider is being dragged and saves the final value on release
 - keeps the widened overlay below the sticky top bar while still allowing it to cover side columns
@@ -40,6 +40,8 @@ The extension exposes these settings in the options page:
 
 - `autoEnableX`
 - `autoEnableMastodon`
+- `platformEnabledX`
+- `platformEnabledMastodon`
 - `widthPercentX`
 - `widthPercentMastodon`
 
@@ -47,9 +49,11 @@ Current defaults:
 
 - `autoEnableX: true`
 - `autoEnableMastodon: true`
+- `platformEnabledX: true`
+- `platformEnabledMastodon: true`
 - supported platform width values default to `35`
 
-The options page is the primary settings surface. The popup only shows page status, an `Open settings` button, and the build version.
+The popup provides quick on/off toggles for supported platforms. The options page remains the full settings surface for platform enablement, Auto mode, preferred width, About, Help, and release notes.
 
 The extension UI shares the same visual design tokens, rounded card treatment, and light color palette so it feels consistent with the marketing site.
 
@@ -70,6 +74,8 @@ Width changes now behave in two phases:
 
 - detection currently targets X tweet articles and Mastodon statuses that contain exactly one direct video or supported YouTube embed
 - media galleries, unusual nested layouts, or unsupported embed structures may be ignored
+- Bluesky support is in progress, but not shipped in the extension yet
+- LinkedIn support is planned
 - Safari output is generated, but final Safari packaging still depends on Safari Web Extension tooling on macOS
 - there is no dedicated automated test suite yet; validation is currently done through `npm run typecheck` and `npm run build`
 
@@ -204,4 +210,4 @@ Release ZIPs preserve the built directory layout and omit sourcemaps and source 
 
 ## License
 
-No license has been added yet.
+WidePlayer is released under the MIT License.

@@ -7,7 +7,7 @@ This PRD is the source of truth for both:
 - the current shipped MVP behavior
 - the intended product direction for upcoming iterations
 
-The repository is no longer a blank scaffold. As of version `1.0.3`, it contains a working browser extension with a real in-feed widening flow for supported X videos. Unreleased changes also add support for supported Mastodon in-feed videos.
+The repository is no longer a blank scaffold. As of version `1.1.0`, it contains a working browser extension with a real in-feed widening flow for supported X and Mastodon videos. Bluesky support is in progress, but not shipped in the extension yet.
 
 ---
 
@@ -38,7 +38,7 @@ The current project already implements:
 - manual mode with per-video icon-based `Expand` / `Collapse` controls
 - manual controls with a top fade overlay that appear on hover or focus, fade away again after about 2 seconds of pointer inactivity, and stay visible while the video is paused
 - storage-backed settings managed from the options page
-- a small popup shortcut that shows page status and opens full settings
+- a popup with quick on/off toggles for supported platforms, page status, build version, and access to full settings
 - a tabbed options page for Settings, About, Help, and recent changes
 - realtime width preview during slider drag, with final persistence when the slider change is committed
 - a player-move overlay architecture that mounts the original player into a fixed overlay
@@ -124,6 +124,8 @@ The extension must keep these values aligned across options, storage, and runtim
 
 - `autoEnableX`
 - `autoEnableMastodon`
+- `platformEnabledX`
+- `platformEnabledMastodon`
 - `widthPercentX`
 - `widthPercentMastodon`
 
@@ -131,6 +133,8 @@ Current defaults:
 
 - `autoEnableX: true`
 - `autoEnableMastodon: true`
+- `platformEnabledX: true`
+- `platformEnabledMastodon: true`
 - supported platform width values default to `35`
 
 Settings behavior requirements:
@@ -144,8 +148,9 @@ Settings behavior requirements:
 The extension should provide an options page that:
 
 - uses tabs for Settings, About, Help, and What's new
+- lets supported platforms be enabled or disabled from options and the popup
 - lets each supported platform have its own Auto mode and width setting
-- shows planned platforms as Coming soon cards without active controls
+- shows unsupported platforms as Coming soon cards without active controls
 - explains what WidePlayer does in a short About section
 - answers the core usage and limitation questions in a concise FAQ
 - shows a plain-language changelog in the What’s new tab, grouped by the same versions as `CHANGELOG.md`
@@ -209,6 +214,7 @@ The next iterations should focus on:
 - tuning manual controls and per-video affordances
 - validating browser-specific quirks where Chrome, Firefox, and Safari diverge
 - adding stronger validation around DOM behavior and settings synchronization
+- continuing Bluesky support work without exposing active controls before it ships
 
 ---
 
@@ -219,7 +225,7 @@ The current MVP should be considered healthy when:
 - `npm run typecheck` passes after TypeScript or UI wiring changes
 - `npm run build` produces working outputs in `dist/chrome`, `dist/firefox`, and `dist/safari`
 - `npm run package:release` produces ZIP archives in `release` for the built browser targets
-- popup shows page status and opens options without duplicating settings
+- popup shows quick platform toggles, page status, build version, and opens options
 - options controls platform-specific auto mode and width settings
 - width changes preview live without reloading the page
 - supported videos can widen and restore without breaking the surrounding feed

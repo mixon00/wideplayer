@@ -1,14 +1,15 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2026-05-20
 
 ### Added
 
-- The popup is now a small shortcut with page status, build version, and an `Open settings` button.
+- The popup now includes quick platform toggles, page status, build version, and a shortcut to full settings.
 - The options page now uses tabs for Settings, About, Help, and What's new.
 - Width can now be configured separately for each supported platform.
+- WidePlayer can now be enabled or disabled separately for X and Mastodon.
 - Auto mode can now be toggled separately for X and Mastodon from options.
-- Bluesky and LinkedIn now appear as Coming soon cards without active controls.
+- Bluesky and LinkedIn now appear as inactive platform cards without active controls.
 - Supported in-feed videos on Mastodon instances are now detected and can use the same widened player behavior as X videos.
 - Mastodon YouTube cards are now detected before playback starts, including the pre-iframe click overlay.
 
@@ -18,6 +19,7 @@
 - The manual expand/collapse icon keeps the original position for Mastodon YouTube cards and sits slightly lower only on native Mastodon videos.
 - The manual expand/collapse hover background is neutral again instead of purple.
 - Native Mastodon video controls remain clickable after the player is expanded by keeping the overlay inside the Mastodon app root.
+- Project metadata now reflects `1.1.0` across `package.json`, `package-lock.json`, and all browser manifests.
 
 ## 1.0.3 - 2026-05-11
 

@@ -183,7 +183,7 @@ export default async function CtaSection() {
               in-feed videos?
             </h2>
             <p className="mt-3 max-w-lg text-sm font-medium leading-relaxed text-ink">
-              Install WidePlayer for X.com now and the best in-feed experience is one click away.
+              Install WidePlayer for X.com and Mastodon now, with Bluesky support in progress.
             </p>
           </div>
           <div className="grid gap-3">

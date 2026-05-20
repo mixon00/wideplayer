@@ -16,20 +16,23 @@ This is an npm workspaces monorepo. The root package is private and only coordin
 
 ## Current Extension Status
 
-WidePlayer for X currently:
+WidePlayer currently:
 
 - widens supported in-feed videos on `x.com`, Mastodon instances, and Mastodon YouTube embeds
 - moves the original player into a wider overlay instead of duplicating the video element
 - preserves feed flow with a placeholder while the player is expanded
 - supports automatic widening and manual per-video expand/collapse controls
-- provides popup settings for auto mode and width percentage
-- previews width changes live while the popup slider is dragged
+- provides quick popup toggles for supported platforms
+- uses the options page for per-platform auto mode and width settings
+- previews width changes live while an options slider is dragged
 - builds browser-specific outputs for Chrome, Firefox, and Safari
 
 Current limitations:
 
 - detection targets X tweet articles and Mastodon statuses with one direct video or supported YouTube embed
 - media galleries, unusual nested layouts, and unsupported embeds may be skipped
+- Bluesky support is in progress, but not shipped in the extension yet
+- LinkedIn support is planned
 - Safari output can be generated here, but final Safari packaging still depends on Safari Web Extension tooling on macOS
 - there is no dedicated automated test suite yet
 
