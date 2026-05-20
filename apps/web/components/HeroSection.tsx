@@ -1,6 +1,7 @@
 import BrowserMockup from "./BrowserMockup";
 import BrowserInstallButton from "./BrowserInstallButton";
 import {
+  IconBrandBluesky,
   IconBrandGithub,
   IconBrandMastodon,
   IconBrandX,
@@ -46,7 +47,11 @@ export default function HeroSection() {
             </span>
             <span className="inline-flex items-center gap-3">
               <IconBrandMastodon size={20} className="rounded bg-violet p-0.5 text-white" />
-              Mastodon, Bluesky, LinkedIn coming soon
+              Available now for Mastodon
+            </span>
+            <span className="inline-flex items-center gap-3">
+              <IconBrandBluesky size={20} className="rounded bg-sky p-0.5 text-white" />
+              Bluesky in progress. LinkedIn planned.
             </span>
             <span className="inline-flex items-center gap-3">
               <IconShieldCheck size={20} className="rounded bg-mint p-0.5 text-white" />

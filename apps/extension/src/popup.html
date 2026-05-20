@@ -8,29 +8,45 @@
   <body>
     <main class="popup-shell">
       <header class="popup-header">
-        <p class="eyebrow">WidePlayer</p>
-        <h1>Quick settings</h1>
+        <div class="popup-title">
+          <img class="popup-logo" src="icons/icon-32.png" width="20" height="20" alt="" aria-hidden="true" />
+          <p class="eyebrow">WidePlayer</p>
+        </div>
+        <button id="open-options" class="options-icon-button" type="button" aria-label="Open settings">
+          <svg class="options-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0 -7a3.5 3.5 0 0 0 0 7Z" />
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1 -2.83 2.83l-.06 -.06a1.7 1.7 0 0 0 -1.88 -.34a1.7 1.7 0 0 0 -1.03 1.56v.17a2 2 0 1 1 -4 0v-.17a1.7 1.7 0 0 0 -1.03 -1.56a1.7 1.7 0 0 0 -1.88 .34l-.06 .06a2 2 0 1 1 -2.83 -2.83l.06 -.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0 -1.56 -1.03h-.17a2 2 0 1 1 0 -4h.17A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0 -.34 -1.88l-.06 -.06a2 2 0 1 1 2.83 -2.83l.06 .06a1.7 1.7 0 0 0 1.88 .34A1.7 1.7 0 0 0 10 3.01v-.17a2 2 0 1 1 4 0v.17a1.7 1.7 0 0 0 1.03 1.56a1.7 1.7 0 0 0 1.88 -.34l.06 -.06a2 2 0 1 1 2.83 2.83l-.06 .06a1.7 1.7 0 0 0 -.34 1.88a1.7 1.7 0 0 0 1.56 1.03h.17a2 2 0 1 1 0 4h-.17A1.7 1.7 0 0 0 19.4 15Z" />
+          </svg>
+        </button>
       </header>
 
-      <section class="setting-card">
-        <label class="toggle-row" for="auto-enable">
-          <span class="setting-label">Auto enable</span>
-          <input id="auto-enable" type="checkbox" />
+      <section class="quick-copy">
+        <h1>Quick controls</h1>
+        <p>Enable WidePlayer for supported platforms.</p>
+      </section>
+
+      <section class="popup-platforms" aria-label="Supported platforms">
+        <label class="popup-platform-row" for="popup-platform-x">
+          <span class="popup-platform-meta">
+            <img src="icons/platform-x.svg" alt="" width="22" height="22" aria-hidden="true" />
+            <span>X</span>
+          </span>
+          <input id="popup-platform-x" type="checkbox" data-platform-toggle="x" />
+        </label>
+        <label class="popup-platform-row" for="popup-platform-mastodon">
+          <span class="popup-platform-meta">
+            <img src="icons/platform-mastodon.svg" alt="" width="22" height="22" aria-hidden="true" />
+            <span>Mastodon</span>
+          </span>
+          <input id="popup-platform-mastodon" type="checkbox" data-platform-toggle="mastodon" />
         </label>
       </section>
 
-      <section class="setting-card">
-        <div class="range-header">
-          <label for="width-range" class="setting-label">Width</label>
-          <output id="width-output" for="width-range">35%</output>
-        </div>
-        <input id="width-range" type="range" min="0" max="100" step="1" value="35" />
+      <section class="status-card">
+        <span class="status-icon" aria-hidden="true">i</span>
+        <p id="page-status" class="page-status" role="status">Checking this page...</p>
       </section>
 
-      <footer class="popup-footer">
-        <button id="open-options" class="secondary-button" type="button">Help</button>
-        <p id="status-text" class="status-text" role="status"></p>
-      </footer>
       <p id="build-id" class="build-text">Build</p>
     </main>
 

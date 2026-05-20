@@ -3,74 +3,401 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WidePlayer — About &amp; Help</title>
+    <title>WidePlayer Settings</title>
   </head>
   <body>
     <main class="page-shell">
       <section class="page-header">
-        <p class="eyebrow">WidePlayer</p>
-        <h1>About &amp; Help</h1>
-        <p class="lead">WidePlayer makes supported in-feed videos wider without going fullscreen. Use the popup for quick settings.</p>
-      </section>
-
-      <section class="panel">
-        <div class="panel-copy">
-          <h2>About</h2>
-          <p>WidePlayer expands supported in-feed videos into a wider overlay while keeping the feed layout stable. X.com is supported now, Mastodon is in progress, and Bluesky plus LinkedIn are planned.</p>
-          <p>The popup is the main place for quick settings. You can switch between Auto and Manual mode there and adjust the preferred width at any time.</p>
+        <img class="app-logo" src="icons/icon-64.png" width="48" height="48" alt="" aria-hidden="true" />
+        <div class="page-title">
+          <p class="eyebrow">WidePlayer</p>
+          <h1>Settings</h1>
+          <p class="lead">Control where WidePlayer runs and how wide videos get.</p>
         </div>
       </section>
 
-      <section class="panel">
+      <nav class="tabs" aria-label="Options sections">
+        <button class="tab-button" type="button" id="tab-settings" data-tab-target="settings">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0 -7a3.5 3.5 0 0 0 0 7Z" />
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1 -2.83 2.83l-.06 -.06a1.7 1.7 0 0 0 -1.88 -.34a1.7 1.7 0 0 0 -1.03 1.56v.17a2 2 0 1 1 -4 0v-.17a1.7 1.7 0 0 0 -1.03 -1.56a1.7 1.7 0 0 0 -1.88 .34l-.06 .06a2 2 0 1 1 -2.83 -2.83l.06 -.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0 -1.56 -1.03h-.17a2 2 0 1 1 0 -4h.17A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0 -.34 -1.88l-.06 -.06a2 2 0 1 1 2.83 -2.83l.06 .06a1.7 1.7 0 0 0 1.88 .34A1.7 1.7 0 0 0 10 3.01v-.17a2 2 0 1 1 4 0v.17a1.7 1.7 0 0 0 1.03 1.56a1.7 1.7 0 0 0 1.88 -.34l.06 -.06a2 2 0 1 1 2.83 2.83l-.06 .06a1.7 1.7 0 0 0 -.34 1.88a1.7 1.7 0 0 0 1.56 1.03h.17a2 2 0 1 1 0 4h-.17A1.7 1.7 0 0 0 19.4 15Z" />
+          </svg>
+          <span>Settings</span>
+        </button>
+        <button class="tab-button" type="button" id="tab-about" data-tab-target="about">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 11v5" />
+            <path d="M12 8h.01" />
+          </svg>
+          <span>About</span>
+        </button>
+        <button class="tab-button" type="button" id="tab-help" data-tab-target="help">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9.6 9a2.5 2.5 0 0 1 4.8 1c0 1.8 -2.4 2 -2.4 3.7" />
+            <path d="M12 17h.01" />
+          </svg>
+          <span>Help</span>
+        </button>
+        <button class="tab-button" type="button" id="tab-news" data-tab-target="news">
+          <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3.6l2.58 5.22l5.76 .84l-4.17 4.06l.98 5.74L12 16.75l-5.15 2.71l.98 -5.74l-4.17 -4.06l5.76 -.84L12 3.6Z" />
+          </svg>
+          <span>What’s new</span>
+        </button>
+      </nav>
+
+      <section class="tab-panel" id="panel-settings" data-tab-panel="settings" aria-labelledby="tab-settings">
+        <div class="section-heading">
+          <h2>Platforms</h2>
+          <p id="settings-status" class="status-text" role="status">Loading settings...</p>
+        </div>
+        <div id="platform-settings" class="platform-grid"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-about" data-tab-panel="about" aria-labelledby="tab-about">
+        <div class="about-layout">
+          <div class="about-main">
+            <section class="about-section about-intro">
+              <h2>About WidePlayer</h2>
+              <p>WidePlayer makes small in-feed videos easier to watch. It widens supported videos on X and Mastodon while keeping the post, replies, and feed context on screen.</p>
+            </section>
+
+            <section class="about-section">
+              <h3>Why it exists</h3>
+              <p>Social feeds are built around narrow columns. That works for text, but video often ends up cramped. Fullscreen is the other extreme: the video is large, but the post and surrounding context disappear.</p>
+              <p>WidePlayer fills the gap between those two states. It keeps the real player in use, gives it more room, and leaves the rest of the page understandable. No cloned video element. No separate player UI. No fullscreen jump.</p>
+              <p>The first version was built for X. Later updates added manual expand and collapse, smoother positioning, live width preview, per-platform settings, and Mastodon support for native videos and supported YouTube cards. Planned platforms stay marked as planned until they work well enough to ship.</p>
+            </section>
+
+            <section class="about-section">
+              <h3>Project principles</h3>
+              <div class="principles-grid">
+                <article class="principle-item">
+                  <span class="principle-icon" aria-hidden="true">
+                    <svg class="about-mini-icon" viewBox="0 0 24 24" focusable="false">
+                      <path d="m8 9l-4 3l4 3" />
+                      <path d="m16 9l4 3l-4 3" />
+                      <path d="m14 5l-4 14" />
+                    </svg>
+                  </span>
+                  <h4>Open source</h4>
+                  <p>MIT licensed. Code is public and inspectable.</p>
+                </article>
+                <article class="principle-item">
+                  <span class="principle-icon" aria-hidden="true">
+                    <svg class="about-mini-icon" viewBox="0 0 24 24" focusable="false">
+                      <path d="M12 3l7 3v5c0 4.6 -2.8 8.4 -7 10c-4.2 -1.6 -7 -5.4 -7 -10V6l7 -3Z" />
+                      <path d="M9.5 12l1.7 1.7l3.6 -4" />
+                    </svg>
+                  </span>
+                  <h4>Privacy friendly</h4>
+                  <p>Settings stay in browser storage. No extension analytics.</p>
+                </article>
+                <article class="principle-item">
+                  <span class="principle-icon" aria-hidden="true">
+                    <svg class="about-mini-icon" viewBox="0 0 24 24" focusable="false">
+                      <path d="M8 5v14l11 -7L8 5Z" />
+                      <path d="M4 6v12" />
+                    </svg>
+                  </span>
+                  <h4>Native playback</h4>
+                  <p>Original player, controls, and playback state stay intact.</p>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <aside class="about-side" aria-label="Project and author information">
+            <div class="project-links-card">
+              <a class="project-link" href="https://wideplayer.com" target="_blank" rel="noopener noreferrer">
+                <img src="icons/wideplayer-favicon.svg" alt="" width="34" height="34" aria-hidden="true" />
+                <span>
+                  <strong>Website</strong>
+                  <span>wideplayer.com</span>
+                </span>
+                <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M14 5h5v5" />
+                  <path d="M10 14L19 5" />
+                  <path d="M19 14v5H5V5h5" />
+                </svg>
+              </a>
+              <a class="project-link" href="https://github.com/mixon00/wideplayer" target="_blank" rel="noopener noreferrer">
+                <svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 0.5C5.65 0.5 0.5 5.65 0.5 12c0 5.09 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.14c-3.2.7-3.87-1.36-3.87-1.36-.52-1.32-1.28-1.67-1.28-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.63 1.58.24 2.75.12 3.04.74.8 1.18 1.82 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.35.78 1.06.78 2.13v3.16c0 .31.21.67.79.56A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35 0.5 12 0.5Z" />
+                </svg>
+                <span>
+                  <strong>GitHub</strong>
+                  <span>github.com/mixon00/wideplayer</span>
+                </span>
+                <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M14 5h5v5" />
+                  <path d="M10 14L19 5" />
+                  <path d="M19 14v5H5V5h5" />
+                </svg>
+              </a>
+            </div>
+
+            <section class="about-side-card">
+              <h3>Made by Mateusz Misztoft</h3>
+              <p>I build web products, prototypes, browser experiments, and small utilities. I care about clear interfaces, focused tools, and shipping things that are useful without turning them into bloated platforms.</p>
+              <div class="side-divider"></div>
+              <h4>Personal profiles</h4>
+              <div class="profile-links">
+                <a class="profile-link" href="https://misztoft.pl" target="_blank" rel="noopener noreferrer">
+                  <img src="icons/misztoft-favicon.svg" alt="" width="30" height="30" aria-hidden="true" />
+                  <span>
+                    <strong>Homepage</strong>
+                    <span>misztoft.pl</span>
+                  </span>
+                  <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 5h5v5" />
+                    <path d="M10 14L19 5" />
+                    <path d="M19 14v5H5V5h5" />
+                  </svg>
+                </a>
+                <a class="profile-link" href="https://x.com/mat_misztoft" target="_blank" rel="noopener noreferrer">
+                  <img src="icons/platform-x.svg" alt="" width="30" height="30" aria-hidden="true" />
+                  <span>
+                    <strong>X / Twitter</strong>
+                    <span>x.com/mat_misztoft</span>
+                  </span>
+                  <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 5h5v5" />
+                    <path d="M10 14L19 5" />
+                    <path d="M19 14v5H5V5h5" />
+                  </svg>
+                </a>
+                <a class="profile-link" href="https://bsky.app/profile/mat-misztoft.bsky.social" target="_blank" rel="noopener noreferrer">
+                  <img src="icons/platform-bluesky.svg" alt="" width="30" height="30" aria-hidden="true" />
+                  <span>
+                    <strong>Bluesky</strong>
+                    <span>mat-misztoft.bsky.social</span>
+                  </span>
+                  <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 5h5v5" />
+                    <path d="M10 14L19 5" />
+                    <path d="M19 14v5H5V5h5" />
+                  </svg>
+                </a>
+                <a class="profile-link" href="https://mstdn.social/@mat_misztoft" target="_blank" rel="noopener noreferrer">
+                  <img src="icons/platform-mastodon.svg" alt="" width="30" height="30" aria-hidden="true" />
+                  <span>
+                    <strong>Mastodon</strong>
+                    <span>mstdn.social/@mat_misztoft</span>
+                  </span>
+                  <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M14 5h5v5" />
+                    <path d="M10 14L19 5" />
+                    <path d="M19 14v5H5V5h5" />
+                  </svg>
+                </a>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="panel-help" data-tab-panel="help" aria-labelledby="tab-help">
         <div class="panel-copy">
-          <h2>FAQ</h2>
+          <h2>Help</h2>
         </div>
         <div class="faq-list">
           <details class="faq-item">
             <summary>Where does WidePlayer work?</summary>
-            <p>WidePlayer works on supported in-feed videos. X.com is supported now. Mastodon support is in progress. Bluesky and LinkedIn are planned.</p>
-          </details>
-          <details class="faq-item">
-            <summary>Which platforms are supported right now?</summary>
-            <p>X.com is supported today. Mastodon is in progress. Bluesky and LinkedIn are on the roadmap, but work has not started yet.</p>
+            <p>WidePlayer currently works on supported in-feed videos on X and Mastodon. Bluesky is in progress and LinkedIn is planned, but both stay disabled until support is ready.</p>
           </details>
           <details class="faq-item">
             <summary>Why doesn’t it appear on every video?</summary>
-            <p>Some layouts and embedded players are still unsupported. WidePlayer skips videos it cannot enhance safely instead of forcing a broken layout.</p>
+            <p>WidePlayer only touches players it can handle safely. It may skip media galleries, unusual embeds, heavily nested layouts, or videos where moving the original player would break controls or layout.</p>
           </details>
           <details class="faq-item">
-            <summary>What’s the difference between Auto and Manual mode?</summary>
-            <p>Auto mode expands supported videos as you scroll. Manual mode leaves videos at their normal size until you use the player control.</p>
+            <summary>What does the popup toggle do?</summary>
+            <p>The popup toggle enables or disables WidePlayer for that whole platform. If X is off, the extension will not add expand buttons or auto mode on X. The same applies to Mastodon.</p>
           </details>
           <details class="faq-item">
-            <summary>Can I control how wide videos get?</summary>
-            <p>Yes. The popup includes a width slider. Active players preview the change while you drag, then save the final value when you release it.</p>
+            <summary>What is Auto mode?</summary>
+            <p>Auto mode widens supported videos while you scroll. It is platform-specific, so you can keep it on for one platform and off for another.</p>
           </details>
           <details class="faq-item">
-            <summary>Does WidePlayer collect any data?</summary>
-            <p>No. The browser extension does not collect, transmit, or sell any user data. It only stores your local extension settings, such as mode and preferred width, on your device.</p>
+            <summary>What is Manual mode?</summary>
+            <p>Manual mode leaves videos in the normal feed layout until you press the expand button on a supported player. It is useful when you want WidePlayer available, but not automatic.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What does Preferred width change?</summary>
+            <p>Preferred width controls how much wider the video can get. The final size is still limited by the viewport, video aspect ratio, and available screen space.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Why do I need to reload a supported platform?</summary>
+            <p>Browser extensions inject content scripts when a page loads. If you install, update, or change some platform-level settings, reloading the page makes sure the current tab uses the latest code and settings.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does WidePlayer replace the video player?</summary>
+            <p>No. WidePlayer keeps the original player and moves it into a wider overlay. Playback state, native controls, volume, captions, and browser behavior stay attached to the same player.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Does WidePlayer collect data?</summary>
+            <p>No. The extension stores settings in your browser and does not collect browsing history, account data, video data, or analytics from the extension.</p>
           </details>
           <details class="faq-item">
             <summary>Is WidePlayer open source?</summary>
-            <p>Yes. The project is open source and available on GitHub. The extension is built in public so the code can be reviewed.</p>
+            <p>Yes. WidePlayer is MIT licensed and the source code is available on GitHub.</p>
           </details>
         </div>
       </section>
 
-      <section class="panel">
+      <section class="tab-panel" id="panel-news" data-tab-panel="news" aria-labelledby="tab-news">
         <div class="panel-copy">
           <h2>What’s new</h2>
-          <p>Recent improvements in the current MVP.</p>
+          <p>Changelog by version.</p>
         </div>
-        <ul class="update-list">
-          <li>The popup is now the main place for quick settings.</li>
-          <li>Width changes preview live on active players while you drag the slider.</li>
-          <li>Manual mode supports per-video controls, outside-click collapse, and centered opening scroll.</li>
-        </ul>
+        <section class="changelog-entry" aria-labelledby="changelog-1-1-0">
+          <p class="changelog-version">1.1.0</p>
+          <h3 id="changelog-1-1-0">Mastodon support and quick platform controls</h3>
+          <ul class="changelog-list">
+            <li>The popup now includes quick on/off toggles for supported platforms.</li>
+            <li>Settings are split into tabs: Settings, About, Help, and What’s new.</li>
+            <li>WidePlayer can now be enabled or disabled separately for X and Mastodon.</li>
+            <li>X and Mastodon now have separate width and Auto mode settings.</li>
+            <li>Bluesky and LinkedIn are shown as inactive platform cards, without fake controls.</li>
+            <li>Mastodon videos and Mastodon YouTube cards are now supported.</li>
+            <li>Expanded videos keep their spacing better on X.</li>
+            <li>Mastodon video controls stay clickable after widening.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-3">
+          <p class="changelog-version">1.0.3</p>
+          <h3 id="changelog-1-0-3">Product copy and build info cleanup</h3>
+          <ul class="changelog-list">
+            <li>The extension name, description, FAQ, colors, and icons were updated.</li>
+            <li>Build information is tracked again after the monorepo move.</li>
+            <li>Version metadata was aligned across the extension files.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-2">
+          <p class="changelog-version">1.0.2</p>
+          <h3 id="changelog-1-0-2">Firefox release fix</h3>
+          <ul class="changelog-list">
+            <li>Firefox release metadata now says the extension collects no data.</li>
+            <li>The Firefox version requirement was updated for store submission.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-1">
+          <p class="changelog-version">1.0.1</p>
+          <h3 id="changelog-1-0-1">Firefox development fix</h3>
+          <ul class="changelog-list">
+            <li>Temporary Firefox installs now use the right background script setup.</li>
+            <li>Version metadata was aligned across the extension files.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-1-0-0">
+          <p class="changelog-version">1.0.0</p>
+          <h3 id="changelog-1-0-0">Cleaner manual controls</h3>
+          <ul class="changelog-list">
+            <li>Manual controls hide when you are not using them.</li>
+            <li>The controls stay visible while the video is paused.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-12">
+          <p class="changelog-version">0.3.12</p>
+          <h3 id="changelog-0-3-12">Better expanded video position</h3>
+          <ul class="changelog-list">
+            <li>Expanded videos now move closer to the center of the screen.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-11">
+          <p class="changelog-version">0.3.11</p>
+          <h3 id="changelog-0-3-11">Updated extension UI</h3>
+          <ul class="changelog-list">
+            <li>The popup and options page got the newer WidePlayer visual style.</li>
+            <li>The extension copy now refers to x.com.</li>
+            <li>Extension icons were refreshed.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-10">
+          <p class="changelog-version">0.3.10</p>
+          <h3 id="changelog-0-3-10">Popup and help refresh</h3>
+          <ul class="changelog-list">
+            <li>The popup and help page were restyled.</li>
+            <li>The options page started showing FAQ and recent updates.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-9">
+          <p class="changelog-version">0.3.9</p>
+          <h3 id="changelog-0-3-9">Cleaner manual button</h3>
+          <ul class="changelog-list">
+            <li>Manual controls got a top fade for better contrast.</li>
+            <li>The button background is now subtle and only appears on hover.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-8">
+          <p class="changelog-version">0.3.8</p>
+          <h3 id="changelog-0-3-8">Release package fix</h3>
+          <ul class="changelog-list">
+            <li>Release ZIP files now keep the right folder structure.</li>
+            <li>Source maps and source-only icon files are no longer included in releases.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-7">
+          <p class="changelog-version">0.3.7</p>
+          <h3 id="changelog-0-3-7">Centered opening</h3>
+          <ul class="changelog-list">
+            <li>Manually expanded videos now scroll toward the center of the screen while opening.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-6">
+          <p class="changelog-version">0.3.6</p>
+          <h3 id="changelog-0-3-6">Smoother manual mode</h3>
+          <ul class="changelog-list">
+            <li>Clicking outside an expanded video now collapses it.</li>
+            <li>Expand and collapse now animate instead of jumping.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-5">
+          <p class="changelog-version">0.3.5</p>
+          <h3 id="changelog-0-3-5">Icon controls</h3>
+          <ul class="changelog-list">
+            <li>Manual controls now use icons instead of text labels.</li>
+            <li>Controls stay hidden until you hover over the player.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-4">
+          <p class="changelog-version">0.3.4</p>
+          <h3 id="changelog-0-3-4">Overlay fixes on X</h3>
+          <ul class="changelog-list">
+            <li>Expanded videos stay below the sticky top bar.</li>
+            <li>Expanded videos can still appear above the side columns.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-3">
+          <p class="changelog-version">0.3.3</p>
+          <h3 id="changelog-0-3-3">Live width preview</h3>
+          <ul class="changelog-list">
+            <li>Width changes preview while you drag the slider.</li>
+            <li>The final width is saved after you finish changing it.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-0-3-2">
+          <p class="changelog-version">0.3.2</p>
+          <h3 id="changelog-0-3-2">Working MVP</h3>
+          <ul class="changelog-list">
+            <li>Videos expand more gradually while moving through the screen.</li>
+            <li>Expanded videos keep their place while scrolling and resizing.</li>
+            <li>Project docs were updated to match the working extension.</li>
+          </ul>
+        </section>
+        <section class="changelog-entry" aria-labelledby="changelog-earlier">
+          <p class="changelog-version">Earlier work</p>
+          <h3 id="changelog-earlier">Initial extension setup</h3>
+          <ul class="changelog-list">
+            <li>Earlier versions set up the extension, saved settings, popup/options pages, and the first widened-player behavior.</li>
+          </ul>
+        </section>
       </section>
 
       <section class="page-footer">
-        <p class="footer-copy">If WidePlayer does not appear right away after installing or updating, reload the supported platform and try again.</p>
+        <p class="footer-copy">Reload a supported platform after installing or updating if WidePlayer does not appear right away.</p>
         <p id="build-id" class="build-text">Build</p>
       </section>
     </main>

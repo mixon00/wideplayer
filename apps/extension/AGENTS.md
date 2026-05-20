@@ -2,11 +2,13 @@
 
 ## Project Summary
 
-WidePlayer for X is a Vite + TypeScript browser extension that makes supported in-feed videos on X appear wider without entering fullscreen.
+WidePlayer is a Vite + TypeScript browser extension that makes supported in-feed videos on X and Mastodon appear wider without entering fullscreen.
 
-The repository currently contains a working MVP, not just a scaffold. As of version `1.0.3`, the extension:
+The repository currently contains a working MVP, not just a scaffold. As of version `1.1.0`, the extension:
 
 - supports `x.com`
+- supports Mastodon instances
+- supports Mastodon YouTube embeds
 - detects supported in-feed video candidates
 - moves the original player into a fixed overlay instead of duplicating the video element
 - preserves feed layout with a placeholder while the player is expanded
@@ -14,15 +16,16 @@ The repository currently contains a working MVP, not just a scaffold. As of vers
 - uses icon-based manual controls that appear on player hover or focus, fade away again after about 2 seconds of pointer inactivity, and stay visible while the video is paused
 - collapses manually expanded players when the user clicks outside them
 - scrolls manually expanded players toward the vertical center of the viewport while opening
-- keeps popup and options settings synchronized through extension storage
-- previews width changes live while the settings slider is being dragged and persists the final value when the change is committed
-- uses the popup as the primary settings surface and the options page for About & Help content
+- keeps options settings synchronized with runtime behavior through extension storage
+- previews width changes live while an options slider is being dragged and persists the final value when the change is committed
+- uses the popup for quick supported-platform toggles and the options page as the full settings surface
 - keeps the widened overlay below X's sticky top bar while still rendering above the side columns
 - shifts expanded videos toward the horizontal center of the viewport instead of anchoring them to the original in-feed box
 - builds separate distributions for Chrome, Firefox, and Safari
 - can package browser-specific release ZIPs from built output
+- has Bluesky support in progress, but not shipped in the extension yet
 
-Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, and `AGENTS.md` aligned with the actual repository state.
+Treat `PRD.md` as the source of truth for current product scope and near-term direction, but keep `README.md`, `CHANGELOG.md`, `AGENTS.md`, and the options page `What’s new` tab aligned with the actual repository state.
 
 ## Stack And Commands
 
@@ -38,10 +41,10 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 
 ## Repository Layout
 
-- `src/content` contains the content script entrypoint, detection logic, overlay positioning, and player-move behavior for X/Twitter pages
+- `src/content` contains the content script entrypoint, detection logic, overlay positioning, and player-move behavior for X/Twitter and Mastodon pages
 - `src/background` contains the background service worker entrypoint that ensures default settings exist
-- `src/shared` contains browser API access, storage, settings normalization, live preview state, constants, build info, and shared UI logic
-- `src/popup` and `src/options` contain the two settings surfaces
+- `src/shared` contains browser API access, storage, settings normalization, live preview state, constants, and build info
+- `src/popup` contains the small status shortcut, and `src/options` contains the tabbed settings surface
 - `chrome`, `firefox`, and `safari` contain browser-specific manifests and compatibility overrides
 - `scripts/prepare-build.mjs` generates the build id used by popup/options and prepares build metadata
 - `scripts/package-release.mjs` packages built browser outputs into release ZIP archives
@@ -68,25 +71,27 @@ Treat `PRD.md` as the source of truth for current product scope and near-term di
 - Preserve the current lightweight, framework-free TypeScript architecture
 - Do not change `package.json` metadata such as `description`, `name`, or unrelated fields unless the user explicitly asks for it
 - Prefer existing abstractions in `src/shared/browser-api.ts`, `src/shared/storage.ts`, and `src/shared/settings.ts` over scattering raw browser API calls
-- When changing settings, keep defaults, normalization, persistence, popup UI, and options UI aligned
+- When changing settings, keep defaults, normalization, persistence, options UI, and runtime behavior aligned
 - When changing content-script behavior, preserve the moved-player overlay architecture unless the user explicitly asks for an architectural change
 - Do not edit generated files under `dist`
 
 ## Documentation Rules
 
-- Keep `README.md`, `CHANGELOG.md`, `PRD.md`, and `AGENTS.md` aligned with the current project state
+- Keep `README.md`, `CHANGELOG.md`, `PRD.md`, `AGENTS.md`, and the options page `What’s new` tab aligned with the current project state
+- When updating `CHANGELOG.md`, also update the options page `What’s new` tab in `src/options.html` so users see the same version history in the extension
 - When behavior changes materially, update the relevant documentation in the same task unless the user says otherwise
 - On every version bump, also update:
   - `README.md`
   - `CHANGELOG.md`
   - `PRD.md`
+  - the options page `What’s new` tab in `src/options.html`
 - After a version bump and the required documentation updates, propose a commit message for the current set of changes without mentioning the version bump itself unless the user explicitly asks for that
 - Proposed commit messages must use the repository's existing prefix style such as `fix:`, `feat:`, `feat(ui):`, or `release:`, chosen to match the dominant change
-- If a version bump changes shipped behavior, make sure the changelog entry is user-facing and the README/PRD describe the new current state accurately
+- If a version bump changes shipped behavior, make sure the changelog entry is user-facing, the options page `What’s new` tab mirrors it in plain language, and the README/PRD describe the new current state accurately
 
 ## Validation Expectations
 
 - Run `npm run typecheck` after changing TypeScript, HTML, or shared UI wiring
 - Run `npm run build` after changing manifests, build logic, or extension entrypoints
-- If changing settings behavior, verify both popup and options surfaces stay in sync
+- If changing settings behavior, verify options UI and runtime behavior stay in sync
 - There is no dedicated test suite yet; do not add new tooling unless the task requires it

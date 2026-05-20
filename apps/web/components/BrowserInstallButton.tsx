@@ -22,7 +22,7 @@ const BROWSER_STORE_LINKS: Record<Browser, string | null> = {
   Firefox: "https://addons.mozilla.org/pl/firefox/addon/wideplayer/",
   Safari: null,
   Edge: "https://microsoftedge.microsoft.com/addons/detail/wideplayer-for-x/ejbhlmgehocbfnpolalkbgonfeggkohi",
-  Opera: null,
+  Opera: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
   Brave: "https://chromewebstore.google.com/detail/wideplayer-for-x/edehifeemiobccenpkodalpkmmngdkgh",
 };
 

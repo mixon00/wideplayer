@@ -1,5 +1,9 @@
-import { DEFAULT_SETTINGS, STYLE_ELEMENT_ID, SUPPORTED_HOSTS, type Settings } from "../shared/constants";
+import { DEFAULT_SETTINGS, STYLE_ELEMENT_ID, X_HOSTS, type Settings } from "../shared/constants";
+import { getExtensionApi, type MessageListener } from "../shared/browser-api";
 import {
+  getPlatformAutoEnable,
+  getPlatformEnabled,
+  getPlatformWidthPercent,
   loadLiveWidthPreview,
   loadSettings,
   subscribeToLiveWidthPreview,
@@ -8,6 +12,7 @@ import {
 } from "../shared/settings";
 import { detectFeedVideoCandidates } from "./detector";
 import { OverlayRootManager } from "./overlay-root";
+import type { SupportedPlatform } from "./platform";
 import {
   activatePlayerPlacement,
   restorePlayerPlacement,
@@ -98,6 +103,39 @@ function isElementVisible(element: HTMLElement): boolean {
   return visibleHeight > 0;
 }
 
+function isVideoPaused(record: CandidateRecord): boolean {
+  return Boolean(record.video?.paused);
+}
+
+function isMastodonPage(): boolean {
+  const applicationName = document.querySelector<HTMLMetaElement>("meta[name='application-name']");
+
+  if (applicationName?.content.toLowerCase() === "mastodon") {
+    return true;
+  }
+
+  const generator = document.querySelector<HTMLMetaElement>("meta[name='generator']");
+
+  if (generator?.content.toLowerCase().includes("mastodon")) {
+    return true;
+  }
+
+  return Boolean(document.querySelector("body#mastodon, #mastodon"));
+}
+
+function getSupportedPlatform(): SupportedPlatform | null {
+  // The manifest matches HTTPS pages so federated Mastodon instances can work.
+  if (X_HOSTS.has(window.location.hostname)) {
+    return "x";
+  }
+
+  if (isMastodonPage()) {
+    return "mastodon";
+  }
+
+  return null;
+}
+
 interface CandidateGeometry {
   expansionProgress: number;
   height: number;
@@ -109,7 +147,7 @@ interface CandidateGeometry {
 class WidePlayerContentApp {
   private readonly candidates = new Map<HTMLElement, CandidateRecord>();
   private readonly handleDocumentClick = (event: MouseEvent): void => {
-    if (this.settings.autoEnable || !this.hasActiveCandidates()) {
+    if (this.isAutoModeEnabled() || !this.hasActiveCandidates()) {
       return;
     }
 
@@ -129,7 +167,7 @@ class WidePlayerContentApp {
     this.dispose();
   };
   private readonly handleScrollOrResize = (): void => {
-    if (!this.intersectionObserver && this.settings.autoEnable) {
+    if (!this.intersectionObserver && this.isAutoModeEnabled()) {
       this.syncFallbackVisibility();
       this.syncAutoMode();
     }
@@ -149,7 +187,7 @@ class WidePlayerContentApp {
       record.isVisible = entry.isIntersecting;
     }
 
-    if (this.settings.autoEnable) {
+    if (this.isAutoModeEnabled()) {
       this.syncAutoMode();
     }
 
@@ -162,6 +200,7 @@ class WidePlayerContentApp {
   private intersectionObserver: IntersectionObserver | null = null;
   private mutationObserver: MutationObserver | null = null;
   private overlayRootManager: OverlayRootManager | null = null;
+  private platform: SupportedPlatform | null = null;
   private liveWidthPreview: LiveWidthPreview | null = null;
   private liveWidthPreviewTimeoutId: number | null = null;
   private scanQueued = false;
@@ -170,8 +209,26 @@ class WidePlayerContentApp {
   private unsubscribeLiveWidthPreview: (() => void) | null = null;
   private unsubscribe: (() => void) | null = null;
 
+  private isAutoModeEnabled(settings: Settings = this.settings): boolean {
+    return this.platform ? getPlatformAutoEnable(settings, this.platform) : false;
+  }
+
+  private isPlatformEnabled(settings: Settings = this.settings): boolean {
+    return this.platform ? getPlatformEnabled(settings, this.platform) : false;
+  }
+
+  private getWidePlayerMode(settings: Settings = this.settings): "auto" | "manual" | "off" {
+    if (!this.isPlatformEnabled(settings)) {
+      return "off";
+    }
+
+    return this.isAutoModeEnabled(settings) ? "auto" : "manual";
+  }
+
   async init(): Promise<void> {
-    if (!SUPPORTED_HOSTS.has(window.location.hostname)) {
+    this.platform = getSupportedPlatform();
+
+    if (!this.platform) {
       return;
     }
 
@@ -180,6 +237,7 @@ class WidePlayerContentApp {
     }
 
     this.injectStyles();
+    document.documentElement.dataset.wideplayerPlatform = this.platform;
     this.overlayRootManager = new OverlayRootManager();
     this.settings = await loadSettings();
     this.liveWidthPreview = await loadLiveWidthPreview();
@@ -201,6 +259,11 @@ class WidePlayerContentApp {
   }
 
   private activateCandidate(record: CandidateRecord): void {
+    if (!this.isPlatformEnabled()) {
+      this.updateToggleButtonState(record);
+      return;
+    }
+
     if (record.activePlacement || !this.overlayRootManager) {
       this.updateToggleButtonState(record);
       return;
@@ -227,7 +290,7 @@ class WidePlayerContentApp {
     record.playerElement.dataset.wideplayerExpanded = "true";
     this.updateToggleButtonState(record);
 
-    if (this.settings.autoEnable) {
+    if (this.isAutoModeEnabled()) {
       this.syncCandidatePosition(record);
       this.schedulePositionSync();
       return;
@@ -238,7 +301,7 @@ class WidePlayerContentApp {
   }
 
   private applySettings(): void {
-    document.documentElement.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
+    document.documentElement.dataset.wideplayerMode = this.getWidePlayerMode();
     document.documentElement.style.setProperty(
       "--wideplayer-width-percent",
       String(this.getEffectiveWidthPercent())
@@ -349,9 +412,9 @@ class WidePlayerContentApp {
 
   private scheduleControlsHide(record: CandidateRecord): void {
     if (
-      this.settings.autoEnable ||
+      this.isAutoModeEnabled() ||
       this.isToggleButtonFocusVisible(record) ||
-      record.video.paused
+      isVideoPaused(record)
     ) {
       this.clearControlsHideTimeout(record);
       return;
@@ -361,14 +424,14 @@ class WidePlayerContentApp {
     record.controlsHideTimeoutId = window.setTimeout(() => {
       record.controlsHideTimeoutId = null;
 
-      if (!this.isToggleButtonFocusVisible(record) && !record.video.paused) {
+      if (!this.isToggleButtonFocusVisible(record) && !isVideoPaused(record)) {
         this.setControlsVisibility(record, false);
       }
     }, MANUAL_CONTROLS_IDLE_TIMEOUT_MS);
   }
 
   private handlePlayerPointerActivity(record: CandidateRecord, event: PointerEvent): void {
-    if (this.settings.autoEnable || (event.pointerType && event.pointerType === "touch")) {
+    if (this.isAutoModeEnabled() || (event.pointerType && event.pointerType === "touch")) {
       return;
     }
 
@@ -383,8 +446,8 @@ class WidePlayerContentApp {
     record.playerElement.addEventListener("pointerenter", record.handlePlayerPointerEnter);
     record.playerElement.addEventListener("pointerleave", record.handlePlayerPointerLeave);
     record.playerElement.addEventListener("pointermove", record.handlePlayerPointerMove);
-    record.video.addEventListener("pause", record.handleVideoPause);
-    record.video.addEventListener("play", record.handleVideoPlay);
+    record.video?.addEventListener("pause", record.handleVideoPause);
+    record.video?.addEventListener("play", record.handleVideoPlay);
   }
 
   private detachControlVisibilityListeners(record: CandidateRecord): void {
@@ -394,8 +457,8 @@ class WidePlayerContentApp {
     record.playerElement.removeEventListener("pointerenter", record.handlePlayerPointerEnter);
     record.playerElement.removeEventListener("pointerleave", record.handlePlayerPointerLeave);
     record.playerElement.removeEventListener("pointermove", record.handlePlayerPointerMove);
-    record.video.removeEventListener("pause", record.handleVideoPause);
-    record.video.removeEventListener("play", record.handleVideoPlay);
+    record.video?.removeEventListener("pause", record.handleVideoPause);
+    record.video?.removeEventListener("play", record.handleVideoPlay);
     record.playerElement.removeAttribute("data-wideplayer-controls-visible");
   }
 
@@ -464,7 +527,7 @@ class WidePlayerContentApp {
             return;
           }
 
-          if (record.video.paused) {
+          if (isVideoPaused(record)) {
             this.setControlsVisibility(record, true);
             return;
           }
@@ -483,7 +546,7 @@ class WidePlayerContentApp {
       handlePlayerPointerLeave: () => {
         this.clearControlsHideTimeout(record);
 
-        if (!this.isToggleButtonFocusVisible(record) && !record.video.paused) {
+        if (!this.isToggleButtonFocusVisible(record) && !isVideoPaused(record)) {
           this.setControlsVisibility(record, false);
         }
       },
@@ -493,14 +556,14 @@ class WidePlayerContentApp {
       handleVideoPause: () => {
         this.clearControlsHideTimeout(record);
 
-        if (!this.settings.autoEnable) {
+        if (!this.isAutoModeEnabled()) {
           this.setControlsVisibility(record, true);
         }
       },
       handleVideoPlay: () => {
         this.clearControlsHideTimeout(record);
 
-        if (this.settings.autoEnable || this.isToggleButtonFocusVisible(record)) {
+        if (this.isAutoModeEnabled() || this.isToggleButtonFocusVisible(record)) {
           return;
         }
 
@@ -518,9 +581,10 @@ class WidePlayerContentApp {
 
     record.article.dataset.wideplayerCandidate = "true";
     record.article.dataset.wideplayerCandidateId = record.id;
-    record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
+    record.article.dataset.wideplayerMode = this.getWidePlayerMode();
     record.article.dataset.wideplayerState = "collapsed";
     record.playerElement.classList.add("wideplayer-player-root");
+    record.playerElement.dataset.wideplayerMediaKind = record.mediaKind;
     this.attachControlVisibilityListeners(record);
     this.intersectionObserver?.observe(record.article);
     this.candidates.set(record.article, record);
@@ -611,6 +675,7 @@ class WidePlayerContentApp {
     this.detachControlVisibilityListeners(record);
     this.intersectionObserver?.unobserve(record.article);
     record.playerElement.classList.remove("wideplayer-player-root");
+    record.playerElement.removeAttribute("data-wideplayer-media-kind");
     delete record.playerElement.dataset.wideplayerExpanded;
     record.article.removeAttribute("data-wideplayer-candidate");
     record.article.removeAttribute("data-wideplayer-candidate-id");
@@ -620,12 +685,13 @@ class WidePlayerContentApp {
   }
 
   private handleSettingsChange(nextSettings: Settings): void {
-    const modeChanged = this.settings.autoEnable !== nextSettings.autoEnable;
+    const platformEnabledChanged = this.isPlatformEnabled() !== this.isPlatformEnabled(nextSettings);
+    const modeChanged = this.isAutoModeEnabled() !== this.isAutoModeEnabled(nextSettings);
 
     this.settings = nextSettings;
     this.applySettings();
 
-    if (modeChanged) {
+    if (modeChanged || platformEnabledChanged) {
       this.collapseAll();
     }
 
@@ -656,13 +722,21 @@ class WidePlayerContentApp {
   }
 
   private getEffectiveWidthPercent(): number {
+    const savedWidthPercent = this.platform
+      ? getPlatformWidthPercent(this.settings, this.platform)
+      : DEFAULT_SETTINGS.widthPercentX;
+
     if (!this.liveWidthPreview) {
-      return this.settings.widthPercent;
+      return savedWidthPercent;
+    }
+
+    if (this.liveWidthPreview.platform !== this.platform) {
+      return savedWidthPercent;
     }
 
     if (Date.now() - this.liveWidthPreview.updatedAt > LIVE_WIDTH_PREVIEW_TTL_MS) {
       this.clearLiveWidthPreview();
-      return this.settings.widthPercent;
+      return savedWidthPercent;
     }
 
     return this.liveWidthPreview.widthPercent;
@@ -799,10 +873,21 @@ class WidePlayerContentApp {
   }
 
   private resolveAspectRatio(record: CandidateRecord): number {
-    if (record.video.videoWidth > 0 && record.video.videoHeight > 0) {
+    if (record.video && record.video.videoWidth > 0 && record.video.videoHeight > 0) {
       const videoAspectRatio = record.video.videoWidth / record.video.videoHeight;
       record.lastKnownAspectRatio = videoAspectRatio;
       return videoAspectRatio;
+    }
+
+    if (record.mediaElement instanceof HTMLIFrameElement) {
+      const width = Number.parseFloat(record.mediaElement.getAttribute("width") ?? "");
+      const height = Number.parseFloat(record.mediaElement.getAttribute("height") ?? "");
+
+      if (width > 0 && height > 0) {
+        const iframeAspectRatio = width / height;
+        record.lastKnownAspectRatio = iframeAspectRatio;
+        return iframeAspectRatio;
+      }
     }
 
     const playerRect = record.playerElement.getBoundingClientRect();
@@ -817,7 +902,17 @@ class WidePlayerContentApp {
   }
 
   private scanForCandidates(): void {
-    const detectedCandidates = detectFeedVideoCandidates(document);
+    if (!this.isPlatformEnabled()) {
+      for (const record of Array.from(this.candidates.values())) {
+        this.destroyCandidate(record);
+      }
+
+      return;
+    }
+
+    const detectedCandidates = this.platform
+      ? detectFeedVideoCandidates(this.platform, document)
+      : [];
     const seenArticles = new Set<HTMLElement>();
 
     for (const elements of detectedCandidates) {
@@ -846,7 +941,7 @@ class WidePlayerContentApp {
       this.destroyCandidate(record);
     }
 
-    if (!this.intersectionObserver && this.settings.autoEnable) {
+    if (!this.intersectionObserver && this.isAutoModeEnabled()) {
       this.syncFallbackVisibility();
     }
 
@@ -885,10 +980,14 @@ class WidePlayerContentApp {
 
   private syncAutoMode(): void {
     for (const record of this.candidates.values()) {
-      record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
+      record.article.dataset.wideplayerMode = this.getWidePlayerMode();
       this.syncToggleButton(record);
 
-      if (!this.settings.autoEnable) {
+      if (!this.isAutoModeEnabled()) {
+        if (!this.isPlatformEnabled()) {
+          this.deactivateCandidate(record);
+        }
+
         continue;
       }
 
@@ -1064,7 +1163,7 @@ class WidePlayerContentApp {
   }
 
   private syncToggleButton(record: CandidateRecord): void {
-    if (this.settings.autoEnable) {
+    if (!this.isPlatformEnabled() || this.isAutoModeEnabled()) {
       this.clearControlsHideTimeout(record);
       this.setControlsVisibility(record, false);
       this.removeToggleButton(record);
@@ -1097,7 +1196,7 @@ class WidePlayerContentApp {
   }
 
   private toggleCandidate(record: CandidateRecord): void {
-    if (this.settings.autoEnable) {
+    if (!this.isPlatformEnabled() || this.isAutoModeEnabled()) {
       return;
     }
 
@@ -1111,8 +1210,9 @@ class WidePlayerContentApp {
 
   private updateCandidate(record: CandidateRecord, elements: CandidateElements): void {
     const anchorChanged = record.anchorElement !== elements.anchorElement;
+    const mediaChanged = record.mediaElement !== elements.mediaElement;
     const playerChanged = record.playerElement !== elements.playerElement;
-    const videoChanged = record.video !== elements.video;
+    const videoChanged = record.video !== elements.video || mediaChanged;
 
     if (record.activePlacement && (anchorChanged || playerChanged)) {
       this.destroyCandidate(record);
@@ -1124,23 +1224,27 @@ class WidePlayerContentApp {
       this.removeToggleButton(record);
       this.detachControlVisibilityListeners(record);
       record.playerElement.classList.remove("wideplayer-player-root");
+      record.playerElement.removeAttribute("data-wideplayer-media-kind");
       delete record.playerElement.dataset.wideplayerExpanded;
     } else if (videoChanged) {
-      record.video.removeEventListener("pause", record.handleVideoPause);
-      record.video.removeEventListener("play", record.handleVideoPlay);
+      record.video?.removeEventListener("pause", record.handleVideoPause);
+      record.video?.removeEventListener("play", record.handleVideoPlay);
     }
 
+    record.mediaElement = elements.mediaElement;
+    record.mediaKind = elements.mediaKind;
     record.video = elements.video;
     record.anchorElement = elements.anchorElement;
     record.playerElement = elements.playerElement;
     record.playerElement.classList.add("wideplayer-player-root");
+    record.playerElement.dataset.wideplayerMediaKind = record.mediaKind;
     if (playerChanged) {
       this.attachControlVisibilityListeners(record);
     } else if (videoChanged) {
-      record.video.addEventListener("pause", record.handleVideoPause);
-      record.video.addEventListener("play", record.handleVideoPlay);
+      record.video?.addEventListener("pause", record.handleVideoPause);
+      record.video?.addEventListener("play", record.handleVideoPlay);
     }
-    record.article.dataset.wideplayerMode = this.settings.autoEnable ? "auto" : "manual";
+    record.article.dataset.wideplayerMode = this.getWidePlayerMode();
 
     if (!this.intersectionObserver) {
       record.isVisible = isElementVisible(record.article);
@@ -1178,6 +1282,7 @@ class WidePlayerContentApp {
       this.removeToggleButton(record);
       this.detachControlVisibilityListeners(record);
       record.playerElement.classList.remove("wideplayer-player-root");
+      record.playerElement.removeAttribute("data-wideplayer-media-kind");
       delete record.playerElement.dataset.wideplayerExpanded;
       record.article.removeAttribute("data-wideplayer-candidate");
       record.article.removeAttribute("data-wideplayer-candidate-id");
@@ -1194,8 +1299,25 @@ class WidePlayerContentApp {
 
     const styleElement = document.getElementById(STYLE_ELEMENT_ID);
     styleElement?.remove();
+    document.documentElement.removeAttribute("data-wideplayer-platform");
   }
 }
+
+const pageStatusMessageListener: MessageListener = (message, _sender, sendResponse) => {
+  if (
+    typeof message !== "object" ||
+    message === null ||
+    (message as { type?: unknown }).type !== "wideplayer:get-page-status"
+  ) {
+    return;
+  }
+
+  sendResponse({
+    platform: getSupportedPlatform(),
+  });
+};
+
+getExtensionApi()?.runtime?.onMessage?.addListener(pageStatusMessageListener);
 
 const app = new WidePlayerContentApp();
 void app.init();

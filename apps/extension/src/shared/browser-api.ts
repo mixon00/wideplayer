@@ -9,7 +9,16 @@ export interface ExtensionApi {
     onStartup?: {
       addListener(listener: () => void): void;
     };
+    onMessage?: {
+      addListener(listener: MessageListener): void;
+      removeListener(listener: MessageListener): void;
+    };
     openOptionsPage?: () => Promise<void> | void;
+    sendMessage?: (...args: unknown[]) => Promise<unknown> | void;
+  };
+  tabs?: {
+    query(...args: unknown[]): Promise<Tab[]> | void;
+    sendMessage?: (...args: unknown[]) => Promise<unknown> | void;
   };
   storage?: {
     local?: StorageArea;
@@ -35,6 +44,18 @@ export type StorageChangeListener = (
   changes: Record<string, StorageChange>,
   areaName: string
 ) => void | Promise<void>;
+
+export interface Tab {
+  active?: boolean;
+  id?: number;
+  url?: string;
+}
+
+export type MessageListener = (
+  message: unknown,
+  sender: unknown,
+  sendResponse: (response?: unknown) => void
+) => boolean | void;
 
 function getExtensionGlobal(): typeof globalThis & {
   browser?: ExtensionApi;

@@ -91,6 +91,22 @@ export class OverlayRootManager {
     };
   }
 
+  private findMastodonHost(): OverlayRootPlacement | null {
+    const mastodonRoot =
+      document.querySelector<HTMLElement>("#mastodon") ??
+      (document.body.matches("#mastodon") ? document.body : null);
+
+    if (!mastodonRoot) {
+      return null;
+    }
+
+    return {
+      host: mastodonRoot,
+      insertBefore: null,
+      layeredMain: null,
+    };
+  }
+
   private resolvePlacement(): OverlayRootPlacement {
     const reactRoot = document.getElementById("react-root");
 
@@ -102,6 +118,12 @@ export class OverlayRootManager {
           layeredMain: null,
         }
       );
+    }
+
+    const mastodonPlacement = this.findMastodonHost();
+
+    if (mastodonPlacement) {
+      return mastodonPlacement;
     }
 
     return {

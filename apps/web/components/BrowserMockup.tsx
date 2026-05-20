@@ -27,8 +27,8 @@ const navIcons = [IconBrandX, IconHome, IconSearch, IconBell, IconMail, IconBook
 
 const platformBadges = [
   { name: "X.com", status: "Available now", icon: IconBrandX, className: "bg-black text-white" },
-  { name: "Mastodon", status: "Coming soon", icon: IconBrandMastodon, className: "bg-violet text-white" },
-  { name: "Bluesky", status: "Coming soon", icon: IconBrandBluesky, className: "bg-sky text-white" },
+  { name: "Mastodon", status: "Available now", icon: IconBrandMastodon, className: "bg-violet text-white" },
+  { name: "Bluesky", status: "In progress", icon: IconBrandBluesky, className: "bg-sky text-white" },
   { name: "LinkedIn", status: "Coming soon", icon: IconBrandLinkedin, className: "bg-[#0a66c2] text-white" },
 ];
 

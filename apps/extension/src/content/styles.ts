@@ -12,7 +12,7 @@ export const contentStyles = `
   --wideplayer-manual-transition-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --wideplayer-overlay-shadow: 0 16px 42px rgba(7, 8, 74, 0.2),
     0 0 0 1px rgba(7, 8, 74, 0.08);
-  --wideplayer-toggle-background-hover: rgba(112, 76, 255, 0.22);
+  --wideplayer-toggle-background-hover: rgba(15, 20, 25, 0.18);
   --wideplayer-toggle-color: #ffffff;
   --wideplayer-toggle-top-fade: linear-gradient(
     180deg,
@@ -37,11 +37,11 @@ main[data-wideplayer-overlay-layer="true"] {
   z-index: 4;
 }
 
-article[data-wideplayer-candidate="true"] {
+:is(article, .status)[data-wideplayer-candidate="true"] {
   --wideplayer-candidate-width: calc(var(--wideplayer-width-percent) * 1%);
 }
 
-article[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
+:is(article, .status)[data-wideplayer-candidate="true"][data-wideplayer-state="expanded"] {
   z-index: 1;
 }
 
@@ -118,26 +118,20 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root[data-wideplayer-cont
 
 .wideplayer-player-mounted {
   border-radius: inherit;
-  display: flex;
   height: 100%;
-  justify-content: center;
   overflow: hidden;
   width: 100%;
 }
 
-.wideplayer-player-mounted > * {
-  max-width: 100%;
+.wideplayer-player-mounted > iframe,
+.wideplayer-player-mounted > video {
+  height: 100%;
+  width: 100%;
 }
 
 .wideplayer-player-root[data-wideplayer-expanded="true"] {
-  display: flex;
   height: 100%;
-  justify-content: center;
-}
-
-.wideplayer-player-root[data-wideplayer-expanded="true"] > :not(.wideplayer-toggle-button) {
-  flex-shrink: 0;
-  max-width: 100%;
+  width: 100%;
 }
 
 .wideplayer-toggle-button {
@@ -161,6 +155,10 @@ html[data-wideplayer-mode="manual"] .wideplayer-player-root[data-wideplayer-cont
   transition: opacity 120ms ease, background-color 120ms ease;
   width: 40px;
   z-index: 2;
+}
+
+html[data-wideplayer-platform="mastodon"] .wideplayer-player-root[data-wideplayer-media-kind="native-video"] .wideplayer-toggle-button {
+  top: 34px;
 }
 
 .wideplayer-player-root[data-wideplayer-controls-visible="true"] .wideplayer-toggle-button,
