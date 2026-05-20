@@ -2,6 +2,7 @@ import { DEFAULT_SETTINGS, STYLE_ELEMENT_ID, X_HOSTS, type Settings } from "../s
 import { getExtensionApi, type MessageListener } from "../shared/browser-api";
 import {
   getPlatformAutoEnable,
+  getPlatformEnabled,
   getPlatformWidthPercent,
   loadLiveWidthPreview,
   loadSettings,
@@ -212,6 +213,18 @@ class WidePlayerContentApp {
     return this.platform ? getPlatformAutoEnable(settings, this.platform) : false;
   }
 
+  private isPlatformEnabled(settings: Settings = this.settings): boolean {
+    return this.platform ? getPlatformEnabled(settings, this.platform) : false;
+  }
+
+  private getWidePlayerMode(settings: Settings = this.settings): "auto" | "manual" | "off" {
+    if (!this.isPlatformEnabled(settings)) {
+      return "off";
+    }
+
+    return this.isAutoModeEnabled(settings) ? "auto" : "manual";
+  }
+
   async init(): Promise<void> {
     this.platform = getSupportedPlatform();
 
@@ -246,6 +259,11 @@ class WidePlayerContentApp {
   }
 
   private activateCandidate(record: CandidateRecord): void {
+    if (!this.isPlatformEnabled()) {
+      this.updateToggleButtonState(record);
+      return;
+    }
+
     if (record.activePlacement || !this.overlayRootManager) {
       this.updateToggleButtonState(record);
       return;
@@ -283,7 +301,7 @@ class WidePlayerContentApp {
   }
 
   private applySettings(): void {
-    document.documentElement.dataset.wideplayerMode = this.isAutoModeEnabled() ? "auto" : "manual";
+    document.documentElement.dataset.wideplayerMode = this.getWidePlayerMode();
     document.documentElement.style.setProperty(
       "--wideplayer-width-percent",
       String(this.getEffectiveWidthPercent())
@@ -563,7 +581,7 @@ class WidePlayerContentApp {
 
     record.article.dataset.wideplayerCandidate = "true";
     record.article.dataset.wideplayerCandidateId = record.id;
-    record.article.dataset.wideplayerMode = this.isAutoModeEnabled() ? "auto" : "manual";
+    record.article.dataset.wideplayerMode = this.getWidePlayerMode();
     record.article.dataset.wideplayerState = "collapsed";
     record.playerElement.classList.add("wideplayer-player-root");
     record.playerElement.dataset.wideplayerMediaKind = record.mediaKind;
@@ -667,12 +685,13 @@ class WidePlayerContentApp {
   }
 
   private handleSettingsChange(nextSettings: Settings): void {
+    const platformEnabledChanged = this.isPlatformEnabled() !== this.isPlatformEnabled(nextSettings);
     const modeChanged = this.isAutoModeEnabled() !== this.isAutoModeEnabled(nextSettings);
 
     this.settings = nextSettings;
     this.applySettings();
 
-    if (modeChanged) {
+    if (modeChanged || platformEnabledChanged) {
       this.collapseAll();
     }
 
@@ -883,6 +902,14 @@ class WidePlayerContentApp {
   }
 
   private scanForCandidates(): void {
+    if (!this.isPlatformEnabled()) {
+      for (const record of Array.from(this.candidates.values())) {
+        this.destroyCandidate(record);
+      }
+
+      return;
+    }
+
     const detectedCandidates = this.platform
       ? detectFeedVideoCandidates(this.platform, document)
       : [];
@@ -953,10 +980,14 @@ class WidePlayerContentApp {
 
   private syncAutoMode(): void {
     for (const record of this.candidates.values()) {
-      record.article.dataset.wideplayerMode = this.isAutoModeEnabled() ? "auto" : "manual";
+      record.article.dataset.wideplayerMode = this.getWidePlayerMode();
       this.syncToggleButton(record);
 
       if (!this.isAutoModeEnabled()) {
+        if (!this.isPlatformEnabled()) {
+          this.deactivateCandidate(record);
+        }
+
         continue;
       }
 
@@ -1132,7 +1163,7 @@ class WidePlayerContentApp {
   }
 
   private syncToggleButton(record: CandidateRecord): void {
-    if (this.isAutoModeEnabled()) {
+    if (!this.isPlatformEnabled() || this.isAutoModeEnabled()) {
       this.clearControlsHideTimeout(record);
       this.setControlsVisibility(record, false);
       this.removeToggleButton(record);
@@ -1165,7 +1196,7 @@ class WidePlayerContentApp {
   }
 
   private toggleCandidate(record: CandidateRecord): void {
-    if (this.isAutoModeEnabled()) {
+    if (!this.isPlatformEnabled() || this.isAutoModeEnabled()) {
       return;
     }
 
@@ -1213,7 +1244,7 @@ class WidePlayerContentApp {
       record.video?.addEventListener("pause", record.handleVideoPause);
       record.video?.addEventListener("play", record.handleVideoPlay);
     }
-    record.article.dataset.wideplayerMode = this.isAutoModeEnabled() ? "auto" : "manual";
+    record.article.dataset.wideplayerMode = this.getWidePlayerMode();
 
     if (!this.intersectionObserver) {
       record.isVisible = isElementVisible(record.article);

@@ -7,6 +7,7 @@ export interface PlatformSettingsConfig {
   iconSrc: string;
   label: string;
   platform: Platform;
+  platformEnabledKey?: keyof Settings;
   status: "Coming soon" | "Supported";
   widthPercentKey: keyof Settings;
 }
@@ -18,6 +19,7 @@ export const PLATFORM_SETTINGS: PlatformSettingsConfig[] = [
     iconSrc: "icons/platform-x.svg",
     label: "X",
     platform: "x",
+    platformEnabledKey: "platformEnabledX",
     status: "Supported",
     widthPercentKey: "widthPercentX",
   },
@@ -27,6 +29,7 @@ export const PLATFORM_SETTINGS: PlatformSettingsConfig[] = [
     iconSrc: "icons/platform-mastodon.svg",
     label: "Mastodon",
     platform: "mastodon",
+    platformEnabledKey: "platformEnabledMastodon",
     status: "Supported",
     widthPercentKey: "widthPercentMastodon",
   },

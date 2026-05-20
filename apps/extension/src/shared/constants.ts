@@ -6,6 +6,8 @@ export interface Settings {
   autoEnableLinkedIn: boolean;
   autoEnableMastodon: boolean;
   autoEnableX: boolean;
+  platformEnabledMastodon: boolean;
+  platformEnabledX: boolean;
   widthPercentBluesky: number;
   widthPercentLinkedIn: number;
   widthPercentMastodon: number;
@@ -17,6 +19,8 @@ export const DEFAULT_SETTINGS: Settings = {
   autoEnableLinkedIn: true,
   autoEnableMastodon: true,
   autoEnableX: true,
+  platformEnabledMastodon: true,
+  platformEnabledX: true,
   widthPercentBluesky: 35,
   widthPercentLinkedIn: 35,
   widthPercentMastodon: 35,

@@ -15,6 +15,8 @@ interface StoredSettingsInput {
   autoEnableLinkedIn?: unknown;
   autoEnableMastodon?: unknown;
   autoEnableX?: unknown;
+  platformEnabledMastodon?: unknown;
+  platformEnabledX?: unknown;
   widthPercentBluesky?: unknown;
   widthPercentLinkedIn?: unknown;
   widthPercentMastodon?: unknown;
@@ -42,6 +44,8 @@ const STORAGE_DEFAULTS: StoredSettingsInput = {
   autoEnableMastodon: DEFAULT_SETTINGS.autoEnableMastodon,
   autoEnableX: DEFAULT_SETTINGS.autoEnableX,
   expansionPercent: undefined,
+  platformEnabledMastodon: DEFAULT_SETTINGS.platformEnabledMastodon,
+  platformEnabledX: DEFAULT_SETTINGS.platformEnabledX,
   widthPercent: undefined,
   widthPercentBluesky: DEFAULT_SETTINGS.widthPercentBluesky,
   widthPercentLinkedIn: DEFAULT_SETTINGS.widthPercentLinkedIn,
@@ -67,6 +71,15 @@ function getAutoEnableKey(platform: Platform): keyof Settings {
   }
 }
 
+function getPlatformEnabledKey(platform: SupportedPlatform): keyof Settings {
+  switch (platform) {
+    case "mastodon":
+      return "platformEnabledMastodon";
+    case "x":
+      return "platformEnabledX";
+  }
+}
+
 function getWidthPercentKey(platform: Platform): keyof Settings {
   switch (platform) {
     case "bluesky":
@@ -81,7 +94,15 @@ function getWidthPercentKey(platform: Platform): keyof Settings {
 }
 
 export function getPlatformAutoEnable(settings: Settings, platform: Platform): boolean {
+  if (platform === "mastodon" || platform === "x") {
+    return getPlatformEnabled(settings, platform) && Boolean(settings[getAutoEnableKey(platform)]);
+  }
+
   return Boolean(settings[getAutoEnableKey(platform)]);
+}
+
+export function getPlatformEnabled(settings: Settings, platform: SupportedPlatform): boolean {
+  return Boolean(settings[getPlatformEnabledKey(platform)]);
 }
 
 export function getPlatformWidthPercent(settings: Settings, platform: Platform): number {
@@ -147,6 +168,14 @@ export function normalizeSettings(input?: StoredSettingsInput): Settings {
       typeof input?.autoEnableX === "boolean"
         ? input.autoEnableX
         : legacyAutoEnable ?? DEFAULT_SETTINGS.autoEnableX,
+    platformEnabledMastodon:
+      typeof input?.platformEnabledMastodon === "boolean"
+        ? input.platformEnabledMastodon
+        : DEFAULT_SETTINGS.platformEnabledMastodon,
+    platformEnabledX:
+      typeof input?.platformEnabledX === "boolean"
+        ? input.platformEnabledX
+        : DEFAULT_SETTINGS.platformEnabledX,
     widthPercentBluesky:
       input?.widthPercentBluesky !== undefined
         ? clampWidthPercent(input.widthPercentBluesky)
@@ -256,7 +285,11 @@ export function subscribeToSettings(listener: (settings: Settings) => void): () 
       !PLATFORMS.some((platform) => {
         const autoEnableKey = getAutoEnableKey(platform);
         const widthPercentKey = getWidthPercentKey(platform);
-        return autoEnableKey in changes || widthPercentKey in changes;
+        const platformEnabledChanged =
+          (platform === "mastodon" || platform === "x") &&
+          getPlatformEnabledKey(platform) in changes;
+
+        return autoEnableKey in changes || platformEnabledChanged || widthPercentKey in changes;
       })
     ) {
       return;
