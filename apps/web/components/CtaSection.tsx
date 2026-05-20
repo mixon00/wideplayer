@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import {
   IconBrandGithub,
   IconCode,
@@ -34,30 +37,6 @@ const fallbackRepo: GitHubRepo = {
   visibility: "public",
 };
 
-async function getGitHubRepo(): Promise<GitHubRepo> {
-  const headers: Record<string, string> = {
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
-
-  if (process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-  }
-
-  try {
-    const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
-      headers,
-      next: { revalidate: 3600 },
-    });
-
-    if (!response.ok) return fallbackRepo;
-
-    return (await response.json()) as GitHubRepo;
-  } catch {
-    return fallbackRepo;
-  }
-}
-
 function formatCount(count: number) {
   return new Intl.NumberFormat("en", {
     maximumFractionDigits: count >= 1000 ? 1 : 0,
@@ -77,8 +56,40 @@ const openItems = [
   { icon: IconHeart, title: "Always free", copy: "Open source today. Never pay-to-play." },
 ];
 
-export default async function CtaSection() {
-  const repo = await getGitHubRepo();
+export default function CtaSection() {
+  const [repo, setRepo] = useState<GitHubRepo>(fallbackRepo);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadGitHubRepo() {
+      try {
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+          },
+        });
+
+        if (!response.ok) return;
+
+        const nextRepo = (await response.json()) as GitHubRepo;
+
+        if (isMounted) {
+          setRepo(nextRepo);
+        }
+      } catch {
+        // Keep the static fallback when GitHub is unavailable or rate-limited.
+      }
+    }
+
+    void loadGitHubRepo();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const repoDescription =
     repo.description ?? "A browser extension that makes in-feed videos wider without going fullscreen.";
   const repoLicense = repo.license?.spdx_id ? `${repo.license.spdx_id} License` : "No license";
